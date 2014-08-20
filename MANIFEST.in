@@ -1,0 +1,8 @@
+# Base Installation
+global-exclude *
+include README LICENSE setup.py MANIFEST.in
+include __init__.py model.py display.py
+include doc/*.rst doc/*.py doc/*.png doc/*.svg
+include unittest/*.py
+recursive-include doc/html * # This duplicates images.  I don't like that
+include unittest/*.py

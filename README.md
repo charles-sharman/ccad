@@ -1,4 +1,0 @@
-ccad
-====
-
-pythonocc wrapper
