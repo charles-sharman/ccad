@@ -1,3 +1,13 @@
+Introduction
+============
+
+ccad is a text-based mechanical CAD (computer aided design) tool.  It
+is a python module you import within a python file or from the python
+prompt.  Once imported, you can create and view mechanical objects.
+
+ccad is a python wrapper of pythonocc, but pythonocc knowledge is
+unnecessary to use ccad.
+
 To Install
 ==========
 
