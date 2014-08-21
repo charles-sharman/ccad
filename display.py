@@ -24,8 +24,15 @@ import math as _math
 try:
     import pygtk, gtk, gtk.gtkgl, gobject
 except ImportError:
-    print "Please install python-gtk (see http://www.pygtk.org)."
-    _sys.exit(0)
+    print 'Warning: Cannot find python-gtk and/or python-gtkglext.  Trying python-wxgtk.'
+    try:
+        from OCC.Display import SimpleGui as _SimpleGui
+        print 'Using python-wxgtk.  You will have limited display capabilities.'
+    except ImportError:
+        print 'Error: Cannot find python-gtk, python-gtkglext, or python-wxgtk'
+        _sys.exit(0)
+
+#from OCC.Display import SimpleGui as _SimpleGui # To debug _SimpleGui
 
 from OCC import (AIS as _AIS, Aspect as _Aspect, gp as _gp,
                  Graphic3d as _Graphic3d, Prs3d as _Prs3d,
@@ -1249,20 +1256,53 @@ class view_gtk(object):
         else:
             self.win.destroy()
 
+class view_wx(object):
+    """
+    Currently, this simply wraps pythonocc's SimpleGui, so it is
+    without most of the functionality of view_gtk.  Use view_gtk if
+    you can.
+    """
+
+    def __init__(self):
+        """
+        Initialize the SimpleGui
+        """
+        self.disp, self.start_display, self.add_menu, self.add_function_to_menu = _SimpleGui.init_display()
+    
+    def display(self, shape):
+        """
+        Displays a ccad shape
+        """
+        if hasattr(shape, 'shape'):
+            s = shape.shape
+        else:
+            s = shape
+        self.disp.DisplayShape(s, update=True)
 
 def view(manager='gtk', perspective=False):
     if manager == 'gtk':
         v1 = view_gtk(perspective)
         return v1
+    elif manager == 'wx':
+        v1 = view_wx()
+        return v1
     else:
         print 'Error: Manager', manager, 'not supported'
         _sys.exit()
 
-
-def start():  # For non-interactive sessions (don't run in ipython)
+def start(manager='gtk'):  # For non-interactive sessions (don't run in ipython)
     global interactive
     interactive = False
-    gtk.main()
+
+    if manager == 'gtk':
+        gtk.main()
+
+    elif manager == 'wx':
+        _SimpleGui.start_display()
+
+    else:
+        print 'Error: Manger', manager, 'not supported'
+        _sys.exit()
 
 
 if __name__ == '__main__':
