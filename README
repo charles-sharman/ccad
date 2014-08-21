@@ -11,6 +11,9 @@ unnecessary to use ccad.
 To Install
 ==========
 
+First, make sure you have correctly installed pythonocc, python-gtk,
+python-gtkglext, and their underlying dependencies.  Then,
+
   tar xvzf ccad-ver.tar.gz (where ver is the version number)
   cd ccad-ver (where ver is the version number)
   python setup.py install --prefix=/usr/local (as root)
