@@ -17,6 +17,12 @@ Distributed under the GNU LESSER GENERAL PUBLIC LICENSE Version 3.
 View LICENSE for details.
 """
 
+# Globals
+version = '0.1'
+interactive = True
+manager = 'gtk'
+
+
 import os as _os
 import sys as _sys
 import math as _math
@@ -28,11 +34,10 @@ except ImportError:
     try:
         from OCC.Display import SimpleGui as _SimpleGui
         print 'Using python-wxgtk.  You will have limited display capabilities.'
+        manager = 'wx'
     except ImportError:
         print 'Error: Cannot find python-gtk, python-gtkglext, or python-wxgtk'
         _sys.exit(0)
-
-#from OCC.Display import SimpleGui as _SimpleGui # To debug _SimpleGui
 
 from OCC import (AIS as _AIS, Aspect as _Aspect, gp as _gp,
                  Graphic3d as _Graphic3d, Prs3d as _Prs3d,
@@ -50,23 +55,18 @@ from OCC.Xw import Xw_Window as _Xw_Window, Xw_WQ_3DQUALITY as _Xw_WQ_3DQUALITY
 import ccad.model as _cm
 
 
-# Globals
-version = '0.1'
-interactive = True
-
-
 class view_gtk(object):
     """
     A gtk-based viewer
     """
 
-    REGULAR_CURSOR = gtk.gdk.Cursor(gtk.gdk.LEFT_PTR)
-    WAIT_CURSOR = gtk.gdk.Cursor(gtk.gdk.WATCH)
-
     def __init__(self, perspective=False):
         """
         Perspective doesn't seem to work in pythonocc ***.  Don't use.
         """
+
+        self.REGULAR_CURSOR = gtk.gdk.Cursor(gtk.gdk.LEFT_PTR)
+        self.WAIT_CURSOR = gtk.gdk.Cursor(gtk.gdk.WATCH)
 
         self.key_table = {'redraw()': 'KP_Page_Up',
                           'orbitup()': 'KP_Up',
@@ -1279,7 +1279,10 @@ class view_wx(object):
             s = shape
         self.disp.DisplayShape(s, update=True)
 
-def view(manager='gtk', perspective=False):
+
+def view(perspective=False):
+    global manager
+
     if manager == 'gtk':
         v1 = view_gtk(perspective)
         return v1
@@ -1290,8 +1293,9 @@ def view(manager='gtk', perspective=False):
         print 'Error: Manager', manager, 'not supported'
         _sys.exit()
 
-def start(manager='gtk'):  # For non-interactive sessions (don't run in ipython)
-    global interactive
+
+def start():  # For non-interactive sessions (don't run in ipython)
+    global interactive, manager
     interactive = False
 
     if manager == 'gtk':
@@ -1301,7 +1305,7 @@ def start(manager='gtk'):  # For non-interactive sessions (don't run in ipython)
         _SimpleGui.start_display()
 
     else:
-        print 'Error: Manger', manager, 'not supported'
+        print 'Error: Manager', manager, 'not supported'
         _sys.exit()
 
 
