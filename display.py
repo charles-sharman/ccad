@@ -30,14 +30,21 @@ import math as _math
 try:
     import pygtk, gtk, gtk.gtkgl, gobject
 except ImportError:
-    print 'Warning: Cannot find python-gtk and/or python-gtkglext.  Trying python-wxgtk.'
-    try:
-        from OCC.Display import SimpleGui as _SimpleGui
-        print 'Using python-wxgtk.  You will have limited display capabilities.'
-        manager = 'wx'
-    except ImportError:
-        print 'Error: Cannot find python-gtk, python-gtkglext, or python-wxgtk'
-        _sys.exit(0)
+    manager = 'none'
+    print """
+Warning: Cannot find python-gtk and/or python-gtkglext.  You will not
+be able to use ccad's display.  Instead, you may use pythonocc's
+viewers.  ccad shapes may be displayed in pythonocc's viewers by using
+the .shape attribute.  For example:
+
+    import ccad
+    import OCC.Display.SimpleGui as SimpleGui
+    
+    s1 = ccad.sphere(1.0)
+    display, start_display, add_menu, add_function_to_menu = SimpleGui.init_display()
+    display.DisplayShape(s1.shape, update = True)
+    start_display()
+"""
 
 from OCC import (AIS as _AIS, Aspect as _Aspect, gp as _gp,
                  Graphic3d as _Graphic3d, Prs3d as _Prs3d,
@@ -50,7 +57,11 @@ from OCC.TCollection import (TCollection_ExtendedString as
                              _TCollection_ExtendedString)
 from OCC.TopExp import TopExp_Explorer as _TopExp_Explorer
 from OCC.Visual3d import Visual3d_ViewOrientation as _Visual3d_ViewOrientation
-from OCC.Xw import Xw_Window as _Xw_Window, Xw_WQ_3DQUALITY as _Xw_WQ_3DQUALITY
+
+if _sys.platform.startswith('win'):
+    from OCC.WNT import WNT_Window as _WNT_Window
+else:
+    from OCC.Xw import Xw_Window as _Xw_Window, Xw_WQ_3DQUALITY as _Xw_WQ_3DQUALITY
 
 import ccad.model as _cm
 
@@ -420,8 +431,12 @@ class view_gtk(object):
         # faults!)
         window_handle = self.glarea.window.xid
 
-        gd = _Graphic3d.Graphic3d_GraphicDevice(_os.environ['DISPLAY'])
-        window = _Xw_Window(gd.GetHandle(), window_handle >> 16, window_handle & 0xffff, _Xw_WQ_3DQUALITY)
+        if _sys.platform.startswith('win'): # Not Debugged ***
+            gd = _Graphic3d.Graphic3d_WNTGraphicDevice()
+            window = _WNT_Window(gd.GetHandle(), window_handle >> 16, window_handle & 0xffff)
+        else:
+            gd = _Graphic3d.Graphic3d_GraphicDevice(_os.environ['DISPLAY'])
+            window = _Xw_Window(gd.GetHandle(), window_handle >> 16, window_handle & 0xffff, _Xw_WQ_3DQUALITY)
         self.occ_viewer = _V3d.V3d_Viewer(gd.GetHandle(), _TCollection_ExtendedString('Viewer').ToExtString())
 
         # This works now, by reading the handle first.  Go figure . . .
@@ -429,7 +444,7 @@ class view_gtk(object):
         handle_occ_viewer = self.occ_viewer.GetHandle()
         self.occ_viewer.Init()
         #print 'Viewer inited"
-        #self.handle_view = self.occ_viewer.CreateView()
+
         if perspective:
             self.handle_view = self.occ_viewer.DefaultPerspectiveView()
         else:
@@ -437,6 +452,16 @@ class view_gtk(object):
         #print 'View handle created"
         self.occ_view = self.handle_view.GetObject()
         #print 'view created'
+
+        """
+        # This also worked, but still Perspective did not
+        if perspective:
+            self.occ_view = _V3d.V3d_PerspectiveView(handle_occ_viewer)
+        else:
+            self.occ_view = _V3d.V3d_OrthographicView(handle_occ_viewer)
+        self.handle_view = self.occ_view.GetHandle()
+        """
+
         self.occ_view.SetWindow(window.GetHandle())
         #print 'View window set'
 
@@ -756,16 +781,23 @@ class view_gtk(object):
         if self.selected is not None:
             if self.selection_type == 'vertex':
                 s = _cm.vertex(self.selected)
-                retval = 'center' + s.center() + '\ntolerance' + s.tolerance()
+                retval = 'center: ' + str(s.center()) + \
+                    '\ntolerance: ' + str(s.tolerance())
             elif self.selection_type == 'edge':
-                s = _cm.vertex(self.selected)
-                retval = 'center' + s.center() + '\ntolerance', + s.tolerance() + 'length' + s.length()
+                s = _cm.edge(self.selected)
+                retval = 'center: ' + str(s.center()) + \
+                    '\nlength: ' + str(s.length()) + \
+                    '\ntolerance: ' + str(s.tolerance())
             elif self.selection_type == 'wire':
-                s = _cm.face(self.selected)
-                retval = 'center' + s.center() + 'length' + s.length()
+                s = _cm.wire(self.selected)
+                retval = 'center: ' + str(s.center()) + \
+                    '\nlength: ' + str(s.length())
             elif self.selection_type == 'face':
                 s = _cm.face(self.selected)
-                retval = 'center' + s.center() + '\ntolerance', + s.tolerance() + '\ntype', + s.type() + 'area' + s.area()
+                retval = 'center: ' + str(s.center()) + \
+                    '\ntype: ' + str(s.type()) + \
+                    '\narea: ' + str(s.area()) + \
+                    '\ntolerance: ' + str(s.tolerance())
             else:
                 retval = 'No properties for type ' + self.selection_type
             print retval
@@ -1256,29 +1288,6 @@ class view_gtk(object):
         else:
             self.win.destroy()
 
-class view_wx(object):
-    """
-    Currently, this simply wraps pythonocc's SimpleGui, so it is
-    without most of the functionality of view_gtk.  Use view_gtk if
-    you can.
-    """
-
-    def __init__(self):
-        """
-        Initialize the SimpleGui
-        """
-        self.disp, self.start_display, self.add_menu, self.add_function_to_menu = _SimpleGui.init_display()
-    
-    def display(self, shape):
-        """
-        Displays a ccad shape
-        """
-        if hasattr(shape, 'shape'):
-            s = shape.shape
-        else:
-            s = shape
-        self.disp.DisplayShape(s, update=True)
-
 
 def view(perspective=False):
     global manager
@@ -1286,12 +1295,8 @@ def view(perspective=False):
     if manager == 'gtk':
         v1 = view_gtk(perspective)
         return v1
-    elif manager == 'wx':
-        v1 = view_wx()
-        return v1
     else:
         print 'Error: Manager', manager, 'not supported'
-        _sys.exit()
 
 
 def start():  # For non-interactive sessions (don't run in ipython)
@@ -1300,13 +1305,8 @@ def start():  # For non-interactive sessions (don't run in ipython)
 
     if manager == 'gtk':
         gtk.main()
-
-    elif manager == 'wx':
-        _SimpleGui.start_display()
-
     else:
         print 'Error: Manager', manager, 'not supported'
-        _sys.exit()
 
 
 if __name__ == '__main__':

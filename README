@@ -1,18 +1,22 @@
-Introduction
-============
+Description
+===========
 
 ccad is a text-based mechanical CAD (computer aided design) tool.  It
 is a python module you import within a python file or from the python
 prompt.  Once imported, you can create and view mechanical objects.
 
-ccad is a python wrapper of pythonocc, but pythonocc knowledge is
-unnecessary to use ccad.
+ccad is a python wrapper of pythonocc.  No knowledge of pythonocc is
+necessary to operate ccad.
+
+ccad was developed and debugged on Debian Linux 6.0 and 7.0.  Although
+designed for Linux, OSX, and Windows, interoperability with other
+operating systems is untested and therefore probably broken.
 
 To Install
 ==========
 
-First, make sure you have correctly installed pythonocc, python-gtk,
-python-gtkglext, and their underlying dependencies.  Then,
+Make sure you have working copies of pythonocc, python-gtk, and
+python-gtkglext.  Then,
 
   tar xvzf ccad-ver.tar.gz (where ver is the version number)
   cd ccad-ver (where ver is the version number)
