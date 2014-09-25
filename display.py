@@ -934,7 +934,7 @@ class view_qt(_QtGui.QWidget):
         if _sys.platform.startswith('linux'):
             updirs = 4
         elif _sys.platform.startswith('win'):
-            updirs = 1
+            updirs = 3
         elif _sys.platform.startswith('darwin'):
             updirs = 4 # Not debugged
         else:

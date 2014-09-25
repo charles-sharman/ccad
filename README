@@ -8,25 +8,60 @@ prompt.  Once imported, you can create and view mechanical objects.
 ccad is a python wrapper of pythonocc.  No knowledge of pythonocc is
 necessary to operate ccad.
 
-ccad was developed and debugged on Debian Linux 6.0 and 7.0.  Although
-designed for Linux, OSX, and Windows, interoperability with other
-operating systems is untested and therefore probably broken.
+To Install (Linux)
+==================
 
-To Install
-==========
+Make sure you have working copies of pythonocc and python-qt4.  Then::
 
-Make sure you have working copies of pythonocc and python-qt4.  Then,
+  Download and unzip the .zip file from github
 
-  tar xvzf ccad-ver.tar.gz (where ver is the version number)
-  cd ccad-ver (where ver is the version number)
+  cd ccad-master
+
   python setup.py install --prefix=/usr/local (as root)
 
 Change the prefix argument to install in a different directory.
 
+To Install (Windows)
+====================
+
+Make sure you have working copies of pythonocc and python-qt4.  Then::
+
+  Download the .zip file from github
+
+  From a file explorer window, right-click on the downloaded zip file
+  and select "extract here"
+
+  Navigate to the folder just created
+
+  Shift-right-click in the file explorer window and select "open
+  command window here"
+
+  Type the following command:
+  python setup.py install
+
+For interactive mode, use ipython or run python from a command window.
+ccad does *not* work under Idle.
+
+To Install (Mac)
+================
+
+While ccad should work for Mac, we haven't heard of anyone trying it.
+If you install it, let us know, and we'll update the README.
+
 To Operate
 ==========
 
+Start python from the command line.  Then::
+
+  >>> import ccad
+  >>> s1 = ccad.sphere(1.0)
+  >>> v1 = ccad.view()
+  >>> v1.display(s1)
+
+You should see a sphere displayed in a window.
+
 Consult the documentation at prefix/share/doc/ccad/html/contents.html
+for ccad's full capabilities.
 
 To Build (only for developers)
 ==============================
