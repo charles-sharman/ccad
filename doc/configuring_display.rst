@@ -26,6 +26,6 @@ item is selected.  Pass parameters follow the function call.
 add_menu
 --------
 
-If you know gtk and you want menu items fancier than strings,
-**add_menu**, a lower-level menu manipulation method is available.  See
-the API for details.
+If you know qt and you want menu items fancier than strings,
+**add_menu**, a lower-level menu manipulation method is available.
+See the API for details.

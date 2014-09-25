@@ -37,10 +37,13 @@ manual.  Keep it handly.
 System Requirements
 -------------------
 
-You'll need pythonocc, python-gtk, and python-gtkglext to run ccad.
+You'll need pythonocc and python-qt4 to run ccad.
 
 Installation
 ------------
+
+Linux
+^^^^^
 
 To install ccad, follow the following procedure in Linux::
 
@@ -50,9 +53,57 @@ To install ccad, follow the following procedure in Linux::
 
 Change the prefix argument to install in a different directory.
 
-If you're a Windows or Mac user, ccad should still work.  I just
-haven't tried it.  If you successfully install ccad in Windows or Mac,
-let us know how you did it, and we'll update the documentation.
+Windows
+^^^^^^^
+
+To install ccad, follow the following procedure in Windows::
+
+  tar xvzf ccad-ver.tar.gz (where ver is the version number)
+  cd ccad-ver (where ver is the version number)
+  python setup.py install
+
+Mac
+^^^
+
+If you're a Mac user, ccad should still work.  I just haven't tried
+it.  If you successfully install ccad on Mac, let us know how you did
+it, and we'll update the documentation.
+
+Troubleshooting
+^^^^^^^^^^^^^^^
 
 If you're having trouble, simply extract the .tar.gz file.  Then, add
 that directory to your PYTHONPATH.  That, at least, will get you going.
+
+Importing
+---------
+
+ccad consists of two modules: **model** and **display**.  The
+command::
+
+  import ccad
+
+imports both modules in * form, making all their contents relative to
+**ccad**::
+
+  import ccad
+  s1 = ccad.box(1,2,3)
+  v1 = ccad.view()
+  v1.display(s1)
+
+Some users may prefer to write or use their own display.  In that
+case, the **model** module can be imported alone::
+
+  import ccad.model as cm
+
+Finally, if you prefer to keep the modules separate, you can import
+each one separately::
+
+  import ccad.model as cm
+  import ccad.display as cd
+
+  s1 = cm.box(1,2,3)
+  v1 = cd.view()
+  v1.display(s1)
+
+The rest of this document assumes you use **import ccad**.

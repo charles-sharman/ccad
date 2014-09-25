@@ -15,8 +15,7 @@ operating systems is untested and therefore probably broken.
 To Install
 ==========
 
-Make sure you have working copies of pythonocc, python-gtk, and
-python-gtkglext.  Then,
+Make sure you have working copies of pythonocc and python-qt4.  Then,
 
   tar xvzf ccad-ver.tar.gz (where ver is the version number)
   cd ccad-ver (where ver is the version number)
@@ -27,7 +26,7 @@ Change the prefix argument to install in a different directory.
 To Operate
 ==========
 
-Consult the documentation at prefix/usr/local/html/contents.html
+Consult the documentation at prefix/share/doc/ccad/html/contents.html
 
 To Build (only for developers)
 ==============================
@@ -43,8 +42,20 @@ committing.**
 To Build the Documentation (only for developers)
 ================================================
 
-  cd ccad-ver/rst
+  cd ccad-ver/doc
   python generate_images.py
   sphinx-build . html
 
 Then, direct your browser to ccad-ver/doc/html/contents.html
+
+Philosophy (only for developers)
+================================
+
+1. Edges are continuous lines in 3D space.  There should be no reason
+   to distinguish between them and OCC curves.  Wires are collections
+   of edge connections.  Faces are continuous surfaces in 3D space.
+   There should be no reason to distinguish between them and OCC
+   surfaces.  Shells are collections of face connections.
+
+2. The end-user should not ever have to call pythonOCC directly.  ccad
+   should handle all things someone might want to do in CAD.

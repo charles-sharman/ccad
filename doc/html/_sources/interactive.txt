@@ -7,9 +7,9 @@ Introduction
 To run the viewer in stand-alone mode, you need ipython.  Start
 ipython with::
 
-  ipython -gthread
+  ipython -q4thread
 
-The ccad viewer uses gtk; that's why you use the -gthread option.
+The ccad viewer uses qt; that's why you use the -q4thread option.
 
 Now, from the ipython prompt, you can work with ccad interactively.
 Try this::

@@ -5,13 +5,13 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Details &mdash; ccad v0.1 documentation</title>
+    <title>Details &mdash; ccad v0.11 documentation</title>
     <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.1',
+        VERSION:     '0.11',
         COLLAPSE_MODINDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -19,7 +19,7 @@
     </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="ccad v0.1 documentation" href="index.html" />
+    <link rel="top" title="ccad v0.11 documentation" href="index.html" />
     <link rel="next" title="Modelling" href="modelling.html" />
     <link rel="prev" title="Introduction" href="intro.html" /> 
   </head>
@@ -36,7 +36,7 @@
         <li class="right" >
           <a href="intro.html" title="Introduction"
              accesskey="P">previous</a> |</li>
-        <li><a href="contents.html">ccad v0.1 documentation</a> &raquo;</li> 
+        <li><a href="contents.html">ccad v0.11 documentation</a> &raquo;</li> 
       </ul>
     </div>
       <div class="sphinxsidebar">
@@ -47,7 +47,14 @@
 <li><a class="reference external" href="#internals">Internals</a></li>
 <li><a class="reference external" href="#user-requirements">User Requirements</a></li>
 <li><a class="reference external" href="#system-requirements">System Requirements</a></li>
-<li><a class="reference external" href="#installation">Installation</a></li>
+<li><a class="reference external" href="#installation">Installation</a><ul>
+<li><a class="reference external" href="#linux">Linux</a></li>
+<li><a class="reference external" href="#windows">Windows</a></li>
+<li><a class="reference external" href="#mac">Mac</a></li>
+<li><a class="reference external" href="#troubleshooting">Troubleshooting</a></li>
+</ul>
+</li>
+<li><a class="reference external" href="#importing">Importing</a></li>
 </ul>
 </li>
 </ul>
@@ -117,21 +124,70 @@ manual.  Keep it handly.</p>
 </div>
 <div class="section" id="system-requirements">
 <h2>System Requirements<a class="headerlink" href="#system-requirements" title="Permalink to this headline">¶</a></h2>
-<p>You&#8217;ll need pythonocc, python-gtk, and python-gtkglext to run ccad.</p>
+<p>You&#8217;ll need pythonocc and python-qt4 to run ccad.</p>
 </div>
 <div class="section" id="installation">
 <h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="linux">
+<h3>Linux<a class="headerlink" href="#linux" title="Permalink to this headline">¶</a></h3>
 <p>To install ccad, follow the following procedure in Linux:</p>
 <div class="highlight-python"><pre>tar xvzf ccad-ver.tar.gz (where ver is the version number)
 cd ccad-ver (where ver is the version number)
 python setup.py install --prefix=/usr/local (as root)</pre>
 </div>
 <p>Change the prefix argument to install in a different directory.</p>
-<p>If you&#8217;re a Windows or Mac user, ccad should still work.  I just
-haven&#8217;t tried it.  If you successfully install ccad in Windows or Mac,
-let us know how you did it, and we&#8217;ll update the documentation.</p>
+</div>
+<div class="section" id="windows">
+<h3>Windows<a class="headerlink" href="#windows" title="Permalink to this headline">¶</a></h3>
+<p>To install ccad, follow the following procedure in Windows:</p>
+<div class="highlight-python"><pre>tar xvzf ccad-ver.tar.gz (where ver is the version number)
+cd ccad-ver (where ver is the version number)
+python setup.py install</pre>
+</div>
+</div>
+<div class="section" id="mac">
+<h3>Mac<a class="headerlink" href="#mac" title="Permalink to this headline">¶</a></h3>
+<p>If you&#8217;re a Mac user, ccad should still work.  I just haven&#8217;t tried
+it.  If you successfully install ccad on Mac, let us know how you did
+it, and we&#8217;ll update the documentation.</p>
+</div>
+<div class="section" id="troubleshooting">
+<h3>Troubleshooting<a class="headerlink" href="#troubleshooting" title="Permalink to this headline">¶</a></h3>
 <p>If you&#8217;re having trouble, simply extract the .tar.gz file.  Then, add
 that directory to your PYTHONPATH.  That, at least, will get you going.</p>
+</div>
+</div>
+<div class="section" id="importing">
+<h2>Importing<a class="headerlink" href="#importing" title="Permalink to this headline">¶</a></h2>
+<p>ccad consists of two modules: <strong>model</strong> and <strong>display</strong>.  The
+command:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">ccad</span>
+</pre></div>
+</div>
+<p>imports both modules in * form, making all their contents relative to
+<strong>ccad</strong>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">ccad</span>
+<span class="n">s1</span> <span class="o">=</span> <span class="n">ccad</span><span class="o">.</span><span class="n">box</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span>
+<span class="n">v1</span> <span class="o">=</span> <span class="n">ccad</span><span class="o">.</span><span class="n">view</span><span class="p">()</span>
+<span class="n">v1</span><span class="o">.</span><span class="n">display</span><span class="p">(</span><span class="n">s1</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Some users may prefer to write or use their own display.  In that
+case, the <strong>model</strong> module can be imported alone:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">ccad.model</span> <span class="kn">as</span> <span class="nn">cm</span>
+</pre></div>
+</div>
+<p>Finally, if you prefer to keep the modules separate, you can import
+each one separately:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">ccad.model</span> <span class="kn">as</span> <span class="nn">cm</span>
+<span class="kn">import</span> <span class="nn">ccad.display</span> <span class="kn">as</span> <span class="nn">cd</span>
+
+<span class="n">s1</span> <span class="o">=</span> <span class="n">cm</span><span class="o">.</span><span class="n">box</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span>
+<span class="n">v1</span> <span class="o">=</span> <span class="n">cd</span><span class="o">.</span><span class="n">view</span><span class="p">()</span>
+<span class="n">v1</span><span class="o">.</span><span class="n">display</span><span class="p">(</span><span class="n">s1</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The rest of this document assumes you use <strong>import ccad</strong>.</p>
 </div>
 </div>
 
@@ -153,11 +209,11 @@ that directory to your PYTHONPATH.  That, at least, will get you going.</p>
         <li class="right" >
           <a href="intro.html" title="Introduction"
              >previous</a> |</li>
-        <li><a href="contents.html">ccad v0.1 documentation</a> &raquo;</li> 
+        <li><a href="contents.html">ccad v0.11 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
-      &copy; Copyright 2014 by Charles Sharman.
+      &copy; Copyright 2014 by Charles Sharman and Others.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.6.
     </div>
   </body>

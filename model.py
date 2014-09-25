@@ -1,60 +1,19 @@
 """
 Description
 ----------
-CCAD is a python text-based solid modeller and displayer based on pythonocc.
+ccad modeller designed to be imported from a python prompt or program.
+View README for a full description of ccad.
+
 model.py contains classes and functions for modelling.
 
 Author
 ------
-Charles Sharman
+View AUTHORS.
 
 License
 -------
 Distributed under the GNU LESSER GENERAL PUBLIC LICENSE Version 3.
 View LICENSE for details.
-
-Philosophy
-----------
-
-1. Edges are continuous lines in 3D space.  There should be no reason
-   to distinguish between them and OCC curves.  Wires are collections
-   of edge connections.  Faces are continuous surfaces in 3D space.
-   There should be no reason to distinguish between them and OCC
-   surfaces.  Shells are collections of face connections.
-
-2. The end-user should not ever have to call pythonOCC directly.  ccad
-   should handle all things someone might want to do in CAD.
-
-To Do
------
-
-1. Allow shells (and 2D curves?) in the boolean operations.
-
-2. Allow shell returns from cylinder, sphere, box, wedge, cone, torus.
-
-3. More robust error handling--usually shows a buried SWIG issue,
-   which isn't helpful.
-
-4. Enhance the options to various routines to more encompass OCC's
-   capabilities.
-
-5. Add parabola, hyperbola edges
-
-6. Add edge intersection
-
-7. I never got OCC's concept of orientation in 3d.  That caused a
-   liberal use of .fix statements.  It would be nice to get this right.
-
-8. Distinction between face, wire, solid, etc. can get muddled after
-   certain operations.  Boolean can naturally do so.  Even a basic
-   translate converts TopoDS_Vertex to TopoDS_Shape, for example.
-   It's currently fixed by converting at the point where the specific
-   type is needed.  May be better to correct immediately after the
-   loose operation.  Ought to be more careful about this, or maybe
-   should make a single class (shape) that is smart and handles all
-   types.  That seems harder but is more python-like.
-
-9. Separate compound, compsolid from solid.
 """
 
 from os import path as _path

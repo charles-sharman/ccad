@@ -12,21 +12,24 @@ License
 -------
 Distributed under the GNU LESSER GENERAL PUBLIC LICENSE Version 3.
 View LICENSE for details.
-
-Revision History
-----------------
-1/11/14: Began
 """
 
-import os, sys
+import os, sys, glob
 
 import distutils.core
 import distutils.dir_util
 import distutils.sysconfig
 
 name = 'ccad'
+version = '0.11' # Change also in display.py, doc/conf.py
 
-from display import version
+# Include the documentation
+prefix = 'share/doc/ccad/' # Don't like including the share prefix.
+                           # Probably too linux-specific ***
+data_files = [(prefix + 'html', glob.glob('doc/html/*.html')),
+              (prefix + 'html/_images', glob.glob('doc/html/_images/*')),
+              (prefix + 'html/_static', glob.glob('doc/html/_static/*')),
+              (prefix + 'html/_sources', glob.glob('doc/html/_sources/*'))]
 
 # Install the module
 distutils.core.setup(name = name,
@@ -34,18 +37,7 @@ distutils.core.setup(name = name,
                      url = 'UNKNOWN',
                      py_modules = ['ccad.model', 'ccad.display'],
                      package_dir = {'ccad': '.'},
-                     requires = ['occe', 'pythonocc', 'pygtk', 'gtkglext']
+                     data_files = data_files,
+#                     requires = ['OCC', 'gtk']
+                     requires = ['OCC', 'PyQt4']
                      )
-
-# Install the documentation
-# This is probably not the *proper* way to do this. ***
-dist = distutils.core._setup_distribution
-if 'install' in dist.commands:
-    if dist.command_options['install'].has_key('prefix'):
-        prefix = dist.command_options['install']['prefix'][1]
-    elif dist.command_options['install'].has_key('home'):
-        prefix = dist.command_options['install']['home'][1]
-    else:
-        prefix = distutils.PREFIX
-    if prefix:
-        distutils.dir_util.copy_tree('doc/html', os.path.join(prefix, 'share/doc/ccad/doc/html')) # Hard-coding share into this makes it a linux-only distribution ***

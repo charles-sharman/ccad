@@ -1,15 +1,23 @@
 """
 Description
 -----------
-ccad viewer designed to work under ipython or called from a python
-program.  View model.py for a full description of ccad.
+ccad viewer designed to be imported from a python prompt or program.
+View README for a full description of ccad.
 
-It is meant to handle viewers from a variety of GUIs via the view
-function.  Currently, however, it only supports gtk.
+display.py contains classes and functions for displaying.
+
+The viewer uses python-qt4.
+
+This version runs a low-level viewer for Linux and pythonocc's own
+Display3d for other platforms.  Display3d has an error with multiple
+viewing windows:
+
+RuntimeError: Aspect_GraphicDeviceDefinitionError
+Cannot connect to server
 
 Author
 ------
-Charles Sharman
+View AUTHORS.
 
 License
 -------
@@ -18,9 +26,10 @@ View LICENSE for details.
 """
 
 # Globals
-version = '0.1'
+version = '0.11' # Change also in setup.py, doc/conf.py
 interactive = True
-manager = 'gtk'
+manager = 'qt'
+app = None
 
 
 import os as _os
@@ -28,14 +37,14 @@ import sys as _sys
 import math as _math
 
 try:
-    import pygtk, gtk, gtk.gtkgl, gobject
+    from PyQt4 import QtCore as _QtCore, QtGui as _QtGui
 except ImportError:
     manager = 'none'
     print """
-Warning: Cannot find python-gtk and/or python-gtkglext.  You will not
-be able to use ccad's display.  Instead, you may use pythonocc's
-viewers.  ccad shapes may be displayed in pythonocc's viewers by using
-the .shape attribute.  For example:
+Warning: Cannot find python-qt4.  You will not be able to use ccad's
+display.  Instead, you may use pythonocc's viewers.  ccad shapes may
+be displayed in pythonocc's viewers by using the .shape attribute.
+For example:
 
     import ccad
     import OCC.Display.SimpleGui as SimpleGui
@@ -57,426 +66,185 @@ from OCC.TCollection import (TCollection_ExtendedString as
                              _TCollection_ExtendedString)
 from OCC.TopExp import TopExp_Explorer as _TopExp_Explorer
 from OCC.Visual3d import Visual3d_ViewOrientation as _Visual3d_ViewOrientation
-
-if _sys.platform.startswith('win'):
-    from OCC.WNT import WNT_Window as _WNT_Window
-else:
+# Use lower level window routines for linux to allow multiple viewing
+# windows.  Doesn't work on other platforms.
+if _sys.platform.startswith('linux'):
     from OCC.Xw import Xw_Window as _Xw_Window, Xw_WQ_3DQUALITY as _Xw_WQ_3DQUALITY
+else:
+    from OCC.Visualization import Display3d as _Display3d
 
 import ccad.model as _cm
 
 
-class view_gtk(object):
+class view_qt(_QtGui.QWidget):
     """
-    A gtk-based viewer
+    A qt-based viewer
     """
 
     def __init__(self, perspective=False):
         """
         Perspective doesn't seem to work in pythonocc ***.  Don't use.
         """
+        super(view_qt, self).__init__()
+        self.setMouseTracking(True)
+        #self.setFocusPolicy(_QtCore.Qt.WheelFocus)
 
-        self.REGULAR_CURSOR = gtk.gdk.Cursor(gtk.gdk.LEFT_PTR)
-        self.WAIT_CURSOR = gtk.gdk.Cursor(gtk.gdk.WATCH)
+        self.REGULAR_CURSOR = _QtCore.Qt.ArrowCursor
+        self.WAIT_CURSOR = _QtCore.Qt.WaitCursor
 
-        self.key_table = {'redraw()': 'KP_Page_Up',
-                          'orbitup()': 'KP_Up',
-                          'panup()': 'KP_8',
-                          'orbitdown()': 'KP_Down',
-                          'pandown()': 'KP_2',
-                          'orbitleft()': 'KP_Left',
-                          'panleft()': 'KP_4',
-                          'orbitright()': 'KP_Right',
-                          'panright()': 'KP_6',
-                          'rotateccw()': 'KP_Divide',
-                          'rotatecw()': 'KP_Multiply',
-                          'zoomin()': 'KP_Add',
-                          'zoomout()': 'KP_Subtract',
-                          'fit()': 'KP_Delete',
-                          'query()': 'q',
-                          'viewstandard("top")': 'KP_Home',
-                          'viewstandard("bottom")': 'KP_7',
-                          'viewstandard("front")': 'KP_End',
-                          'viewstandard("back")': 'KP_1',
-                          'viewstandard("right")': 'KP_Page_Down',
-                          'viewstandard("left")': 'KP_3',
-                          'quit()': '<Control>q'}
+        self.key_table = {'redraw()': 'PgUp',
+                          'orbitup()': 'Up',
+                          'panup()': '8',
+                          'orbitdown()': 'Down',
+                          'pandown()': '2',
+                          'orbitleft()': 'Left',
+                          'panleft()': '4',
+                          'orbitright()': 'Right',
+                          'panright()': '6',
+                          'rotateccw()': '/',
+                          'rotatecw()': '*',
+                          'zoomin()': '+',
+                          'zoomout()': '-',
+                          'fit()': 'Del',
+                          'query()': 'Q',
+                          'viewstandard("top")': 'Home',
+                          'viewstandard("bottom")': '7',
+                          'viewstandard("front")': 'End',
+                          'viewstandard("back")': '1',
+                          'viewstandard("right")': 'PgDown',
+                          'viewstandard("left")': '3',
+                          'quit()': 'Ctrl+Q'}
 
-        self.occ_viewer = None
-        self.occ_view = None
         self.selected = None
         self.selected_shape = None
         self.selection_type = 'shape'
         self.selection_index = -1
         self.foreground = (1.0, 1.0, 0.0)  # Bright-Yellow is default
-        self.SCR = (400, 400)  # initial screen size
         self.display_shapes = []
 
         # Main Window
-        self.win = gtk.Window()
-        self.win.set_title('ccad viewer')
-        self.win.connect('destroy', self.quit)
-        self.win.connect('key_press_event', self.keypress)
-        #self.win.set_resize_mode(gtk.RESIZE_IMMEDIATE)
-        self.win.show()
-        #window_handle = self.win.window.xid
-        #print 'window_handle', window_handle
+        self.setWindowTitle('ccad viewer')
         self.menus = {}
 
         # Vertical Container
-        vbox1 = gtk.VBox()
-        self.win.add(vbox1)
-        vbox1.show()
-
-        hbox1 = gtk.HBox(False)
-        hbox1.show()
-        vbox1.pack_start(hbox1, False)
+        vbox1 = _QtGui.QVBoxLayout()
+        vbox1.setMargin(0)
+        vbox1.setSpacing(0)
 
         ## Menu Space
-        accel_group = gtk.AccelGroup()
-        self.win.add_accel_group(accel_group)
-
-        self.menubar = gtk.MenuBar()
-        hbox1.pack_start(self.menubar, False)
-        self.menubar.show()
+        self.menubar = _QtGui.QMenuBar()
+        vbox1.setMenuBar(self.menubar)
 
         ### File
+        file_menu = _QtGui.QMenu('&File', self)
+        self.menubar.addMenu(file_menu)
 
-        file_container = gtk.Menu()
-
-        file_save = gtk.ImageMenuItem(gtk.STOCK_SAVE)
-        file_save.connect('activate', self.save)
-        file_container.append(file_save)
-
-        file_quit = gtk.ImageMenuItem(gtk.STOCK_QUIT)
-        file_quit.connect('activate', self.quit)
-        keyval, keymod = self.key_lookup('quit()')
-        file_quit.add_accelerator('activate', accel_group, keyval,
-                                  keymod, gtk.ACCEL_VISIBLE)
-        file_container.append(file_quit)
-
-        file_menu = gtk.MenuItem('_File')
-        file_menu.set_submenu(file_container)
-        file_menu.show()
-        self.menubar.append(file_menu)
+        file_save = file_menu.addAction('&Save', self.save)
+        file_quit = file_menu.addAction('&Quit', self.quit, self.key_lookup('quit()'))
 
         ### view
-        view_container = gtk.Menu()
+        view_menu = _QtGui.QMenu('&View', self)
+        self.menubar.addMenu(view_menu)
 
-        view_mode = gtk.MenuItem('Mode')
-        view_mode_container = gtk.Menu()
-        view_mode.set_submenu(view_mode_container)
-        view_container.append(view_mode)
+        view_mode = _QtGui.QMenu('Mode', self)
+        view_menu.addMenu(view_mode)
+        view_mode_container = _QtGui.QActionGroup(self)
+        view_mode_wireframe = view_mode.addAction('Wireframe', self.mode_wireframe)
+        view_mode_wireframe.setCheckable(True)
+        view_mode_container.addAction(view_mode_wireframe)
+        view_mode_shaded = view_mode.addAction('Shaded', self.mode_shaded)
+        view_mode_shaded.setCheckable(True)
+        view_mode_shaded.setChecked(True)
+        view_mode_container.addAction(view_mode_shaded)
+        view_mode_hlr = view_mode.addAction('Hidden Line Removal', self.mode_hlr)
+        view_mode_hlr.setCheckable(True)
+        view_mode_container.addAction(view_mode_hlr)
 
-        view_wireframe = gtk.RadioMenuItem(None, 'Wireframe')
-        view_wireframe.connect('activate', self.mode_wireframe)
-        view_mode_container.append(view_wireframe)
+        view_side = _QtGui.QMenu('Side', self)
+        view_menu.addMenu(view_side)
+        view_front = view_side.addAction('Front', lambda view='front': self.viewstandard(view), self.key_lookup('viewstandard("front")'))
+        view_top = view_side.addAction('Top', lambda view='top': self.viewstandard(view), self.key_lookup('viewstandard("top")'))
+        view_right = view_side.addAction('Right', lambda view='right': self.viewstandard(view), self.key_lookup('viewstandard("right")'))
+        view_back = view_side.addAction('Back', lambda view='back': self.viewstandard(view), self.key_lookup('viewstandard("back")'))
+        view_bottom = view_side.addAction('Bottom', lambda view='bottom': self.viewstandard(view), self.key_lookup('viewstandard("bottom")'))
+        view_left = view_side.addAction('Left', lambda view='left': self.viewstandard(view), self.key_lookup('viewstandard("left")'))
 
-        self.view_shaded = gtk.RadioMenuItem(view_wireframe, 'Shaded')
-        self.view_shaded.set_active(True)
-        self.view_shaded.connect('activate', self.mode_shaded)
-        view_mode_container.append(self.view_shaded)
+        view_orbit = _QtGui.QMenu('Orbit', self)
+        view_menu.addMenu(view_orbit)
+        view_orbitup = view_orbit.addAction('Up', self.orbitup, self.key_lookup('orbitup()'))
+        view_orbitdown = view_orbit.addAction('Down', self.orbitdown, self.key_lookup('orbitdown()'))
+        view_orbitleft = view_orbit.addAction('Left', self.orbitleft, self.key_lookup('orbitleft()'))
+        view_orbitright = view_orbit.addAction('Right', self.orbitright, self.key_lookup('orbitright()'))
+        view_orbitccw = view_orbit.addAction('CCW', self.rotateccw, self.key_lookup('rotateccw()'))
+        view_orbitleft = view_orbit.addAction('CW', self.rotatecw, self.key_lookup('rotatecw()'))
 
-        view_hlr = gtk.RadioMenuItem(self.view_shaded, 'Hidden Line Removal')
-        view_hlr.connect('activate', self.mode_hlr)
-        view_mode_container.append(view_hlr)
+        view_pan = _QtGui.QMenu('Pan', self)
+        view_menu.addMenu(view_pan)
+        view_panup = view_pan.addAction('Up', self.panup, self.key_lookup('panup()'))
+        view_pandown = view_pan.addAction('Down', self.pandown, self.key_lookup('pandown()'))
+        view_panleft = view_pan.addAction('Left', self.panleft, self.key_lookup('panleft()'))
+        view_panright = view_pan.addAction('Right', self.panright, self.key_lookup('panright()'))
 
-        #self.view_drawing = gtk.RadioMenuItem(view_hlr, 'Drawing')
-        #self.view_drawing.connect('activate', self.mode_drawing)
-        #view_mode_container.append(self.view_drawing)
+        view_zoom = _QtGui.QMenu('Zoom', self)
+        view_menu.addMenu(view_zoom)
+        view_zoomin = view_zoom.addAction('In', self.zoomin, self.key_lookup('zoomin()'))
+        view_zoomout = view_zoom.addAction('Out', self.zoomout, self.key_lookup('zoomout()'))
+        view_fit = view_zoom.addAction('Fit to Screen', self.fit, self.key_lookup('fit()'))
 
-        view_side = gtk.MenuItem('Side')
-        view_side_container = gtk.Menu()
-        view_side.set_submenu(view_side_container)
-        view_container.append(view_side)
-
-        view_front = gtk.MenuItem('Front')
-        view_front.connect('activate', self.viewstandard, 'front')
-        keyval, keymod = self.key_lookup('viewstandard("front")')
-        view_front.add_accelerator('activate', accel_group, keyval,
-                                   keymod, gtk.ACCEL_VISIBLE)
-        view_side_container.append(view_front)
-
-        view_top = gtk.MenuItem('Top')
-        view_top.connect('activate', self.viewstandard, 'top')
-        keyval, keymod = self.key_lookup('viewstandard("top")')
-        view_top.add_accelerator('activate', accel_group, keyval,
-                                 keymod, gtk.ACCEL_VISIBLE)
-        view_side_container.append(view_top)
-
-        view_right = gtk.MenuItem('Right')
-        view_right.connect('activate', self.viewstandard, 'right')
-        keyval, keymod = self.key_lookup('viewstandard("right")')
-        view_right.add_accelerator('activate', accel_group, keyval,
-                                   keymod, gtk.ACCEL_VISIBLE)
-        view_side_container.append(view_right)
-
-        view_back = gtk.MenuItem('Back')
-        view_back.connect('activate', self.viewstandard, 'back')
-        keyval, keymod = self.key_lookup('viewstandard("back")')
-        view_back.add_accelerator('activate', accel_group, keyval,
-                                  keymod, gtk.ACCEL_VISIBLE)
-        view_side_container.append(view_back)
-
-        view_bottom = gtk.MenuItem('Bottom')
-        view_bottom.connect('activate', self.viewstandard, 'bottom')
-        keyval, keymod = self.key_lookup('viewstandard("bottom")')
-        view_bottom.add_accelerator('activate', accel_group, keyval,
-                                    keymod, gtk.ACCEL_VISIBLE)
-        view_side_container.append(view_bottom)
-
-        view_left = gtk.MenuItem('Left')
-        view_left.connect('activate', self.viewstandard, 'left')
-        keyval, keymod = self.key_lookup('viewstandard("left")')
-        view_left.add_accelerator('activate', accel_group, keyval,
-                                  keymod, gtk.ACCEL_VISIBLE)
-        view_side_container.append(view_left)
-
-        view_orbit = gtk.MenuItem('Orbit')
-        view_orbit_container = gtk.Menu()
-        view_orbit.set_submenu(view_orbit_container)
-        view_container.append(view_orbit)
-
-        view_orbitup = gtk.MenuItem('Up')
-        view_orbitup.connect('activate', self.orbitup)
-        keyval, keymod = self.key_lookup('orbitup()')
-        view_orbitup.add_accelerator('activate', accel_group, keyval,
-                                     keymod, gtk.ACCEL_VISIBLE)
-        view_orbit_container.append(view_orbitup)
-
-        view_orbitdown = gtk.MenuItem('Down')
-        view_orbitdown.connect('activate', self.orbitdown)
-        keyval, keymod = self.key_lookup('orbitdown()')
-        view_orbitdown.add_accelerator('activate', accel_group, keyval,
-                                       keymod, gtk.ACCEL_VISIBLE)
-        view_orbit_container.append(view_orbitdown)
-
-        view_orbitleft = gtk.MenuItem('Left')
-        view_orbitleft.connect('activate', self.orbitleft)
-        keyval, keymod = self.key_lookup('orbitleft()')
-        view_orbitleft.add_accelerator('activate', accel_group, keyval,
-                                       keymod, gtk.ACCEL_VISIBLE)
-        view_orbit_container.append(view_orbitleft)
-
-        view_orbitright = gtk.MenuItem('Right')
-        view_orbitright.connect('activate', self.orbitright)
-        keyval, keymod = self.key_lookup('orbitright()')
-        view_orbitright.add_accelerator('activate', accel_group, keyval,
-                                        keymod, gtk.ACCEL_VISIBLE)
-        view_orbit_container.append(view_orbitright)
-
-        view_orbitccw = gtk.MenuItem('CCW')
-        view_orbitccw.connect('activate', self.rotateccw)
-        keyval, keymod = self.key_lookup('rotateccw()')
-        view_orbitccw.add_accelerator('activate', accel_group, keyval,
-                                      keymod, gtk.ACCEL_VISIBLE)
-        view_orbit_container.append(view_orbitccw)
-
-        view_orbitcw = gtk.MenuItem('CW')
-        view_orbitcw.connect('activate', self.rotatecw)
-        keyval, keymod = self.key_lookup('rotatecw()')
-        view_orbitcw.add_accelerator('activate', accel_group, keyval,
-                                     keymod, gtk.ACCEL_VISIBLE)
-        view_orbit_container.append(view_orbitcw)
-
-        view_pan = gtk.MenuItem('Pan')
-        view_pan_container = gtk.Menu()
-        view_pan.set_submenu(view_pan_container)
-        view_container.append(view_pan)
-
-        view_panup = gtk.MenuItem('Up')
-        view_panup.connect('activate', self.panup)
-        keyval, keymod = self.key_lookup('panup()')
-        view_panup.add_accelerator('activate', accel_group, keyval,
-                                   keymod, gtk.ACCEL_VISIBLE)
-        view_pan_container.append(view_panup)
-
-        view_pandown = gtk.MenuItem('Down')
-        view_pandown.connect('activate', self.pandown)
-        keyval, keymod = self.key_lookup('pandown()')
-        view_pandown.add_accelerator('activate', accel_group, keyval,
-                                     keymod, gtk.ACCEL_VISIBLE)
-        view_pan_container.append(view_pandown)
-
-        view_panleft = gtk.MenuItem('Left')
-        view_panleft.connect('activate', self.panleft)
-        keyval, keymod = self.key_lookup('panleft()')
-        view_panleft.add_accelerator('activate', accel_group, keyval,
-                                     keymod, gtk.ACCEL_VISIBLE)
-        view_pan_container.append(view_panleft)
-
-        view_panright = gtk.MenuItem('Right')
-        view_panright.connect('activate', self.panright)
-        keyval, keymod = self.key_lookup('panright()')
-        view_panright.add_accelerator('activate', accel_group,
-                                      keyval, keymod, gtk.ACCEL_VISIBLE)
-        view_pan_container.append(view_panright)
-
-        view_zoom = gtk.MenuItem('Zoom')
-        view_zoom_container = gtk.Menu()
-        view_zoom.set_submenu(view_zoom_container)
-        view_container.append(view_zoom)
-
-        view_zoomin = gtk.MenuItem('In')
-        view_zoomin.connect('activate', self.zoomin)
-        keyval, keymod = self.key_lookup('zoomin()')
-        view_zoomin.add_accelerator('activate', accel_group, keyval,
-                                    keymod, gtk.ACCEL_VISIBLE)
-        view_zoom_container.append(view_zoomin)
-
-        view_zoomout = gtk.MenuItem('Out')
-        view_zoomout.connect('activate', self.zoomout)
-        keyval, keymod = self.key_lookup('zoomout()')
-        view_zoomout.add_accelerator('activate', accel_group, keyval,
-                                     keymod, gtk.ACCEL_VISIBLE)
-        view_zoom_container.append(view_zoomout)
-
-        view_fit = gtk.MenuItem('Fit to Screen')
-        view_fit.connect('activate', self.fit)
-        keyval, keymod = self.key_lookup('fit()')
-        view_fit.add_accelerator('activate', accel_group, keyval,
-                                 keymod, gtk.ACCEL_VISIBLE)
-        view_zoom_container.append(view_fit)
-
-        view_menu = gtk.MenuItem('_View')
-        view_menu.set_submenu(view_container)
-        view_menu.show()
-        self.menubar.append(view_menu)
+        view_menu.addAction('Redraw', self.redraw, self.key_lookup('redraw()'))
 
         ### select
-        select_container = gtk.Menu()
+        select_menu = _QtGui.QMenu('&Select', self)
+        self.menubar.addMenu(select_menu)
+        select_container = _QtGui.QActionGroup(self)
 
-        select_vertex = gtk.RadioMenuItem(None, 'Select Vertex')
-        select_vertex.connect('activate', self.select_vertex)
-        select_container.append(select_vertex)
+        select_vertex = select_menu.addAction('Select Vertex', self.select_vertex)
+        select_vertex.setCheckable(True)
+        select_container.addAction(select_vertex)
 
-        select_edge = gtk.RadioMenuItem(select_vertex, 'Select Edge')
-        select_edge.connect('activate', self.select_edge)
-        select_container.append(select_edge)
+        select_edge = select_menu.addAction('Select Edge', self.select_edge)
+        select_edge.setCheckable(True)
+        select_container.addAction(select_edge)
 
-        select_wire = gtk.RadioMenuItem(select_vertex, 'Select Wire')
-        select_wire.connect('activate', self.select_wire)
-        select_container.append(select_wire)
+        select_wire = select_menu.addAction('Select Wire', self.select_wire)
+        select_wire.setCheckable(True)
+        select_container.addAction(select_wire)
 
-        select_face = gtk.RadioMenuItem(select_edge, 'Select Face')
-        select_face.connect('activate', self.select_face)
-        select_container.append(select_face)
+        select_face = select_menu.addAction('Select Face', self.select_face)
+        select_vertex.setCheckable(True)
+        select_container.addAction(select_face)
 
-        select_shape = gtk.RadioMenuItem(select_face, 'Select Shape')
-        select_shape.set_active(True)
-        select_shape.connect('activate', self.select_shape)
-        select_container.append(select_shape)
+        select_shape = select_menu.addAction('Select Shape', self.select_shape)
+        select_shape.setCheckable(True)
+        select_shape.setChecked(True)
+        select_container.addAction(select_vertex)
 
-        select_query = gtk.MenuItem('Query')
-        select_query.connect('activate', self.query)
-        keyval, keymod = self.key_lookup('query()')
-        select_query.add_accelerator('activate', accel_group, keyval,
-                                     keymod, gtk.ACCEL_VISIBLE)
-        select_container.append(select_query)
-
-        select_menu = gtk.MenuItem('_Select')
-        select_menu.set_submenu(select_container)
-        select_menu.show()
-        self.menubar.append(select_menu)
+        select_query = select_menu.addAction('Query', self.query, self.key_lookup('query()'))
 
         ### help
-        help_container = gtk.Menu()
-
-        help_manual = gtk.ImageMenuItem('_Manual')
-        help_manual.set_image(gtk.image_new_from_stock(gtk.STOCK_HELP, gtk.ICON_SIZE_MENU))
-        help_manual.connect('activate', self.display_manual)
-        help_container.append(help_manual)
-
-        help_about = gtk.ImageMenuItem(gtk.STOCK_ABOUT)
-        help_about.connect('activate', self.about)
-        help_container.append(help_about)
-
-        help_menu = gtk.MenuItem('_Help')
-        help_menu.set_submenu(help_container)
-        help_menu.show()
-        self.menubar.append(help_menu)
-
-        self.menubar.show_all()
+        help_menu = _QtGui.QMenu('&Help', self)
+        self.menubar.addMenu(help_menu)
+        help_manual = help_menu.addAction('&Manual', self.display_manual)
+        help_about = help_menu.addAction('&About', self.about)
 
         # OpenGL Space
-        glconfig = gtk.gdkgl.Config(mode=gtk.gdkgl.MODE_RGBA | gtk.gdkgl.MODE_DEPTH | gtk.gdkgl.MODE_DOUBLE)
-        self.glarea = gtk.gtkgl.DrawingArea(glconfig)
-        self.glarea.set_size_request(self.SCR[0], self.SCR[1])
-        # Set up the events
-        self.glarea.connect_after('realize', self.realize)
-        self.glarea.connect('configure-event', self.resize)
-        self.glarea.connect('expose-event', self.draw)
-        self.glarea.connect('map-event', self.draw)
-        self.glarea.connect('button_press_event', self.mousepress)
-        self.glarea.connect('button_release_event', self.mouserelease)
-        self.glarea.connect('motion_notify_event', self.mousemotion)
-        self.glarea.add_events(gtk.gdk.BUTTON_PRESS_MASK | gtk.gdk.BUTTON_RELEASE_MASK | gtk.gdk.POINTER_MOTION_MASK)
-        gtk.gtkgl.widget_set_gl_capability(self.glarea, glconfig)
-        self.glarea.show()
-        vbox1.pack_start(self.glarea)
+        self.glarea = GLWidget(self)
+        vbox1.addWidget(self.glarea)
 
         # Status Line
-        hbox_status = gtk.HBox()
-        hbox_status.show()
-        vbox1.pack_start(hbox_status, False, False)
+        self.status_bar = _QtGui.QLabel()
+        self.status_bar.setText('')
+        vbox1.addWidget(self.status_bar)
 
-        self.status_bar = gtk.Label()
-        self.status_bar.set_text('')
-        self.status_bar.show()
-        hbox_status.pack_start(self.status_bar, False, False)
+        self.setLayout(vbox1)
+        self.show()
 
-        # Set up the OCC hooks to the OpenGL space
-        # Get the handle IMMEDIATELY after creating an object.
-        # Otherwise, this shows very strange behavior (usually seg
-        # faults!)
-        window_handle = self.glarea.window.xid
-
-        if _sys.platform.startswith('win'): # Not Debugged ***
-            gd = _Graphic3d.Graphic3d_WNTGraphicDevice()
-            window = _WNT_Window(gd.GetHandle(), window_handle >> 16, window_handle & 0xffff)
-        else:
-            gd = _Graphic3d.Graphic3d_GraphicDevice(_os.environ['DISPLAY'])
-            window = _Xw_Window(gd.GetHandle(), window_handle >> 16, window_handle & 0xffff, _Xw_WQ_3DQUALITY)
-        self.occ_viewer = _V3d.V3d_Viewer(gd.GetHandle(), _TCollection_ExtendedString('Viewer').ToExtString())
-
-        # This works now, by reading the handle first.  Go figure . . .
-        #print 'Viewer created'
-        handle_occ_viewer = self.occ_viewer.GetHandle()
-        self.occ_viewer.Init()
-        #print 'Viewer inited"
-
-        if perspective:
-            self.handle_view = self.occ_viewer.DefaultPerspectiveView()
-        else:
-            self.handle_view = self.occ_viewer.DefaultOrthographicView()
-        #print 'View handle created"
-        self.occ_view = self.handle_view.GetObject()
-        #print 'view created'
-
-        """
-        # This also worked, but still Perspective did not
-        if perspective:
-            self.occ_view = _V3d.V3d_PerspectiveView(handle_occ_viewer)
-        else:
-            self.occ_view = _V3d.V3d_OrthographicView(handle_occ_viewer)
-        self.handle_view = self.occ_view.GetHandle()
-        """
-
-        self.occ_view.SetWindow(window.GetHandle())
-        #print 'View window set'
-
-        if not window.IsMapped():
-            window.Map()
-        self.occ_context = _AIS.AIS_InteractiveContext(handle_occ_viewer)
-        handle_occ_context = self.occ_context.GetHandle()
+        self.glarea.start(perspective)
 
         # Some Initial Values
-        self.occ_view.SetComputedMode(False)
         self.mode_shaded()
-        self.occ_view.SetBackgroundColor(_Quantity.Quantity_TOC_RGB, 0.0, 0.0, 0.0)
+        self.glarea.occ_view.SetBackgroundColor(_Quantity.Quantity_TOC_RGB, 0.0, 0.0, 0.0)
         self.set_triedron(1)
-        
-        self.occ_view.MustBeResized()
 
         # Set up some initial states
         self.morbit = _math.pi/12.0
@@ -490,15 +258,12 @@ class view_gtk(object):
         (radio buttons, check boxes, items with graphics, etc.)
         manually.  For text-only menu items, use add_menuitem.
         """
-        last_menu = (None, self.menubar)
+        last_menu = self.menubar
         for sub_menu in hierarchy:
             if sub_menu not in self.menus:
-                menu = gtk.MenuItem(sub_menu)
-                menu_container = gtk.Menu()
-                menu.set_submenu(menu_container)
-                menu.show()
-                last_menu[1].append(menu)
-                self.menus[sub_menu] = (menu, menu_container)
+                menu = _QtGui.QMenu(sub_menu, self)
+                last_menu.addMenu(menu)
+                self.menus[sub_menu] = menu
             last_menu = self.menus[sub_menu]
         return last_menu
 
@@ -515,67 +280,15 @@ class view_gtk(object):
         Generates all needed menus to create the passed hierarchy.
         """
         last_menu = self.add_menu(hierarchy[:-1])
-        menuitem = gtk.MenuItem(hierarchy[-1])
-        menuitem.connect('activate', func, *args)
-        menuitem.show()
-        last_menu[1].append(menuitem)
+        menuitem = last_menu.addAction(hierarchy[-1], lambda: func(*args))
 
 
     # Event Functions
-    def realize(self, widget):
-        """
-        Called on a window realize
-        """
-        pass  # Adding the glcontext checking here didn't help
-
-
-    def resize(self, widget, event):
-        """
-        Called on a window resize
-        """
-        #print 'Resize called'
-
-        glcontext = gtk.gtkgl.widget_get_gl_context(self.glarea)
-        gldrawable = gtk.gtkgl.widget_get_gl_drawable(self.glarea)
-        if not gldrawable.gl_begin(glcontext):
-            return
-
-        w = widget.allocation.width
-        h = widget.allocation.height
-
-        self.SCR = (w, h)
-        self.mpan = max(w, h) / 10
-
-        if self.occ_view:
-            #print 'Resize'
-            self.occ_view.MustBeResized()
-
-        gldrawable.gl_end()
-
-
-    def draw(self, widget, event):
-        """
-        Called on a window draw
-        """
-        #print 'Draw called'
-
-        # For some reason, this check made the display blank on init
-        #glcontext = gtk.gtkgl.widget_get_gl_context(self.glarea)
-        #gldrawable = gtk.gtkgl.widget_get_gl_drawable(self.glarea)
-        #if not gldrawable.gl_begin(glcontext):return
-
-        if self.occ_viewer:
-            #print 'Draw'
-            self.occ_viewer.Redraw()
-
-        #gldrawable.gl_end()
-
-
-    def redraw(self, widget=None):
+    def redraw(self):
         """
         Called from a user request
         """
-        self.glarea.queue_draw()
+        self.glarea.paintEvent(None)
 
 
     def key_lookup(self, func_call):
@@ -583,93 +296,89 @@ class view_gtk(object):
         Connects a key press to a function in the key_table
         """
         key = self.key_table[func_call]
-        retval = gtk.accelerator_parse(key)
-        #print key
-        if key not in ['KP_Up', 'KP_Down', 'KP_Left', 'KP_Right', 'KP_Delete']:  # Avoids pygtk bug that kind of and kind of doesn't recognize these keys
-            #del self.key_table[key]
-            del self.key_table[func_call]
-        return retval
+        return key
 
-
-    def keypress(self, widget, event):
+    def keyPressEvent(self, event):
         """
         Called when a key is pressed
         """
-        key = gtk.accelerator_name(event.keyval, event.state & gtk.gdk.MODIFIER_MASK)
-        self.status_bar.set_text('Key ' + key)
+        key = event.key()
+        self.status_bar.setText('Key ' + hex(key))
         if key in self.key_table.values():
             try:
+                print 'Got to 2'
                 cmd = self.key_table.keys()[self.key_table.values().index(key)]
                 eval('self.' + cmd)
             except:
-                self.status_bar.set_text('Command unknown ' + cmd)
+                self.status_bar.setText('Command unknown ' + cmd)
 
 
-    def mousepress(self, widget, event):
+    def mousePressEvent(self, event):
         """
         Called when a mouse button is pressed
         """
-        self.beginx, self.beginy = int(event.x), int(event.y)
-        self.occ_view.StartRotation(self.beginx, self.beginy)
+        pos = self.glarea.mapFromParent(event.pos())
+        self.beginx, self.beginy = pos.x(), pos.y()
+        self.glarea.occ_view.StartRotation(self.beginx, self.beginy)
 
 
-    def mouserelease(self, widget, event):
+    def mouseReleaseEvent(self, event):
         """
         Called when a mouse button is released
         """
-        x, y = int(event.x), int(event.y)
-        if event.state & gtk.gdk.BUTTON3_MASK:  # Selection
-            self.occ_context.Select()
-            self.occ_context.InitSelected()
-            if self.occ_context.MoreSelected():
-                if self.occ_context.HasSelectedShape():
-                    self.selected = self.occ_context.SelectedShape()
+        if event.button() == _QtCore.Qt.RightButton:  # Selection
+            self.glarea.occ_context.Select()
+            self.glarea.occ_context.InitSelected()
+            if self.glarea.occ_context.MoreSelected():
+                if self.glarea.occ_context.HasSelectedShape():
+                    self.selected = self.glarea.occ_context.SelectedShape()
                     #print "Current selection (single):",self.selected_shape
             else:
                 self.selected = None
             self.make_selection()
 
 
-    def mousemotion(self, widget, event):
+    def mouseMoveEvent(self, event):
         """
         Called when a mouse button is pressed and the mouse is moving
         """
-        x, y = int(event.x), int(event.y)
+        pos = self.glarea.mapFromParent(event.pos())
+        x, y = pos.x(), pos.y()
         # Mouse-Controlled Projection
         # ComputedModes are too slow to redraw, so disabled for them
-        if (event.state & gtk.gdk.BUTTON2_MASK) and \
-                not self.occ_view.ComputedMode():
-            if event.state & gtk.gdk.SHIFT_MASK:  # Mouse-Controlled Pan
-                self.occ_view.Pan(x - self.beginx, -y + self.beginy)
+        if (event.buttons() & _QtCore.Qt.MidButton) and \
+                not self.glarea.occ_view.ComputedMode():
+            if event.modifiers() & _QtCore.Qt.ShiftModifier:  # Mouse-Controlled Pan
+                self.glarea.occ_view.Pan(x - self.beginx, -y + self.beginy)
                 self.beginx, self.beginy = x, y
             else:  # Mouse-Controlled Orbit
-                self.occ_view.Rotation(x, y)
-        self.occ_context.MoveTo(x, y, self.handle_view)
+                self.glarea.occ_view.Rotation(x, y)
+        self.glarea.occ_context.MoveTo(x, y, self.glarea.handle_view)
 
 
     # View Functions
-    def viewstandard(self, widget=None, viewtype='front'):
+    def viewstandard(self, viewtype='front'):
         """
         Sets up the viewing projection according to a standard set of views
         """
         if viewtype == 'front':
-            self.occ_view.SetProj(_V3d.V3d_Yneg)
+            self.glarea.occ_view.SetProj(_V3d.V3d_Yneg)
         elif viewtype == 'back':
-            self.occ_view.SetProj(_V3d.V3d_Ypos)
+            self.glarea.occ_view.SetProj(_V3d.V3d_Ypos)
         elif viewtype == 'top':
-            self.occ_view.SetProj(_V3d.V3d_Zpos)
+            self.glarea.occ_view.SetProj(_V3d.V3d_Zpos)
         elif viewtype == 'bottom':
-            self.occ_view.SetProj(_V3d.V3d_Zneg)
+            self.glarea.occ_view.SetProj(_V3d.V3d_Zneg)
         elif viewtype == 'right':
-            self.occ_view.SetProj(_V3d.V3d_Xpos)
+            self.glarea.occ_view.SetProj(_V3d.V3d_Xpos)
         elif viewtype == 'left':
-            self.occ_view.SetProj(_V3d.V3d_Xneg)
+            self.glarea.occ_view.SetProj(_V3d.V3d_Xneg)
         elif viewtype == 'iso':
-            self.occ_view.SetProj(_V3d.V3d_XposYnegZpos)
+            self.glarea.occ_view.SetProj(_V3d.V3d_XposYnegZpos)
         elif viewtype == 'iso_back':
-            self.occ_view.SetProj(_V3d.V3d_XnegYposZneg)
+            self.glarea.occ_view.SetProj(_V3d.V3d_XnegYposZneg)
         else:
-            self.status_bar.set_text('Unknown view' + viewtype)
+            self.status_bar.setText('Unknown view' + viewtype)
 
 
     def orbitup(self, widget=None, rapid=False):
@@ -683,94 +392,94 @@ class view_gtk(object):
         pythonocc doesn't implement OCC's Gravity.
         """
         # The better way
-        #gravity = self.occ_view.Gravity() # pythonocc doesn't implement
-        #self.occ_view.Rotate(0.0, -self.morbit, 0.0, gravity[0], gravity[1], gravity[2])
-        self.occ_view.Rotate(0.0, -self.morbit, 0.0)
+        #gravity = self.glarea.occ_view.Gravity() # pythonocc doesn't implement
+        #self.glarea.occ_view.Rotate(0.0, -self.morbit, 0.0, gravity[0], gravity[1], gravity[2])
+        self.glarea.occ_view.Rotate(0.0, -self.morbit, 0.0)
 
 
     def panup(self, widget=None, rapid=False):
         """
         The scene is panned up
         """
-        self.occ_view.Pan(0, -self.mpan)
+        self.glarea.occ_view.Pan(0, -self.glarea.mpan)
 
 
     def orbitdown(self, widget=None, rapid=False):
         """
         The observer has moved down
         """
-        self.occ_view.Rotate(0.0, self.morbit, 0.0)
+        self.glarea.occ_view.Rotate(0.0, self.morbit, 0.0)
 
 
     def pandown(self, widget=None, rapid=False):
         """
         The scene is panned down
         """
-        self.occ_view.Pan(0, self.mpan)
+        self.glarea.occ_view.Pan(0, self.glarea.mpan)
 
 
     def orbitright(self, widget = None, rapid=False):
         """
         The observer has moved to the right
         """
-        self.occ_view.Rotate(-self.morbit, 0.0, 0.0)
+        self.glarea.occ_view.Rotate(-self.morbit, 0.0, 0.0)
 
 
     def panright(self, widget=None, rapid=False):
         """
         The scene is panned right
         """
-        self.occ_view.Pan(-self.mpan, 0)
+        self.glarea.occ_view.Pan(-self.glarea.mpan, 0)
 
 
     def orbitleft(self, widget=None, rapid=False):
         """
         The observer has moved to the left
         """
-        self.occ_view.Rotate(self.morbit, 0.0, 0.0)
+        self.glarea.occ_view.Rotate(self.morbit, 0.0, 0.0)
 
 
     def panleft(self, widget=None, rapid=False):
         """
         The scene is panned to the left
         """
-        self.occ_view.Pan(self.mpan, 0)
+        self.glarea.occ_view.Pan(self.glarea.mpan, 0)
 
 
     def zoomin(self, widget=None, rapid=False):
         """
         Zoom in
         """
-        self.occ_view.SetZoom(_math.sqrt(2.0))
+        self.glarea.occ_view.SetZoom(_math.sqrt(2.0))
 
 
     def zoomout(self, widget=None, rapid=False):
         """
         Zoom out
         """
-        self.occ_view.SetZoom(_math.sqrt(0.5))
+        self.glarea.occ_view.SetZoom(_math.sqrt(0.5))
 
 
     def rotateccw(self, widget=None, rapid=False):
         """
         The scene is rotated counter clockwise
         """
-        self.occ_view.Rotate(0.0, 0.0, -self.morbit)
+        self.glarea.occ_view.Rotate(0.0, 0.0, -self.morbit)
 
 
     def rotatecw(self, widget=None, rapid=False):
         """
         The scene is rotated clockwise
         """
-        self.occ_view.Rotate(0.0, 0.0, self.morbit)
+        self.glarea.occ_view.Rotate(0.0, 0.0, self.morbit)
 
 
     def fit(self, widget=None):
         """
         Fit the scene to the screen
         """
-        self.occ_view.ZFitAll()
-        self.occ_view.FitAll()
+        self.glarea.occ_view.ZFitAll()
+        self.glarea.occ_view.FitAll()
 
 
     def query(self, widget=None):
@@ -814,7 +523,7 @@ class view_gtk(object):
         """
 
         projection = _Visual3d_ViewOrientation(_Graphic3d.Graphic3d_Vertex(vcenter[0], vcenter[1], vcenter[2]), _Graphic3d.Graphic3d_Vector(vout[0], vout[1], vout[2]), _Graphic3d.Graphic3d_Vector(vup[0], vup[1], vup[2]))
-        self.occ_view.SetViewOrientation(projection)
+        self.glarea.occ_view.SetViewOrientation(projection)
 
 
     def set_scale(self, scale):
@@ -825,15 +534,24 @@ class view_gtk(object):
         x-direction, and you set the scale to 8.0, the block will
         exactly fill the screen in the x-direction.
         """
-        self.occ_view.SetSize(scale)
+        self.glarea.occ_view.SetSize(scale)
 
 
     def set_size(self, size):
         """
         Sets the size of the window in pixels.  Size is a 2-tuple
+
+        Currently does not work ***.  Updates window but OCC not updated.
         """
-        self.win.resize(max(1, size[0]-1), max(1, size[1]-1))
-        self.glarea.set_size_request(size[0], size[1])
+        #self.win.resize(max(1, size[0]-1), max(1, size[1]-1))
+        self.glarea.SCR = size
+        #old_size = self.glarea.size()
+        #new_size = _QtCore.QSize(size[0], size[1])
+        #self.glarea.setFixedSize(size[0], size[1])
+        #self.glarea.resizeEvent(_QtGui.QResizeEvent(new_size, old_size))
+        #self.glarea.resize(size[0], size[1])
+        self.glarea.updateGeometry()
+        self.adjustSize()
 
 
     def set_background(self, color):
@@ -841,7 +559,7 @@ class view_gtk(object):
         Sets the background color.
         color is a 3-tuple with each value from 0.0 to 1.0
         """
-        self.occ_view.SetBackgroundColor(_Quantity.Quantity_TOC_RGB, color[0], color[1], color[2])
+        self.glarea.occ_view.SetBackgroundColor(_Quantity.Quantity_TOC_RGB, color[0], color[1], color[2])
 
 
     def set_foreground(self, color):
@@ -862,7 +580,7 @@ class view_gtk(object):
         size sets the triedron size in scene-coordinates
         """
         if not state:
-            self.occ_view.TriedronErase()
+            self.glarea.occ_view.TriedronErase()
         else:
             local_position = {'down_right': _Aspect.Aspect_TOTP_RIGHT_LOWER,
                               'down_left': _Aspect.Aspect_TOTP_LEFT_LOWER,
@@ -874,7 +592,7 @@ class view_gtk(object):
                 qcolor = _Quantity.Quantity_NOC_WHITE
             else:
                 qcolor = _Quantity.Quantity_NOC_BLACK
-            self.occ_view.TriedronDisplay(local_position, qcolor, size, _V3d.V3d_WIREFRAME)
+            self.glarea.occ_view.TriedronDisplay(local_position, qcolor, size, _V3d.V3d_WIREFRAME)
 
 
     # Things to Show Functions
@@ -958,7 +676,7 @@ class view_gtk(object):
                            'dot': _Aspect.Aspect_TOL_DOT}[line_type]
         aspect_line = _Prs3d.Prs3d_LineAspect(qcolor, local_line_type, line_width)
         handle_aspect_line = aspect_line.GetHandle()
-        #drawer = self.occ_context.DefaultDrawer().GetObject()
+        #drawer = self.glarea.occ_context.DefaultDrawer().GetObject()
         drawer.SetSeenLineAspect(handle_aspect_line)
         drawer.SetWireAspect(handle_aspect_line)
 
@@ -991,7 +709,7 @@ class view_gtk(object):
         aspect_shading.SetTransparency(transparency)
         drawer.SetShadingAspect(handle_aspect_shading)
 
-        self.occ_context.Display(handle_aisshape, True)
+        self.glarea.occ_context.Display(handle_aisshape, True)
 
 
     def clear(self, display_shapes=True):
@@ -999,8 +717,8 @@ class view_gtk(object):
         Clears all shapes from the window
         """
         self.select_shape()
-        self.occ_context.PurgeDisplay()
-        self.occ_context.EraseAll()
+        self.glarea.occ_context.PurgeDisplay()
+        self.glarea.occ_context.EraseAll()
         if display_shapes:
             self.display_shapes = []
 
@@ -1059,11 +777,11 @@ class view_gtk(object):
                 except ValueError:
                     index = -1
                 if index == -1:
-                    self.status_bar.set_text('Select shape first.')
+                    self.status_bar.setText('Select shape first.')
                 else:
                     status = self.selection_type + ' ' + str(index) + self.positions[index][0] + ' at (%.9f, %.9f, %.9f)' % self.positions[index][1]
                     print status
-                    self.status_bar.set_text(status)
+                    self.status_bar.setText(status)
                 self.selection_index = index
 
 
@@ -1071,62 +789,62 @@ class view_gtk(object):
         """
         Changes to a mode where only vertices can be selected
         """
-        self.glarea.window.set_cursor(self.WAIT_CURSOR)
-        self.occ_context.CloseAllContexts()
-        self.occ_context.OpenLocalContext()
-        self.occ_context.ActivateStandardMode(_TopAbs.TopAbs_VERTEX)
+        self.setCursor(self.WAIT_CURSOR)
+        self.glarea.occ_context.CloseAllContexts()
+        self.glarea.occ_context.OpenLocalContext()
+        self.glarea.occ_context.ActivateStandardMode(_TopAbs.TopAbs_VERTEX)
         self._build_hashes('vertex')
         self.selection_type = 'vertex'
-        self.glarea.window.set_cursor(self.REGULAR_CURSOR)
+        self.setCursor(self.REGULAR_CURSOR)
 
 
     def select_edge(self, event=None):
         """
         Changes to a mode where only edges can be selected
         """
-        self.glarea.window.set_cursor(self.WAIT_CURSOR)
-        self.occ_context.CloseAllContexts()
-        self.occ_context.OpenLocalContext()
-        self.occ_context.ActivateStandardMode(_TopAbs.TopAbs_EDGE)
+        self.setCursor(self.WAIT_CURSOR)
+        self.glarea.occ_context.CloseAllContexts()
+        self.glarea.occ_context.OpenLocalContext()
+        self.glarea.occ_context.ActivateStandardMode(_TopAbs.TopAbs_EDGE)
         self._build_hashes('edge')
         self.selection_type = 'edge'
-        self.glarea.window.set_cursor(self.REGULAR_CURSOR)
+        self.setCursor(self.REGULAR_CURSOR)
 
 
     def select_wire(self, event=None):
         """
         Changes to a mode where only wires can be selected
         """
-        self.glarea.window.set_cursor(self.WAIT_CURSOR)
-        self.occ_context.CloseAllContexts()
-        self.occ_context.OpenLocalContext()
-        self.occ_context.ActivateStandardMode(_TopAbs.TopAbs_WIRE)
+        self.setCursor(self.WAIT_CURSOR)
+        self.glarea.occ_context.CloseAllContexts()
+        self.glarea.occ_context.OpenLocalContext()
+        self.glarea.occ_context.ActivateStandardMode(_TopAbs.TopAbs_WIRE)
         self._build_hashes('wire')
         self.selection_type = 'wire'
-        self.glarea.window.set_cursor(self.REGULAR_CURSOR)
+        self.setCursor(self.REGULAR_CURSOR)
 
 
     def select_face(self, event=None):
         """
         Changes to a mode where only faces can be selected
         """
-        self.glarea.window.set_cursor(self.WAIT_CURSOR)
-        self.occ_context.CloseAllContexts()
-        self.occ_context.OpenLocalContext()
-        self.occ_context.ActivateStandardMode(_TopAbs.TopAbs_FACE)
+        self.setCursor(self.WAIT_CURSOR)
+        self.glarea.occ_context.CloseAllContexts()
+        self.glarea.occ_context.OpenLocalContext()
+        self.glarea.occ_context.ActivateStandardMode(_TopAbs.TopAbs_FACE)
         self._build_hashes('face')
         self.selection_type = 'face'
-        self.glarea.window.set_cursor(self.REGULAR_CURSOR)
+        self.setCursor(self.REGULAR_CURSOR)
 
 
     def select_shape(self, event=None):
         """
         Changes to a mode where only shapes can be selected
         """
-        self.glarea.window.set_cursor(self.WAIT_CURSOR)
-        self.occ_context.CloseAllContexts()
+        self.setCursor(self.WAIT_CURSOR)
+        self.glarea.occ_context.CloseAllContexts()
         self.selection_type = 'shape'
-        self.glarea.window.set_cursor(self.REGULAR_CURSOR)
+        self.setCursor(self.REGULAR_CURSOR)
 
 
     # Viewing Mode Functions
@@ -1135,8 +853,8 @@ class view_gtk(object):
         Changes the display to view shapes as wireframes
         """
         if not widget or (widget and widget.get_active()):
-            self.occ_view.SetComputedMode(False)
-            self.occ_context.SetDisplayMode(_AIS.AIS_WireFrame)
+            self.glarea.occ_view.SetComputedMode(False)
+            self.glarea.occ_context.SetDisplayMode(_AIS.AIS_WireFrame)
 
 
     def mode_shaded(self, widget=None):
@@ -1144,8 +862,8 @@ class view_gtk(object):
         Changes the display to view shapes as shaded (filled) shapes.
         """
         if not widget or (widget and widget.get_active()):
-            self.occ_view.SetComputedMode(False)
-            self.occ_context.SetDisplayMode(_AIS.AIS_Shaded)
+            self.glarea.occ_view.SetComputedMode(False)
+            self.glarea.occ_context.SetDisplayMode(_AIS.AIS_Shaded)
 
 
     def mode_hlr(self, widget=None):
@@ -1155,13 +873,13 @@ class view_gtk(object):
         are shown as lines.
         """
         if not widget or (widget and widget.get_active()):
-            self.occ_view.SetComputedMode(True)
-            self.occ_context.SetDisplayMode(_AIS.AIS_ExactHLR)
+            self.glarea.occ_view.SetComputedMode(True)
+            self.glarea.occ_context.SetDisplayMode(_AIS.AIS_ExactHLR)
 
         # Draws hidden lines
         #presentation = Prs3d_LineAspect(Quantity_NOC_BLACK, Aspect_TOL_DASH, 3)
-        #self.occ_context.SetHiddenLineAspect(presentation.GetHandle())
-        #self.occ_context.EnableDrawHiddenLine()
+        #self.glarea.occ_context.SetHiddenLineAspect(presentation.GetHandle())
+        #self.glarea.occ_context.EnableDrawHiddenLine()
 
 
     def reset_mode_drawing(self):
@@ -1170,7 +888,7 @@ class view_gtk(object):
         """
         self.view_shaded.set_active(True)
         self.clear(0)
-        self.occ_view.SetViewOrientation(self.saved_projection)
+        self.glarea.occ_view.SetViewOrientation(self.saved_projection)
         for display_shape in self.display_shapes:
             self.display(display_shape['shape'], display_shape['color'], display_shape['material'], display_shape['transparency'], display_shape['line_type'], display_shape['line_width'], logging = 0)
 
@@ -1182,7 +900,7 @@ class view_gtk(object):
         edges where shapes are tangent.  If this must be a menu call,
         pop up a separate window for it.
         """
-        self.saved_projection = self.occ_view.ViewOrientation()
+        self.saved_projection = self.glarea.occ_view.ViewOrientation()
         vcenter = self.saved_projection.ViewReferencePoint()  # Graphic3d_Vertex
         vout = self.saved_projection.ViewReferencePlane()  # Graphic3d_Vector
         vup = self.saved_projection.ViewReferenceUp()  # Graphic3d_Vector
@@ -1207,104 +925,195 @@ class view_gtk(object):
 
 
     # Helps
-    def display_manual(self, widget):
-        pass
+    def display_manual(self):
+        """
+        Displays the manual
+        """
+
+        # I couldn't get the directory to work for all platforms.
+        if _sys.platform.startswith('linux'):
+            updirs = 4
+        elif _sys.platform.startswith('win'):
+            updirs = 1
+        elif _sys.platform.startswith('darwin'):
+            updirs = 4 # Not debugged
+        else:
+            updirs = 0
+
+        doc_directory = _os.path.normpath(_os.path.join(_os.path.dirname(__file__), '../'*updirs + 'share/doc/ccad/html'))
+        fullname = _os.path.join(doc_directory, 'contents.html')
+
+        if _os.path.exists(fullname):
+            if _sys.platform.startswith('linux'):
+                _os.system('xdg-open ' + fullname + ' &')
+            elif _sys.platform.startswith('win'):
+                _os.system('start ' + fullname)
+            elif _sys.platform.startswith('darwin'):
+                _os.system('open ' + fullname)
+            else:
+                self.status_bar.setText('Warning: viewer not found for ' + _sys.platform)
+        else:
+            self.status_bar.setText('Warning: cannot find ' + fullname)
 
 
-    def about(self, widget):
+    def about(self):
+        """
+        Pops up a window about ccad
+        """
         global version
-        dialog = gtk.AboutDialog()
-        dialog.set_name('ccad viewer')
-        dialog.set_version(str(version))
-        dialog.set_copyright('\302\251 Copyright 2013 Seven:Twelve Engineering, LLC')
-        dialog.run()
-        dialog.destroy()
+        _QtGui.QMessageBox.about(self, 'ccad viewer ' + str(version), '\251 Copyright 2014 by Charles Sharman and Others')
 
 
     def save(self, name=''):
         """
         Saves a screen shot
         """
+        global app
 
-        if isinstance(name, str):
+        if name:
             filename = name
         else:
-            dialog = gtk.FileChooserDialog(title=None,
-                                           action=gtk.FILE_CHOOSER_ACTION_SAVE,
-                                           buttons=(gtk.STOCK_CANCEL,
-                                                    gtk.RESPONSE_CANCEL,
-                                                    gtk.STOCK_SAVE,
-                                                    gtk.RESPONSE_OK))
-            for file_type in ['png', 'bmp', 'jpg', 'gif']:
-                filter = gtk.FileFilter()
-                filter.set_name(file_type)
-                filter.add_pattern('*.' + file_type)
-                dialog.add_filter(filter)
-
-            response = dialog.run()
-            if response == gtk.RESPONSE_OK:
-                filename = dialog.get_filename()
-            else:
-                filename = ''
-            dialog.destroy()
+            filename = str(_QtGui.QFileDialog.getSaveFileName(self, 'Save Screen Image', '.', 'Image Files (*.png *.bmp *.jpg *.gif)'))
 
         if filename:
-
-            while gtk.events_pending():
-                gtk.main_iteration()
-            retval = self.occ_view.Dump(filename)
+            while app.hasPendingEvents():
+                app.processEvents()
+            retval = self.glarea.occ_view.Dump(filename)
             if not retval:
-                self.status_bar.set_text('Error: Couldn\'t save ' + filename)
+                self.status_bar.setText('Error: Couldn\'t save ' + filename)
             else:
-                self.status_bar.set_text('Saved ' + filename)
+                self.status_bar.setText('Saved ' + filename)
 
             # This works and allows higher resolutions
             #pixmap = Image_AlienPixMap()
-            #self.occ_view.ToPixMap(pixmap, self.SCR[0], self.SCR[1])
-            #pixmap.Save(TCollection_AsciiString(name)
+            #size = self.glarea.size()
+            #self.glarea.occ_view.ToPixMap(pixmap, size.width(), size.height())
+            #pixmap.Save(TCollection_AsciiString(name))
 
 
     def perspective_length(self, distance):
         """
         Sets the focal length for perspective views
         """
-        self.occ_view.SetFocale(distance)
+        self.glarea.occ_view.SetFocale(distance)
 
 
     def perspective_angle(self, angle):
         """
         Sets the focal length for perspective views
         """
-        self.occ_view.SetAngle(angle)
+        self.glarea.occ_view.SetAngle(angle)
 
 
-    def quit(self, widget=None):
+    def quit(self):
         """
         Closes the viewer
         """
-        global __name__
+        global __name__, app, interactive
         if __name__ == '__main__' or not interactive:
-            gtk.main_quit()
+            app.quit()
         else:
-            self.win.destroy()
+            self.close()
 
+class GLWidget(_QtGui.QWidget):
+    """
+    A ccad canvas
+    """
+
+    def __init__(self, parent=None):
+        super(GLWidget, self).__init__(parent)
+        self.setMouseTracking(True)
+        #self.setFocusPolicy(_QtCore.Qt.WheelFocus)
+        self.setAttribute(_QtCore.Qt.WA_PaintOnScreen)
+        self.setAttribute(_QtCore.Qt.WA_NoSystemBackground)
+        self.setSizePolicy(_QtGui.QSizePolicy(_QtGui.QSizePolicy.Expanding, _QtGui.QSizePolicy.Expanding))
+        self.occ_view = None
+        self.SCR = (400, 400)
+
+
+    def start(self, perspective=False):
+        
+        # Set up the OCC hooks to the OpenGL space
+        window_handle = int(self.winId())
+
+        if _sys.platform.startswith('linux'):
+            # This lower level routine allows multiple viewing
+            # windows.  Only works on linux.
+            gd = _Graphic3d.Graphic3d_GraphicDevice(_os.environ['DISPLAY'])
+            window = _Xw_Window(gd.GetHandle(), window_handle >> 16, window_handle & 0xffff, _Xw_WQ_3DQUALITY)
+            self.occ_viewer = _V3d.V3d_Viewer(gd.GetHandle(), _TCollection_ExtendedString('Viewer').ToExtString())
+            handle_occ_viewer = self.occ_viewer.GetHandle()
+            self.occ_viewer.Init()
+            if perspective:
+                self.handle_view = self.occ_viewer.DefaultPerspectiveView()
+            else:
+                self.handle_view = self.occ_viewer.DefaultOrthographicView()
+            self.occ_view = self.handle_view.GetObject()
+            self.occ_view.SetWindow(window.GetHandle())
+            if not window.IsMapped():
+                window.Map()
+            self.occ_context = _AIS.AIS_InteractiveContext(handle_occ_viewer)
+            handle_occ_context = self.occ_context.GetHandle()
+
+        else:
+
+            self.d3d = _Display3d()
+            self.d3d.Init(window_handle)
+
+            handle_occ_context = self.d3d.GetContext()
+            handle_occ_viewer = self.d3d.GetViewer()
+            self.handle_view = self.d3d.GetView()
+            self.occ_context = handle_occ_context.GetObject()
+            self.occ_viewer = handle_occ_viewer.GetObject()
+            self.occ_view = self.handle_view.GetObject()
+
+
+    def sizeHint(self):
+        return _QtCore.QSize(self.SCR[0], self.SCR[1])
+
+
+    def paintEvent(self, event):
+        if self.occ_viewer:
+            self.occ_viewer.Redraw()
+
+
+    def resizeEvent(self, event):
+        global app
+        x, y = event.size().width(), event.size().height()
+        #print 'resize', x, y, self.SCR
+        self.SCR = (x, y)
+        self.mpan = max(x, y) / 10
+
+        if self.occ_view:
+            # There's a race condition here.  The resize must be known
+            # to qt before MustBeResized is called.
+            while app.hasPendingEvents():
+                app.processEvents()
+            self.occ_view.MustBeResized()
+
+
+    def paintEngine(self):
+        return None
+        
 
 def view(perspective=False):
-    global manager
+    global manager, app
 
-    if manager == 'gtk':
-        v1 = view_gtk(perspective)
+    if manager == 'qt':
+        if not app:
+            app = _QtGui.QApplication([])
+        v1 = view_qt(perspective)
         return v1
     else:
         print 'Error: Manager', manager, 'not supported'
 
 
 def start():  # For non-interactive sessions (don't run in ipython)
-    global interactive, manager
+    global interactive, manager, app
     interactive = False
 
-    if manager == 'gtk':
-        gtk.main()
+    if manager == 'qt':
+        app.exec_()
     else:
         print 'Error: Manager', manager, 'not supported'
 
