@@ -26,7 +26,7 @@ View LICENSE for details.
 """
 
 # Globals
-version = '0.11' # Change also in setup.py, doc/conf.py
+version = '0.11'  # Change also in setup.py, doc/conf.py
 interactive = True
 manager = 'qt'
 app = None
@@ -250,7 +250,6 @@ class view_qt(_QtGui.QWidget):
         self.morbit = _math.pi/12.0
         self.set_scale(10.0)
 
-
     def add_menu(self, hierarchy):
         """
         Add a menu.  Used internally.  Used externally for those who
@@ -267,7 +266,6 @@ class view_qt(_QtGui.QWidget):
             last_menu = self.menus[sub_menu]
         return last_menu
 
-
     def add_menuitem(self, hierarchy, func, *args):
         """
         Add a menu item.  hierarchy is a tuple.  The first element in
@@ -282,14 +280,12 @@ class view_qt(_QtGui.QWidget):
         last_menu = self.add_menu(hierarchy[:-1])
         menuitem = last_menu.addAction(hierarchy[-1], lambda: func(*args))
 
-
     # Event Functions
     def redraw(self):
         """
         Called from a user request
         """
         self.glarea.paintEvent(None)
-
 
     def key_lookup(self, func_call):
         """
@@ -312,7 +308,6 @@ class view_qt(_QtGui.QWidget):
             except:
                 self.status_bar.setText('Command unknown ' + cmd)
 
-
     def mousePressEvent(self, event):
         """
         Called when a mouse button is pressed
@@ -320,7 +315,6 @@ class view_qt(_QtGui.QWidget):
         pos = self.glarea.mapFromParent(event.pos())
         self.beginx, self.beginy = pos.x(), pos.y()
         self.glarea.occ_view.StartRotation(self.beginx, self.beginy)
-
 
     def mouseReleaseEvent(self, event):
         """
@@ -336,7 +330,6 @@ class view_qt(_QtGui.QWidget):
             else:
                 self.selected = None
             self.make_selection()
-
 
     def mouseMoveEvent(self, event):
         """
@@ -354,7 +347,6 @@ class view_qt(_QtGui.QWidget):
             else:  # Mouse-Controlled Orbit
                 self.glarea.occ_view.Rotation(x, y)
         self.glarea.occ_context.MoveTo(x, y, self.glarea.handle_view)
-
 
     # View Functions
     def viewstandard(self, viewtype='front'):
@@ -380,7 +372,6 @@ class view_qt(_QtGui.QWidget):
         else:
             self.status_bar.setText('Unknown view' + viewtype)
 
-
     def orbitup(self, widget=None, rapid=False):
         """
         The observer has moved up
@@ -396,13 +387,11 @@ class view_qt(_QtGui.QWidget):
         #self.glarea.occ_view.Rotate(0.0, -self.morbit, 0.0, gravity[0], gravity[1], gravity[2])
         self.glarea.occ_view.Rotate(0.0, -self.morbit, 0.0)
 
-
     def panup(self, widget=None, rapid=False):
         """
         The scene is panned up
         """
         self.glarea.occ_view.Pan(0, -self.glarea.mpan)
-
 
     def orbitdown(self, widget=None, rapid=False):
         """
@@ -410,20 +399,17 @@ class view_qt(_QtGui.QWidget):
         """
         self.glarea.occ_view.Rotate(0.0, self.morbit, 0.0)
 
-
     def pandown(self, widget=None, rapid=False):
         """
         The scene is panned down
         """
         self.glarea.occ_view.Pan(0, self.glarea.mpan)
 
-
-    def orbitright(self, widget = None, rapid=False):
+    def orbitright(self, widget=None, rapid=False):
         """
         The observer has moved to the right
         """
         self.glarea.occ_view.Rotate(-self.morbit, 0.0, 0.0)
-
 
     def panright(self, widget=None, rapid=False):
         """
@@ -431,13 +417,11 @@ class view_qt(_QtGui.QWidget):
         """
         self.glarea.occ_view.Pan(-self.glarea.mpan, 0)
 
-
     def orbitleft(self, widget=None, rapid=False):
         """
         The observer has moved to the left
         """
         self.glarea.occ_view.Rotate(self.morbit, 0.0, 0.0)
-
 
     def panleft(self, widget=None, rapid=False):
         """
@@ -445,13 +429,11 @@ class view_qt(_QtGui.QWidget):
         """
         self.glarea.occ_view.Pan(self.glarea.mpan, 0)
 
-
     def zoomin(self, widget=None, rapid=False):
         """
         Zoom in
         """
         self.glarea.occ_view.SetZoom(_math.sqrt(2.0))
-
 
     def zoomout(self, widget=None, rapid=False):
         """
@@ -459,13 +441,11 @@ class view_qt(_QtGui.QWidget):
         """
         self.glarea.occ_view.SetZoom(_math.sqrt(0.5))
 
-
     def rotateccw(self, widget=None, rapid=False):
         """
         The scene is rotated counter clockwise
         """
         self.glarea.occ_view.Rotate(0.0, 0.0, -self.morbit)
-
 
     def rotatecw(self, widget=None, rapid=False):
         """
@@ -473,14 +453,12 @@ class view_qt(_QtGui.QWidget):
         """
         self.glarea.occ_view.Rotate(0.0, 0.0, self.morbit)
 
-
     def fit(self, widget=None):
         """
         Fit the scene to the screen
         """
         self.glarea.occ_view.ZFitAll()
         self.glarea.occ_view.FitAll()
-
 
     def query(self, widget=None):
         """
@@ -511,7 +489,6 @@ class view_qt(_QtGui.QWidget):
                 retval = 'No properties for type ' + self.selection_type
             print retval
 
-
     # Direct Call (not from GUI) Functions
     def set_projection(self, vcenter, vout, vup):
         """
@@ -525,7 +502,6 @@ class view_qt(_QtGui.QWidget):
         projection = _Visual3d_ViewOrientation(_Graphic3d.Graphic3d_Vertex(vcenter[0], vcenter[1], vcenter[2]), _Graphic3d.Graphic3d_Vector(vout[0], vout[1], vout[2]), _Graphic3d.Graphic3d_Vector(vup[0], vup[1], vup[2]))
         self.glarea.occ_view.SetViewOrientation(projection)
 
-
     def set_scale(self, scale):
         """
         Set the screen scale.  I'm not certain, but it looks to me
@@ -535,7 +511,6 @@ class view_qt(_QtGui.QWidget):
         exactly fill the screen in the x-direction.
         """
         self.glarea.occ_view.SetSize(scale)
-
 
     def set_size(self, size):
         """
@@ -553,7 +528,6 @@ class view_qt(_QtGui.QWidget):
         self.glarea.updateGeometry()
         self.adjustSize()
 
-
     def set_background(self, color):
         """
         Sets the background color.
@@ -561,14 +535,12 @@ class view_qt(_QtGui.QWidget):
         """
         self.glarea.occ_view.SetBackgroundColor(_Quantity.Quantity_TOC_RGB, color[0], color[1], color[2])
 
-
     def set_foreground(self, color):
         """
         Sets the default shape color.
         color is a 3-tuple with each value from 0.0 to 1.0
         """
         self.foreground = color
-
 
     def set_triedron(self, state, position='down_right', color=(1.0, 1.0, 1.0), size=0.08):
         """
@@ -593,7 +565,6 @@ class view_qt(_QtGui.QWidget):
             else:
                 qcolor = _Quantity.Quantity_NOC_BLACK
             self.glarea.occ_view.TriedronDisplay(local_position, qcolor, size, _V3d.V3d_WIREFRAME)
-
 
     # Things to Show Functions
     def display(self, shape, color=None, material='default', transparency=0.0, line_type='solid', line_width=1, logging=True):
@@ -711,7 +682,6 @@ class view_qt(_QtGui.QWidget):
 
         self.glarea.occ_context.Display(handle_aisshape, True)
 
-
     def clear(self, display_shapes=True):
         """
         Clears all shapes from the window
@@ -721,7 +691,6 @@ class view_qt(_QtGui.QWidget):
         self.glarea.occ_context.EraseAll()
         if display_shapes:
             self.display_shapes = []
-
 
     # Selection Functions
     def _build_hashes(self, htype):
@@ -762,7 +731,6 @@ class view_qt(_QtGui.QWidget):
                 self.positions.append(c)
             ex.Next()
 
-
     def make_selection(self, event=None):
         """
         Called when a shape is selected
@@ -784,7 +752,6 @@ class view_qt(_QtGui.QWidget):
                     self.status_bar.setText(status)
                 self.selection_index = index
 
-
     def select_vertex(self, event=None):
         """
         Changes to a mode where only vertices can be selected
@@ -796,7 +763,6 @@ class view_qt(_QtGui.QWidget):
         self._build_hashes('vertex')
         self.selection_type = 'vertex'
         self.setCursor(self.REGULAR_CURSOR)
-
 
     def select_edge(self, event=None):
         """
@@ -810,7 +776,6 @@ class view_qt(_QtGui.QWidget):
         self.selection_type = 'edge'
         self.setCursor(self.REGULAR_CURSOR)
 
-
     def select_wire(self, event=None):
         """
         Changes to a mode where only wires can be selected
@@ -822,7 +787,6 @@ class view_qt(_QtGui.QWidget):
         self._build_hashes('wire')
         self.selection_type = 'wire'
         self.setCursor(self.REGULAR_CURSOR)
-
 
     def select_face(self, event=None):
         """
@@ -836,7 +800,6 @@ class view_qt(_QtGui.QWidget):
         self.selection_type = 'face'
         self.setCursor(self.REGULAR_CURSOR)
 
-
     def select_shape(self, event=None):
         """
         Changes to a mode where only shapes can be selected
@@ -845,7 +808,6 @@ class view_qt(_QtGui.QWidget):
         self.glarea.occ_context.CloseAllContexts()
         self.selection_type = 'shape'
         self.setCursor(self.REGULAR_CURSOR)
-
 
     # Viewing Mode Functions
     def mode_wireframe(self, widget=None):
@@ -856,7 +818,6 @@ class view_qt(_QtGui.QWidget):
             self.glarea.occ_view.SetComputedMode(False)
             self.glarea.occ_context.SetDisplayMode(_AIS.AIS_WireFrame)
 
-
     def mode_shaded(self, widget=None):
         """
         Changes the display to view shapes as shaded (filled) shapes.
@@ -864,7 +825,6 @@ class view_qt(_QtGui.QWidget):
         if not widget or (widget and widget.get_active()):
             self.glarea.occ_view.SetComputedMode(False)
             self.glarea.occ_context.SetDisplayMode(_AIS.AIS_Shaded)
-
 
     def mode_hlr(self, widget=None):
         """
@@ -881,7 +841,6 @@ class view_qt(_QtGui.QWidget):
         #self.glarea.occ_context.SetHiddenLineAspect(presentation.GetHandle())
         #self.glarea.occ_context.EnableDrawHiddenLine()
 
-
     def reset_mode_drawing(self):
         """
         Call this after mode_drawing to reset everything.
@@ -891,7 +850,6 @@ class view_qt(_QtGui.QWidget):
         self.glarea.occ_view.SetViewOrientation(self.saved_projection)
         for display_shape in self.display_shapes:
             self.display(display_shape['shape'], display_shape['color'], display_shape['material'], display_shape['transparency'], display_shape['line_type'], display_shape['line_width'], logging = 0)
-
 
     def mode_drawing(self, widget=None):
         """
@@ -922,7 +880,6 @@ class view_qt(_QtGui.QWidget):
         self.display(vcompound, color=display_shape['color'], line_type=display_shape['line_type'], line_width=display_shape['line_width'], logging=False)
         self.display(outlinevcompound, color=display_shape['color'], line_type=display_shape['line_type'], line_width=display_shape['line_width'], logging=False)
         self.viewstandard(viewtype='top')
-
 
     # Helps
     def display_manual(self):
@@ -955,14 +912,12 @@ class view_qt(_QtGui.QWidget):
         else:
             self.status_bar.setText('Warning: cannot find ' + fullname)
 
-
     def about(self):
         """
         Pops up a window about ccad
         """
         global version
         _QtGui.QMessageBox.about(self, 'ccad viewer ' + str(version), '\251 Copyright 2014 by Charles Sharman and Others')
-
 
     def save(self, name=''):
         """
@@ -990,20 +945,17 @@ class view_qt(_QtGui.QWidget):
             #self.glarea.occ_view.ToPixMap(pixmap, size.width(), size.height())
             #pixmap.Save(TCollection_AsciiString(name))
 
-
     def perspective_length(self, distance):
         """
         Sets the focal length for perspective views
         """
         self.glarea.occ_view.SetFocale(distance)
 
-
     def perspective_angle(self, angle):
         """
         Sets the focal length for perspective views
         """
         self.glarea.occ_view.SetAngle(angle)
-
 
     def quit(self):
         """
@@ -1014,6 +966,7 @@ class view_qt(_QtGui.QWidget):
             app.quit()
         else:
             self.close()
+
 
 class GLWidget(_QtGui.QWidget):
     """
@@ -1030,9 +983,8 @@ class GLWidget(_QtGui.QWidget):
         self.occ_view = None
         self.SCR = (400, 400)
 
-
     def start(self, perspective=False):
-        
+
         # Set up the OCC hooks to the OpenGL space
         window_handle = int(self.winId())
 
@@ -1067,15 +1019,12 @@ class GLWidget(_QtGui.QWidget):
             self.occ_viewer = handle_occ_viewer.GetObject()
             self.occ_view = self.handle_view.GetObject()
 
-
     def sizeHint(self):
         return _QtCore.QSize(self.SCR[0], self.SCR[1])
-
 
     def paintEvent(self, event):
         if self.occ_viewer:
             self.occ_viewer.Redraw()
-
 
     def resizeEvent(self, event):
         global app
@@ -1091,10 +1040,9 @@ class GLWidget(_QtGui.QWidget):
                 app.processEvents()
             self.occ_view.MustBeResized()
 
-
     def paintEngine(self):
         return None
-        
+
 
 def view(perspective=False):
     global manager, app

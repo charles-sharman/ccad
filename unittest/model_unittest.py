@@ -29,13 +29,15 @@ import math
 import unittest
 import sys
 
+
 def dp(p1, p2):
     retval = []
     for count in range(len(p1)):
         retval.append(p1[count] - p2[count])
     return retval
 
-def close(p1, p2, eps = 1e-6):
+
+def close(p1, p2, eps=1e-6):
     """
     Makes sure pt1 and pt2 overlap within eps
     """
@@ -50,6 +52,7 @@ def close(p1, p2, eps = 1e-6):
                 retval = False
                 break
         return retval
+
 
 # Shape Functions
 class TestShapeFunctions(unittest.TestCase):
@@ -111,7 +114,7 @@ class TestShapeFunctions(unittest.TestCase):
         s2 = ccad.scaled(s1, 2.0, 3.0, 4.0)
         v2 = (1.0*2.0)*(2.0*3.0)*(3.0*4.0)
         self.assert_(close(v2, s2.volume()))
-        
+
     def test_scaledx(self):
         s1 = ccad.box(1.0, 2.0, 3.0)
         s2 = ccad.scaledx(s1, 2.0)
@@ -133,6 +136,7 @@ class TestShapeFunctions(unittest.TestCase):
     # reverse skipped ***
 
 # Face Functions
+
 
 # Solid Functions
 class TestSolidFunctions(unittest.TestCase):
@@ -182,7 +186,7 @@ class TestSolidFunctions(unittest.TestCase):
         self.assert_(close(v3new, value) and
                      close(v3old, value) and
                      close(v3op, value))
-        
+
     def test_fillet_fuse(self):
         s1 = ccad.sphere(1.0)
         s2 = ccad.box(4.0, 4.0, 4.0)
@@ -257,6 +261,7 @@ class TestSolidFunctions(unittest.TestCase):
         v3 = s3.volume()
         self.assert_(close(v3, 2*2.0*2.0*2.0))
 
+
 # Import Functions
 class TestImportFunctions(unittest.TestCase):
 
@@ -280,6 +285,7 @@ class TestImportFunctions(unittest.TestCase):
 # 1. translate*, rotate*, mirror*, scale* are omitted, since they are
 #    one-liners which are mostly tested by TestShapeFunctions
 
+
 class TestVertex(unittest.TestCase):
 
     # inherited from shape
@@ -295,7 +301,7 @@ class TestVertex(unittest.TestCase):
     def test_to_iges(self):
         s1 = ccad.vertex((1.0, 2.0, 3.0))
         r1 = s1.center()
-        s1.to_iges('tmp.igs', brep_mode = 1)
+        s1.to_iges('tmp.igs', brep_mode=1)
         s2 = ccad.from_iges('tmp.igs')
         r2 = s2.center()
         self.assert_(close(r1, (1.0, 2.0, 3.0)) and
@@ -312,7 +318,7 @@ class TestVertex(unittest.TestCase):
     #                 close(r2, (1.0, 2.0, 3.0)))
 
     # subshapes skipped since there are no vertex subshapes
-    
+
     def test_copy(self):
         s1 = ccad.vertex((1.0, 2.0, 3.0))
         s2 = s1.copy()
@@ -354,7 +360,8 @@ class TestVertex(unittest.TestCase):
 
     def tolerance(self):
         s1 = ccad.vertex((1.0, 2.0, 3.0))
-        self.assert_(close(s1.tolerance(), 1e-7, eps = 1e-9))
+        self.assert_(close(s1.tolerance(), 1e-7, eps=1e-9))
+
 
 class TestEdge(unittest.TestCase):
 
@@ -371,12 +378,12 @@ class TestEdge(unittest.TestCase):
     def test_to_iges(self):
         s1 = ccad.circle(1.0)
         r1 = s1.length()
-        s1.to_iges('tmp.igs', brep_mode = 1)
+        s1.to_iges('tmp.igs', brep_mode=1)
         s2 = ccad.from_iges('tmp.igs')
         r2 = s2.length()
         self.assert_(close(r1, 2*math.pi) and
                      close(r2, 2*math.pi))
-     
+
     # This broke ***
     #def test_to_step(self):
     #    s1 = ccad.circle(1.0)
@@ -393,7 +400,7 @@ class TestEdge(unittest.TestCase):
         self.assert_(len(vs) == 2 and
                      close(vs[0].center(), (0.0, 0.0, 0.0)) and
                      close(vs[1].center(), (1.0, 1.0, 1.0)))
-    
+
     def test_copy(self):
         s1 = ccad.circle(1.0)
         s2 = s1.copy()
@@ -403,7 +410,7 @@ class TestEdge(unittest.TestCase):
 
     def test_bounds(self):
         s1 = ccad.circle(1.0)
-        self.assert_(close(s1.bounds(), (-1.0, -1.0, 0.0, 1.0, 1.0, 0.0), eps = 0.1))
+        self.assert_(close(s1.bounds(), (-1.0, -1.0, 0.0, 1.0, 1.0, 0.0), eps=0.1))
 
     def test_center(self):
         s1 = ccad.circle(1.0)
@@ -415,7 +422,7 @@ class TestEdge(unittest.TestCase):
         cs = s1.subcenters('vertex')
         self.assert_(close(cs[0], (0.0, 0.0, 0.0)) and
                      close(cs[1], (1.0, 1.0, 1.0)))
-        
+
     def test_check(self):
         s1 = ccad.segment((0.0, 0.0, 0.0), (1.0, 1.0, 1.0))
         self.assert_(s1.check())
@@ -438,8 +445,8 @@ class TestEdge(unittest.TestCase):
     def test_subtolerance(self):
         s1 = ccad.segment((0.0, 0.0, 0.0), (1.0, 1.0, 1.0))
         subtols = s1.subtolerance()
-        self.assert_(close(subtols, (1e-7, 1e-7, 1e-7), eps = 1e-9))
-    
+        self.assert_(close(subtols, (1e-7, 1e-7, 1e-7), eps=1e-9))
+
     # specific
 
     # center skipped since verified above
@@ -448,7 +455,7 @@ class TestEdge(unittest.TestCase):
 
     def tolerance(self):
         s1 = ccad.segment((0.0, 0.0, 0.0), (1.0, 1.0, 1.0))
-        self.assert_(close(s1.tolerance(), 1e-7, eps = 1e-9))
+        self.assert_(close(s1.tolerance(), 1e-7, eps=1e-9))
 
     def type(self):
         s1 = ccad.segment((0.0, 0.0, 0.0), (1.0, 1.0, 1.0))
@@ -461,6 +468,7 @@ class TestEdge(unittest.TestCase):
                      close(p1[0], (0.0, 0.0, 0.0)) and
                      close(p1[1], (1.0, 1.0, 1.0)))
 
+
 class TestWire(unittest.TestCase):
 
     # inherited from shape
@@ -470,18 +478,18 @@ class TestWire(unittest.TestCase):
         s1.to_brep('tmp.brp')
         s2 = ccad.from_brep('tmp.brp')
         r2 = s2.length()
-        self.assert_(close(r1, 5.196, eps = 1e-3) and
-                     close(r2, 5.196, eps = 1e-3))
+        self.assert_(close(r1, 5.196, eps=1e-3) and
+                     close(r2, 5.196, eps=1e-3))
 
     def test_to_iges(self):
         s1 = ccad.ngon(1.0, 3)
         r1 = s1.length()
-        s1.to_iges('tmp.igs', brep_mode = 1)
+        s1.to_iges('tmp.igs', brep_mode=1)
         s2 = ccad.from_iges('tmp.igs')
         r2 = s2.length()
-        self.assert_(close(r1, 5.196, eps = 1e-3) and
-                     close(r2, 5.196, eps = 1e-3))
-      
+        self.assert_(close(r1, 5.196, eps=1e-3) and
+                     close(r2, 5.196, eps=1e-3))
+
     # This broke ***
     #def test_to_step(self):
     #    s1 = ccad.ngon(1.0, 3)
@@ -497,7 +505,7 @@ class TestWire(unittest.TestCase):
         es = s1.subshapes('edge')
         vs = s1.subshapes('vertex')
         self.assert_(len(vs) == 3 and len(es) == 3)
-    
+
     def test_copy(self):
         s1 = ccad.ngon(1.0, 3)
         s2 = s1.copy()
@@ -509,7 +517,7 @@ class TestWire(unittest.TestCase):
         s1 = ccad.ngon(1.0, 3)
         rt3d2 = math.sqrt(3.0)/2
         print 'bounds', s1.bounds()
-        self.assert_(close(s1.bounds(), (-0.5, -rt3d2, 0.0, 1.0, rt3d2, 0.0), eps = 0.1))
+        self.assert_(close(s1.bounds(), (-0.5, -rt3d2, 0.0, 1.0, rt3d2, 0.0), eps=0.1))
 
     def test_center(self):
         s1 = ccad.ngon(1.0, 3)
@@ -523,7 +531,7 @@ class TestWire(unittest.TestCase):
         self.assert_(close(cs[0], (-0.5, rt3d2, 0.0)) and
                      close(cs[1], (-0.5, -rt3d2, 0.0)) and
                      close(cs[2], (1.0, 0.0, 0.0)))
-        
+
     def test_check(self):
         s1 = ccad.ngon(1.0, 3)
         self.assert_(s1.check())
@@ -547,8 +555,8 @@ class TestWire(unittest.TestCase):
     def test_subtolerance(self):
         s1 = ccad.ngon(1.0, 3)
         subtols = s1.subtolerance()
-        self.assert_(close(subtols, (1e-7, 1e-7, 1e-7), eps = 1e-9))
-    
+        self.assert_(close(subtols, (1e-7, 1e-7, 1e-7), eps=1e-9))
+
     # specific
 
     # center skipped since verified above
@@ -557,7 +565,7 @@ class TestWire(unittest.TestCase):
 
     def tolerance(self):
         s1 = ccad.ngon(1.0, 3)
-        self.assert_(close(s1.tolerance(), 1e-7, eps = 1e-9))
+        self.assert_(close(s1.tolerance(), 1e-7, eps=1e-9))
 
     def poly(self):
         s1 = ccad.ngon(1.0, 3)
@@ -568,6 +576,7 @@ class TestWire(unittest.TestCase):
                      close(p1[1], cs[1]) and
                      close(p1[2], cs[2]) and
                      close(p1[3], cs[3]))
+
 
 class TestFace(unittest.TestCase):
 
@@ -583,11 +592,11 @@ class TestFace(unittest.TestCase):
     def test_to_iges(self):
         s1 = ccad.plane(ccad.ngon(1.0, 3))
         r1 = s1.area()
-        s1.to_iges('tmp.igs', brep_mode = 1)
+        s1.to_iges('tmp.igs', brep_mode=1)
         s2 = ccad.from_iges('tmp.igs')
         r2 = s2.area()
         self.assert_(close(r1, r2))
-        
+
     def test_to_step(self):
         s1 = ccad.plane(ccad.ngon(1.0, 3))
         r1 = s1.area()
@@ -602,7 +611,7 @@ class TestFace(unittest.TestCase):
         es = s1.subshapes('edge')
         vs = s1.subshapes('vertex')
         self.assert_(len(vs) == 3 and len(es) == 3 and len(ws) == 1)
-    
+
     def test_copy(self):
         s1 = ccad.plane(ccad.ngon(1.0, 3))
         s2 = s1.copy()
@@ -614,7 +623,7 @@ class TestFace(unittest.TestCase):
         s1 = ccad.plane(ccad.ngon(1.0, 3))
         rt3d2 = math.sqrt(3.0)/2
         print 'bounds', s1.bounds()
-        self.assert_(close(s1.bounds(), (-0.5, -rt3d2, 0.0, 1.0, rt3d2, 0.0), eps = 0.1))
+        self.assert_(close(s1.bounds(), (-0.5, -rt3d2, 0.0, 1.0, rt3d2, 0.0), eps=0.1))
 
     def test_center(self):
         s1 = ccad.plane(ccad.ngon(1.0, 3))
@@ -628,7 +637,7 @@ class TestFace(unittest.TestCase):
         self.assert_(close(cs[0], (-0.5, rt3d2, 0.0)) and
                      close(cs[1], (-0.5, -rt3d2, 0.0)) and
                      close(cs[2], (1.0, 0.0, 0.0)))
-        
+
     def test_check(self):
         s1 = ccad.plane(ccad.ngon(1.0, 3))
         self.assert_(s1.check())
@@ -652,8 +661,8 @@ class TestFace(unittest.TestCase):
     def test_subtolerance(self):
         s1 = ccad.plane(ccad.ngon(1.0, 3))
         subtols = s1.subtolerance()
-        self.assert_(close(subtols, (1e-7, 1e-7, 1e-7), eps = 1e-9))
-    
+        self.assert_(close(subtols, (1e-7, 1e-7, 1e-7), eps=1e-9))
+
     # specific
 
     def test_fillet(self):
@@ -701,11 +710,12 @@ class TestFace(unittest.TestCase):
 
     def tolerance(self):
         s1 = ccad.plane(ccad.ngon(1.0, 3))
-        self.assert_(close(s1.tolerance(), 1e-7, eps = 1e-9))
+        self.assert_(close(s1.tolerance(), 1e-7, eps=1e-9))
 
     def type(self):
         s1 = ccad.plane(ccad.ngon(1.0, 3))
         self.assert_(s1.type() == 'plane')
+
 
 class TestShell(unittest.TestCase):
 
@@ -722,12 +732,12 @@ class TestShell(unittest.TestCase):
     def test_to_iges(self):
         s1 = ccad.box(1.0, 2.0, 3.0).subshapes('shell')[0]
         r1 = s1.area()
-        s1.to_iges('tmp.igs', brep_mode = 1)
+        s1.to_iges('tmp.igs', brep_mode=1)
         s2 = ccad.from_iges('tmp.igs')
         r2 = s2.area()
         self.assert_(close(r1, 22.0) and
                      close(r2, 22.0))
-        
+
     def test_to_step(self):
         s1 = ccad.box(1.0, 2.0, 3.0).subshapes('shell')[0]
         r1 = s1.area()
@@ -743,8 +753,8 @@ class TestShell(unittest.TestCase):
         ws = s1.subshapes('wire')
         es = s1.subshapes('edge')
         vs = s1.subshapes('vertex')
-        self.assert_(len(vs) == 8 and len(es) == 12 and len(ws) == 6 and len(fs) == 6)
-    
+        self.assert_(len(vs) == 8 and len(es) == 12 and len(ws) == 6 and len(fs)==6)
+
     def test_copy(self):
         s1 = ccad.box(1.0, 2.0, 3.0).subshapes('shell')[0]
         s2 = s1.copy()
@@ -754,7 +764,7 @@ class TestShell(unittest.TestCase):
 
     def test_bounds(self):
         s1 = ccad.box(1.0, 2.0, 3.0).subshapes('shell')[0]
-        self.assert_(close(s1.bounds(), (0.0, 0.0, 0.0, 1.0, 2.0, 3.0), eps = 0.1))
+        self.assert_(close(s1.bounds(), (0.0, 0.0, 0.0, 1.0, 2.0, 3.0), eps=0.1))
 
     def test_center(self):
         s1 = ccad.box(1.0, 2.0, 3.0).subshapes('shell')[0]
@@ -769,7 +779,7 @@ class TestShell(unittest.TestCase):
             center[1] = center[1] + c[1]
             center[2] = center[2] + c[2]
         self.assert_(close(center, (6.0*0.5, 6.0*1.0, 6.0*1.5)))
-        
+
     def test_check(self):
         s1 = ccad.box(1.0, 2.0, 3.0).subshapes('shell')[0]
         self.assert_(s1.check())
@@ -792,13 +802,14 @@ class TestShell(unittest.TestCase):
     def test_subtolerance(self):
         s1 = ccad.box(1.0, 2.0, 3.0).subshapes('shell')[0]
         subtols = s1.subtolerance()
-        self.assert_(close(subtols, (1e-7, 1e-7, 1e-7), eps = 1e-9))
-    
+        self.assert_(close(subtols, (1e-7, 1e-7, 1e-7), eps=1e-9))
+
     # specific
 
     # center skipped since verified above
 
     # area skipped since verified above
+
 
 class TestSolid(unittest.TestCase):
 
@@ -815,13 +826,12 @@ class TestSolid(unittest.TestCase):
     def test_to_iges(self):
         s1 = ccad.box(1.0, 2.0, 3.0)
         r1 = s1.volume()
-        s1.to_iges('tmp.igs', brep_mode = 1)
+        s1.to_iges('tmp.igs', brep_mode=1)
         s2 = ccad.from_iges('tmp.igs')
         r2 = s2.volume()
         self.assert_(close(r1, 6.0) and
                      close(r2, 6.0))
 
-        
     def test_to_step(self):
         s1 = ccad.box(1.0, 2.0, 3.0)
         r1 = s1.volume()
@@ -839,7 +849,7 @@ class TestSolid(unittest.TestCase):
         es = s1.subshapes('edge')
         vs = s1.subshapes('vertex')
         self.assert_(len(vs) == 8 and len(es) == 12 and len(ws) == 6 and len(fs) == 6 and len(ss) == 1)
-    
+
     def test_copy(self):
         s1 = ccad.box(1.0, 2.0, 3.0)
         s2 = s1.copy()
@@ -849,7 +859,7 @@ class TestSolid(unittest.TestCase):
 
     def test_bounds(self):
         s1 = ccad.box(1.0, 2.0, 3.0)
-        self.assert_(close(s1.bounds(), (0.0, 0.0, 0.0, 1.0, 2.0, 3.0), eps = 0.1))
+        self.assert_(close(s1.bounds(), (0.0, 0.0, 0.0, 1.0, 2.0, 3.0), eps=0.1))
 
     def test_center(self):
         s1 = ccad.box(1.0, 2.0, 3.0)
@@ -864,7 +874,7 @@ class TestSolid(unittest.TestCase):
             center[1] = center[1] + c[1]
             center[2] = center[2] + c[2]
         self.assert_(close(center, (6.0*0.5, 6.0*1.0, 6.0*1.5)))
-        
+
     def test_check(self):
         s1 = ccad.box(1.0, 2.0, 3.0)
         self.assert_(s1.check())
@@ -887,8 +897,8 @@ class TestSolid(unittest.TestCase):
     def test_subtolerance(self):
         s1 = ccad.box(1.0, 2.0, 3.0)
         subtols = s1.subtolerance()
-        self.assert_(close(subtols, (1e-7, 1e-7, 1e-7), eps = 1e-9))
-    
+        self.assert_(close(subtols, (1e-7, 1e-7, 1e-7), eps=1e-9))
+
     # specific
 
     # add skipped since verified in SolidFunctions
@@ -909,7 +919,7 @@ class TestSolid(unittest.TestCase):
         s1 = s.copy()
         s1.fillet(0.2)
         r1 = s1.volume()
-        
+
         s2 = s.copy()
         s2.fillet(0.2, [0])
         r2 = s2.volume()
@@ -934,7 +944,7 @@ class TestSolid(unittest.TestCase):
         s1 = s.copy()
         s1.chamfer(0.2)
         r1 = s1.volume()
-        
+
         s2 = s.copy()
         s2.chamfer(0.2, [0])
         r2 = s2.volume()
@@ -974,6 +984,7 @@ class TestSolid(unittest.TestCase):
         s3.simplify()
         count2 = len(s3.subshapes('face'))
         self.assert_(count1 == 7 and count2 == 6)
+
 
 # Edge Primitives
 class TestEdgePrimitives(unittest.TestCase):
@@ -1023,9 +1034,10 @@ class TestEdgePrimitives(unittest.TestCase):
         e1 = ccad.ellipse(2.0, 1.0)
         self.assert_(close(9.701, e1.length(), 0.001))
 
+
 # Wire Primitives
 class TestWirePrimitives(unittest.TestCase):
-    
+
     # from documentation
     def test_polygon(self):
         w1 = ccad.polygon([(0.0, 0.0, 0.0),
@@ -1051,9 +1063,10 @@ class TestWirePrimitives(unittest.TestCase):
         # empirical
         self.assert_(close(39.710, w1.length(), 0.001))
 
+
 # Face Primitives
 class TestFacePrimitives(unittest.TestCase):
-    
+
     # from documentation
     def test_plane(self):
         w1 = ccad.ngon(2.0, 5)
@@ -1095,9 +1108,10 @@ class TestFacePrimitives(unittest.TestCase):
         f1 = ccad.slice(s1, z = 1.0)[0]
         self.assert_(close(100.0-math.pi*2.5**2, f1.area(), 0.001))
 
+
 # Solid Primitives
 class TestSolidPrimitives(unittest.TestCase):
-    
+
     # from documentation
     def test_box(self):
         s1 = ccad.box(1.0, 2.0, 3.0)
@@ -1141,7 +1155,7 @@ class TestSolidPrimitives(unittest.TestCase):
         s1 = ccad.prism(f1, (0.0, 0.0, 1.0))
         # empirical
         self.assert_(close(10.392, s1.volume(), 0.001))
-        
+
     # test_revol covered by bezier_cone
 
     # from documentation
@@ -1182,9 +1196,10 @@ class TestSolidPrimitives(unittest.TestCase):
         # empirical
         self.assert_(close(1.346, s1.volume(), 0.001))
 
+
 # Useful functions that return arbitrary shapes
 class TestArbitrary(unittest.TestCase):
-    
+
     # from documentation
     def test_offset(self):
         w1 = ccad.ngon(8.0, 6)
@@ -1200,11 +1215,11 @@ class TestArbitrary(unittest.TestCase):
         # empirical
         self.assert_(close(217.418, f1.area(), 0.001) and
                      close(1608.966, s2.volume(), 0.001))
-       
 
-def suite(tests = []):
+
+def suite(tests=[]):
     suite = unittest.TestSuite()
-    if len(tests) == 0: # Do all
+    if len(tests) == 0:  # Do all
         tests = filter(lambda x: x.startswith('Test'), globals())
     print tests
     for test in tests:
