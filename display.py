@@ -39,6 +39,7 @@ import math as _math
 try:
     from PyQt4 import QtCore as _QtCore, QtGui as _QtGui
 except ImportError:
+    from PySide import QtCore as _QtCore, QtGui as _QtGui
     manager = 'none'
     print """
 Warning: Cannot find python-qt4.  You will not be able to use ccad's
@@ -1173,7 +1174,7 @@ def start():  # For non-interactive sessions (don't run in ipython)
 
 if __name__ == '__main__':
     import model as cm
-    view = view()
+    view = view_qt()
     view.set_background((0.35, 0.35, 0.35))
     s1 = cm.sphere(1.0)
     view.display(s1, (0.5, 0.0, 0.0), line_type='solid', line_width=3)
