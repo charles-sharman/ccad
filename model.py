@@ -18,7 +18,7 @@ View LICENSE for details.
 
 from os import path as _path
 import sys as _sys
-import re  as _re # Needed for svg
+import re as _re  # Needed for svg
 import math as _math
 
 #from OCC.ChFi3d import *
@@ -546,7 +546,7 @@ def _chamfer_boolean(b1, dist):
     edge_map = _TopTools.TopTools_IndexedDataMapOfShapeListOfShape()
     s = b1.Shape()
     _TopExp_MapShapesAndAncestors(s, _TopAbs.TopAbs_EDGE, _TopAbs.TopAbs_FACE,
-                                 edge_map)
+                                  edge_map)
     b2 = _BRepFilletAPI.BRepFilletAPI_MakeChamfer(s)
     iterator = _TopTools.TopTools_ListIteratorOfListOfShape(new_edges)
     while iterator.More():
@@ -688,7 +688,7 @@ def _convert_import(s):
         print 'Error: Unsupported type', stype
     else:
         return eval(stype + '(s)')
-    
+
 
 def from_brep(name):
     """
@@ -763,7 +763,7 @@ def from_svg(name):
     def transform_matrix():
         retval = _gp.gp_Mat(1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0)
         for matrix in matrices:
-            retval.Multiply(matrix[1]) # second element is the matrix
+            retval.Multiply(matrix[1])  # second element is the matrix
         return retval
 
     def transform_pts(transform, pts):
@@ -986,6 +986,7 @@ def _raw_type(raw_shape):
         return raw_types[raw_shape.ShapeType()]
     except:
         return 'unknown'
+
 
 # Classes
 class shape(object):
@@ -1281,7 +1282,7 @@ class shape(object):
             ex.Next()
         return retval
 
-    def _valid_subshapes(self, include_top = False):
+    def _valid_subshapes(self, include_top=False):
         types = ['vertex', 'edge', 'wire', 'face', 'shell', 'solid']
         self_index = types.index(self.stype)
         if include_top:
@@ -1375,7 +1376,7 @@ class shape(object):
         b.Perform()
         self.shape = b.Shape()
 
-    def dump(self, flat = True, _level = 0):
+    def dump(self, flat=True, _level=0):
         """
         Print the details of an object from the top down.
 
@@ -1969,7 +1970,7 @@ class solid(shape):
         if dist > 0.0:
             edge_map = _TopTools.TopTools_IndexedDataMapOfShapeListOfShape()
             _TopExp_MapShapesAndAncestors(self.shape, _TopAbs.TopAbs_EDGE,
-                                         _TopAbs.TopAbs_FACE, edge_map)
+                                          _TopAbs.TopAbs_FACE, edge_map)
             b = _BRepFilletAPI.BRepFilletAPI_MakeChamfer(self.shape)
             raw_edges = self._raw('edge')
             if edge_indices is None:
@@ -2052,8 +2053,8 @@ class solid(shape):
         # Fuse Faces second (not easy)
         if not skip_faces:
             edge_map = _TopTools.TopTools_IndexedDataMapOfShapeListOfShape()
-            _TopExp_MapShapesAndAncestors(self.shape, _TopAbs.TopAbs_EDGE, 
-                                         _TopAbs.TopAbs_FACE, edge_map)
+            _TopExp_MapShapesAndAncestors(self.shape, _TopAbs.TopAbs_EDGE,
+                                          _TopAbs.TopAbs_FACE, edge_map)
             raw_edges = self._raw('edge')
             common_faces = {}
             new_faces = []
@@ -2256,8 +2257,7 @@ def bezier(pts, weights=[]):
     tpts = _TColgp_Array1OfPnt(0, num_pts-1)
     for count in range(num_pts):
         tpts.SetValue(count, _gp.gp_Pnt(pts[count][0],
-                                    pts[count][1],
-                                    pts[count][2]))
+                      pts[count][1], pts[count][2]))
     if len(weights) == num_pts:
         tweights = _TColStd_Array1OfReal(1, num_pts)
         for count in range(num_pts):
@@ -2746,7 +2746,7 @@ def plane_loft(ws, stype='solid'):
                 #w2 = polygon([profiles[profile_index+1][pt_index],
                 #              profiles[profile_index+1][pt_index+1]])
                 #faces.append(loft([w1, w2], 1))
-                 
+
     if stype == 'solid':
         faces.append(plane(polygon(profiles[0])))
         faces.append(plane(polygon(profiles[-1])))
