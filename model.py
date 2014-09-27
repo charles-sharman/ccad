@@ -25,18 +25,24 @@ import math as _math
 #from OCC.BlockFix import *
 from OCC.Bnd import Bnd_Box as _Bnd_Box
 #from OCC.BOP import *
-from OCC.BRep import BRep_Builder as _BRep_Builder, BRep_Tool as _BRep_Tool
+from OCC.BRep import (BRep_Builder as _BRep_Builder, BRep_Tool as _BRep_Tool,
+                      BRep_Tool_Surface as _BRep_Tool_Surface)
 from OCC import BRepAlgo as _BRepAlgo
 from OCC import BRepAlgoAPI as _BRepAlgoAPI
-from OCC.BRepBndLib import BRepBndLib as _BRepBndLib
+from OCC.BRepBndLib import brepbndlib_Add as _brepbndlib_Add
 from OCC import BRepBuilderAPI as _BRepBuilderAPI
 from OCC.BRepCheck import BRepCheck_Analyzer as _BRepCheck_Analyzer
 from OCC.BRepFeat import BRepFeat_Gluer as _BRepFeat_Gluer
 from OCC import BRepFilletAPI as _BRepFilletAPI
-from OCC.BRepGProp import BRepGProp as _BRepGProp
+from OCC.BRepGProp import (brepgprop_VolumeProperties as _brepgprop_VolumeProperties,
+                           brepgprop_LinearProperties as _brepgprop_LinearProperties,
+                           brepgprop_SurfaceProperties as _brepgprop_SurfaceProperties)
 from OCC import BRepOffsetAPI as _BRepOffsetAPI
+from OCC import BRepOffset as _BRepOffset
 from OCC import BRepPrimAPI as _BRepPrimAPI
 from OCC import BRepTools as _BRepTools
+from OCC.BRepTools import (breptools_Read as _breptools_Read,
+                           breptools_Write as _breptools_Write)
 from OCC.GC import (GC_MakeArcOfCircle as _GC_MakeArcOfCircle,
                     GC_MakeArcOfEllipse as _GC_MakeArcOfEllipse)
 from OCC.GCPnts import (GCPnts_QuasiUniformDeflection as
@@ -63,14 +69,18 @@ from OCC.StlAPI import StlAPI_Writer as _StlAPI_Writer
 from OCC.TColgp import TColgp_Array1OfPnt as _TColgp_Array1OfPnt
 from OCC.TColStd import TColStd_Array1OfReal as _TColStd_Array1OfReal
 from OCC import TopAbs as _TopAbs
-from OCC.TopoDS import (TopoDS_edge as _TopoDS_edge,
-                        TopoDS_face as _TopoDS_face,
-                        TopoDS_shell as _TopoDS_shell,
-                        TopoDS_vertex as _TopoDS_vertex,
-                        TopoDS_wire as _TopoDS_wire)
+from OCC.TopoDS import (topods_Edge as _TopoDS_edge,
+                        topods_Face as _TopoDS_face,
+                        topods_Solid as _TopoDS_solid,
+                        topods_Shell as _TopoDS_shell,
+                        topods_Compound as _TopoDS_compound,
+                        topods_CompSolid as _TopoDS_compsolid,
+                        topods_Vertex as _TopoDS_vertex,
+                        topods_Wire as _TopoDS_wire,
+                        TopoDS_Shape as _TopoDS_Shape)
 from OCC import TopoDS as _TopoDS
 from OCC.TopExp import (TopExp_Explorer as _TopExp_Explorer,
-                        TopExp_MapShapesAndAncestors as
+                        topexp_MapShapesAndAncestors as 
                         _TopExp_MapShapesAndAncestors)
 from OCC.TopOpeBRep import (TopOpeBRep_FacesIntersector as
                             _TopOpeBRep_FacesIntersector)
@@ -84,7 +94,7 @@ def _translate(s1, pdir):
     m = _gp.gp_Trsf()
     m.SetTranslation(_gp.gp_Vec(pdir[0], pdir[1], pdir[2]))
     trf = _BRepBuilderAPI.BRepBuilderAPI_Transform(m)
-    trf.Perform(s1.shape, 1)
+    trf.Perform(s1.shape, True)
     return trf.Shape()
 
 
@@ -93,7 +103,7 @@ def _rotate(s1, pabout, pdir, angle):
     m.SetRotation(_gp.gp_Ax1(_gp.gp_Pnt(pabout[0], pabout[1], pabout[2]),
                              _gp.gp_Dir(pdir[0], pdir[1], pdir[2])), angle)
     trf = _BRepBuilderAPI.BRepBuilderAPI_Transform(m)
-    trf.Perform(s1.shape, 1)
+    trf.Perform(s1.shape, True)
     return trf.Shape()
 
 
@@ -102,7 +112,7 @@ def _mirror(s1, pabout, pdir):
     m.SetMirror(_gp.gp_Ax2(_gp.gp_Pnt(pabout[0], pabout[1], pabout[2]),
                            _gp.gp_Dir(pdir[0], pdir[1], pdir[2])))
     trf = _BRepBuilderAPI.BRepBuilderAPI_Transform(m)
-    trf.Perform(s1.shape, 1)
+    trf.Perform(s1.shape, True)
     return trf.Shape()
 
 
@@ -261,9 +271,8 @@ def _raw_faces_same_domain(f1, f2, skip_fits=0):
     #print fi.ShapeSameDomain(f2).IsEmpty():
 
     # Pre-screen, since FacesIntersector is slow
-    b1 = _BRep_Tool()
-    t1 = _GeomAdaptor_Surface(b1.Surface(_TopoDS_face(f1))).GetType()
-    t2 = _GeomAdaptor_Surface(b1.Surface(_TopoDS_face(f2))).GetType()
+    t1 = _GeomAdaptor_Surface(_BRep_Tool_Surface(_TopoDS_face(f1))).GetType()
+    t2 = _GeomAdaptor_Surface(_BRep_Tool_Surface(_TopoDS_face(f2))).GetType()
     if t1 != t2:
         return 0
     else:
@@ -317,7 +326,7 @@ def _raw_faces_merge(f1, f2):
     # The orientations were derived by trial and error.
     # Expect problems. ***
     other_wires = []
-    ow1 = _BRepTools.BRepTools_OuterWire(_TopoDS_face(f1))
+    ow1 = _BRepTools.breptools_OuterWire(_TopoDS_face(f1))
     ow1o = ow1.Orientation()
     ex1w = _TopExp_Explorer(f1, _TopAbs.TopAbs_WIRE)
     while ex1w.More():
@@ -331,7 +340,7 @@ def _raw_faces_merge(f1, f2):
     while ex1e.More():
         e1s.append(ex1e.Current())
         ex1e.Next()
-    ow2 = _BRepTools.BRepTools_OuterWire(_TopoDS_face(f2))
+    ow2 = _BRepTools.breptools_OuterWire(_TopoDS_face(f2))
     ow2o = ow2.Orientation()
     ex2w = _TopExp_Explorer(f2, _TopAbs.TopAbs_WIRE)
     while ex2w.More():
@@ -405,8 +414,7 @@ def _raw_faces_merge(f1, f2):
     b.Perform()
     w = b.Shape()
     # Create the fused face
-    brt = _BRep_Tool()
-    s = brt.Surface(_TopoDS_face(f1))
+    s = _BRep_Tool_Surface(_TopoDS_face(f1))
     bf = _BRepBuilderAPI.BRepBuilderAPI_MakeFace(s, _TopoDS_wire(w))
     for other_wire in other_wires:
         if ow1o != ow2o:
@@ -666,7 +674,7 @@ def simple_glue(s1, s2, face_pairs=[], tolerance=1e-3):
         print 'Warning: simple_glue() returned compound'
         s = solid(new_shell)
         css = s._raw('shell')
-        c = _TopoDS.TopoDS_Compound()
+        c = _TopoDS_compound()
         b3 = _BRep_Builder()
         b3.MakeCompound(c)
         for cs in css:
@@ -696,9 +704,9 @@ def from_brep(name):
     Imports a brep file and returns the shape.
     """
     if _path.exists(name):
-        s = _TopoDS.TopoDS_Shape()
+        s = _TopoDS_Shape()
         b = _BRep_Builder()
-        _BRepTools.BRepTools().Read(s, name, b)
+        _breptools_Read(s, name, b)
         return _convert_import(s)
     else:
         print 'Error: Can\'t find', name
@@ -1040,7 +1048,7 @@ class shape(object):
         """
         Exports the shape in .brep format
         """
-        _BRepTools.BRepTools().Write(self.shape, name)
+        _breptools_Write(self.shape, name)
 
     def to_iges(self, name, **options):
         """
@@ -1378,8 +1386,7 @@ class shape(object):
         boundaries.  It seems to be an OCC problem, but uncertain ***
         """
         b1 = _Bnd_Box()
-        b2 = _BRepBndLib()
-        b2.Add(self.shape, b1)
+        _brepbndlib_Add(self.shape, b1)
         return b1.Get()
 
     def center(self):
@@ -1581,8 +1588,7 @@ class edge(shape):
 
     def center(self):
         g1 = _GProp_GProps()
-        g2 = _BRepGProp()
-        g2.LinearProperties(self.shape, g1)
+        _brepgprop_LinearProperties(self.shape, g1)
         p = g1.CentreOfMass()
         return (p.X(), p.Y(), p.Z())
 
@@ -1591,8 +1597,7 @@ class edge(shape):
         Returns the length of the edge
         """
         g1 = _GProp_GProps()
-        g2 = _BRepGProp()
-        g2.LinearProperties(self.shape, g1)
+        _brepgprop_LinearProperties(self.shape, g1)
         return g1.Mass()
 
     def tolerance(self):
@@ -1760,13 +1765,13 @@ class face(shape):
         Returns the outside of the face as a wire
         """
         #return wire(self._raw('wire')[0])
-        return wire(_BRepTools.BRepTools_OuterWire(_TopoDS_face(self.shape)))
+        return wire(_BRepTools.breptools_OuterWire(_TopoDS_face(self.shape)))
 
     def inner_wires(self):
         """
         Returns the inner contours of a face as a list of wires
         """
-        ow1 = _BRepTools.BRepTools_OuterWire(_TopoDS_face(self.shape))
+        ow1 = _BRepTools.bpeptools_OuterWire(_TopoDS_face(self.shape))
         ow1o = ow1.Orientation()
         ex1w = _TopExp_Explorer(self.shape, _TopAbs.TopAbs_WIRE)
         retval = []
@@ -1780,8 +1785,7 @@ class face(shape):
 
     def center(self):
         g1 = _GProp_GProps()
-        g2 = _BRepGProp()
-        g2.SurfaceProperties(self.shape, g1)
+        _brepgprop_SurfaceProperties(self.shape, g1)
         p = g1.CentreOfMass()
         return (p.X(), p.Y(), p.Z())
 
@@ -1790,8 +1794,7 @@ class face(shape):
         Returns the area of the face
         """
         g1 = _GProp_GProps()
-        g2 = _BRepGProp()
-        g2.SurfaceProperties(self.shape, g1)
+        _brepgprop_SurfaceProperties(self.shape, g1)
         return g1.Mass()
 
     def tolerance(self):
@@ -1889,11 +1892,11 @@ class solid(shape):
             self.shape = ss
         elif isinstance(ss, _TopoDS.TopoDS_Shape):
             if _raw_type(ss) == 'solid':
-                self.shape = _TopoDS.TopoDS_solid(ss)
+                self.shape = _TopoDS_solid(ss)
             elif _raw_type(ss) == 'compound':
-                self.shape = _TopoDS.TopoDS_compound(ss)
+                self.shape = _TopoDS_compound(ss)
             elif _raw_type(ss) == 'compsolid':
-                self.shape = _TopoDS.TopoDS_compsolid(ss)
+                self.shape = _TopoDS_compsolid(ss)
             else:
                 raise TypeError
         else:
@@ -1945,8 +1948,7 @@ class solid(shape):
 
     def center(self):
         g1 = _GProp_GProps()
-        g2 = _BRepGProp()
-        g2.VolumeProperties(self.shape, g1)
+        _brepgprop_VolumeProperties(self.shape, g1)
         p = g1.CentreOfMass()
         return (p.X(), p.Y(), p.Z())
 
@@ -2075,8 +2077,7 @@ class solid(shape):
         Returns the volume of the solid
         """
         g1 = _GProp_GProps()
-        g2 = _BRepGProp()
-        g2.VolumeProperties(self.shape, g1)
+        _brepgprop_VolumeProperties(self.shape, g1)
         return g1.Mass()  # Returns volume when density hasn't been set
 
     def simplify(self, skip_edges=0, skip_faces=0, skip_fits=0,
@@ -2276,7 +2277,7 @@ def arc(rad, start_angle, end_angle):
                 _gp.gp_Circ(_gp.gp_Ax2(_gp.gp_Pnt(0.0, 0.0, 0.0),
                                        _gp.gp_Dir(0.0, 0.0, 1.0)),
                             rad),
-                start_angle, end_angle, 0).Value()).Edge())
+                start_angle, end_angle, False).Value()).Edge())
 
 
 def arc_ellipse(rad1, rad2, start_angle, end_angle):
@@ -2295,7 +2296,7 @@ def arc_ellipse(rad1, rad2, start_angle, end_angle):
                 _gp.gp_Elips(_gp.gp_Ax2(_gp.gp_Pnt(0.0, 0.0, 0.0),
                                         _gp.gp_Dir(0.0, 0.0, 1.0)),
                              rad1, rad2),
-                start_angle, end_angle, 0).Value()).Edge())
+                start_angle, end_angle, False).Value()).Edge())
 
 
 def spline(pts, **options):
@@ -2761,7 +2762,7 @@ def revol(s, pabout, pdir, angle):
     """
     b = _BRepPrimAPI.BRepPrimAPI_MakeRevol(
         s.shape, _gp.gp_Ax1(_gp.gp_Pnt(pabout[0], pabout[1], pabout[2]),
-                            _gp.gp_Dir(pdir[0], pdir[1], pdir[2])), angle, 1)
+                            _gp.gp_Dir(pdir[0], pdir[1], pdir[2])), angle, True)
     b.Build()
     if s.stype == 'vertex':
         return edge(b.Shape())
@@ -2897,11 +2898,11 @@ def pipe(profile, spine, continuous=False, transition='sharp',
         if 'contact' in options:
             contact = options['contact']
         else:
-            contact = 0
+            contact = False
         if 'correct' in options:
             correct = options['correct']
         else:
-            correct = 0
+            correct = False
         if isinstance(profile, list):
             for p in profile:
                 b.Add(p.shape, contact, correct)
@@ -2950,7 +2951,7 @@ def helical_solid(profile, rad, angle, turns):
                                  (count * rad * _math.pi / 2 *
                                   _math.tan(angle))))
         profiles.append(local_profile)
-    quarter_thread = pipe(profiles, spine, 0)
+    quarter_thread = pipe(profiles, spine, False)
 
     # Spin and translate the quarter into the full
     retval = quarter_thread.copy()
@@ -2965,7 +2966,7 @@ def helical_solid(profile, rad, angle, turns):
 
 # Useful functions that return arbitrary shapes
 
-def offset(s1, dist, tolerance=1e-3, join='arc'):
+def offset(s1, dist, tolerance=1e-3, join='arc', mode='skin'):
     """
     Returns a list of solids which compose the offset from a solid
     or a list of faces which compose the offset from a face
@@ -2976,10 +2977,12 @@ def offset(s1, dist, tolerance=1e-3, join='arc'):
     j = {'arc': _GeomAbs.GeomAbs_Arc,
          'tan': _GeomAbs.GeomAbs_Tangent,
          'int': _GeomAbs.GeomAbs_Intersection}[join]
-
+    k = {'skin': _BRepOffset.BRepOffset_Skin,
+         'pipe': _BRepOffset.BRepOffset_Pipe,
+         'rectoverso': _BRepOffset.BRepOffset_RectoVerso}[mode]
     if s1.stype == 'solid':
         b = _BRepOffsetAPI.BRepOffsetAPI_MakeOffsetShape(
-                s1.shape, dist, tolerance, False, False, j)
+                s1.shape, dist, tolerance, k, False, False, j)
         raw_shape = b.Shape()
         ss = []
         if _raw_type(raw_shape) == 'compound':
@@ -2996,8 +2999,7 @@ def offset(s1, dist, tolerance=1e-3, join='arc'):
     elif s1.stype == 'face':
         s1.shape.Orientation(_TopAbs.TopAbs_FORWARD)
         rawf = _TopoDS_face(s1.shape)
-        brt = _BRep_Tool()
-        surf = brt.Surface(rawf)
+        surf = _BRep_Tool_Surface(rawf)
         b = _BRepOffsetAPI.BRepOffsetAPI_MakeOffset(rawf, j)
         b.Perform(dist)
         raw_shape = b.Shape()
