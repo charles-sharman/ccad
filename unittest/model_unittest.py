@@ -9,7 +9,7 @@ Comments that separate blocks of model code are included here.
 
 Author
 ------
-Charles Sharman
+View AUTHORS.
 
 License
 -------

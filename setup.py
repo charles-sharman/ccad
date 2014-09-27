@@ -6,7 +6,7 @@ ccad.
 
 Author
 ------
-Charles Sharman
+View AUTHORS.
 
 License
 -------

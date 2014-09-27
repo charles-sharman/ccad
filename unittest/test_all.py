@@ -5,7 +5,7 @@ ccad unittest.  View ../model.py for a full description of ccad.
 
 Author
 ------
-Charles Sharman
+View AUTHORS.
 
 License
 -------
