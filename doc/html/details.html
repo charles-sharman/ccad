@@ -159,16 +159,16 @@ that directory to your PYTHONPATH.  That, at least, will get you going.</p>
 </div>
 <div class="section" id="importing">
 <h2>Importing<a class="headerlink" href="#importing" title="Permalink to this headline">¶</a></h2>
-<p>ccad consists of two modules: <strong>model</strong> and <strong>display</strong>.  The
-command:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">ccad</span>
+<p>ccad consists of two modules: <strong>model</strong> and <strong>display</strong>.  As the names
+suggest, <strong>model</strong> models shapes, and <strong>display</strong> displays shapes.
+Usually, you import both at the front of your program:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">ccad.model</span> <span class="kn">as</span> <span class="nn">cm</span>
+<span class="kn">import</span> <span class="nn">ccad.display</span> <span class="kn">as</span> <span class="nn">cd</span>
 </pre></div>
 </div>
-<p>imports both modules in * form, making all their contents relative to
-<strong>ccad</strong>:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">ccad</span>
-<span class="n">s1</span> <span class="o">=</span> <span class="n">ccad</span><span class="o">.</span><span class="n">box</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span>
-<span class="n">v1</span> <span class="o">=</span> <span class="n">ccad</span><span class="o">.</span><span class="n">view</span><span class="p">()</span>
+<p>Then, you may model and display:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">s1</span> <span class="o">=</span> <span class="n">cm</span><span class="o">.</span><span class="n">box</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span>
+<span class="n">v1</span> <span class="o">=</span> <span class="n">cd</span><span class="o">.</span><span class="n">view</span><span class="p">()</span>
 <span class="n">v1</span><span class="o">.</span><span class="n">display</span><span class="p">(</span><span class="n">s1</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -177,17 +177,6 @@ case, the <strong>model</strong> module can be imported alone:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">ccad.model</span> <span class="kn">as</span> <span class="nn">cm</span>
 </pre></div>
 </div>
-<p>Finally, if you prefer to keep the modules separate, you can import
-each one separately:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">ccad.model</span> <span class="kn">as</span> <span class="nn">cm</span>
-<span class="kn">import</span> <span class="nn">ccad.display</span> <span class="kn">as</span> <span class="nn">cd</span>
-
-<span class="n">s1</span> <span class="o">=</span> <span class="n">cm</span><span class="o">.</span><span class="n">box</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span>
-<span class="n">v1</span> <span class="o">=</span> <span class="n">cd</span><span class="o">.</span><span class="n">view</span><span class="p">()</span>
-<span class="n">v1</span><span class="o">.</span><span class="n">display</span><span class="p">(</span><span class="n">s1</span><span class="p">)</span>
-</pre></div>
-</div>
-<p>The rest of this document assumes you use <strong>import ccad</strong>.</p>
 </div>
 </div>
 

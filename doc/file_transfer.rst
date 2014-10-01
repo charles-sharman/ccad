@@ -16,7 +16,7 @@ format::
 
 ccad also offers the function from_brep to import a .brep file::
 
-  s1 = ccad.from_brep('sphere.brep')
+  s1 = cm.from_brep('sphere.brep')
 
 to_iges / from_iges
 -------------------
@@ -28,7 +28,7 @@ All shapes offer a to_iges method to store shapes in IGES format::
 
 ccad also offers the function from_iges to import an IGES file::
 
-  s1 = ccad.from_iges('sphere.igs')
+  s1 = cm.from_iges('sphere.igs')
 
 There is one slight nuance to this example: the shape type changed::
 
@@ -38,7 +38,7 @@ There is one slight nuance to this example: the shape type changed::
 To fix, use the *brep_mode* pass parameter::
 
   s1.to_iges('sphere.igs', brep_mode = 1)
-  s1 = ccad.from_iges('sphere.igs')
+  s1 = cm.from_iges('sphere.igs')
   s1.stype
   'solid'
 
@@ -52,7 +52,7 @@ All shapes offer a to_step method to store shapes in STEP format::
 
 ccad also offers the function from_step to import a STEP file::
 
-  s1 = ccad.from_step('sphere.stp')
+  s1 = cm.from_step('sphere.stp')
 
 to_stl
 ------
@@ -70,7 +70,7 @@ from_svg
 ccad offers a from_svg function to import a two dimensional SVG file.
 It converts each svg path into a wire and returns a list of wires::
 
-  ws = ccad.from_svg('logo.svg')
+  ws = cm.from_svg('logo.svg')
   for w in ws:
       view1.display(w)
 

@@ -4,8 +4,8 @@ Boolean Operations
 Boolean operations operate on two solids.  The following shapes are
 used in the following examples::
 
-  s1 = ccad.sphere(1.0)
-  s2 = ccad.box(1.0, 2.0, 3.0)
+  s1 = cm.sphere(1.0)
+  s2 = cm.box(1.0, 2.0, 3.0)
 
 **s3** is the derived shape.
 
@@ -19,7 +19,7 @@ fuses **s1** and **s2**::
 
 or::
 
-  s3 = ccad.fuse(s1, s2)
+  s3 = cm.fuse(s1, s2)
 
 .. image:: boolean_fuse.png
 
@@ -33,7 +33,7 @@ cuts **s2** from **s1**::
 
 or::
 
-  s3 = ccad.cut(s1, s2)
+  s3 = cm.cut(s1, s2)
 
 .. image:: boolean_cut.png
 
@@ -47,7 +47,7 @@ lines below finds the common portions of **s1** and **s2**::
 
 or::
 
-  s3 = ccad.common(s1, s2)
+  s3 = cm.common(s1, s2)
 
 .. image:: boolean_common.png
 
@@ -60,10 +60,10 @@ at a coincident face.  Unfortunately, you need to know the face
 indices that must merge.  Read more about finding face indices in the
 Display or Logging sections::
 
-  s1 = ccad.box(1.0, 2.0, 3.0)
-  s2 = ccad.box(1.0, 1.0, 1.0)
+  s1 = cm.box(1.0, 2.0, 3.0)
+  s2 = cm.box(1.0, 1.0, 1.0)
   s2.translate((1.0, 0.5, 1.0))
-  s3 = ccad.glue(s1, s2, [(1, 0)])
+  s3 = cm.glue(s1, s2, [(1, 0)])
 
 .. image:: boolean_glue.png
 

@@ -12,7 +12,7 @@ display function on each, then starts the viewer:
 If you've read about modelling, you should understand the listing up
 to the view line::
 
-  v1 = ccad.view()
+  v1 = cd.view()
 
 which instantiates a ccad viewing window.  The next line::
 
@@ -24,7 +24,7 @@ displays s1 in the v1 window.  And::
 
 displays s2 in the v1 window.  The final line::
 
-  ccad.start()
+  cd.start()
 
 starts the viewer.  Once you start the viewer, the program is locked
 until you exit the viewer.  Usually, you want to make this the last

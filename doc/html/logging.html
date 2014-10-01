@@ -140,7 +140,7 @@ categories before.  They&#8217;re below.</p>
 <h3>copy<a class="headerlink" href="#copy" title="Permalink to this headline">¶</a></h3>
 <p>All shapes offer a copy method.  copy returns a copy of the shape.
 The following example makes <strong>s2</strong> a new copy of <strong>s1</strong>:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">s1</span> <span class="o">=</span> <span class="n">ccad</span><span class="o">.</span><span class="n">box</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">s1</span> <span class="o">=</span> <span class="n">cm</span><span class="o">.</span><span class="n">box</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">)</span>
 <span class="n">s2</span> <span class="o">=</span> <span class="n">s1</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -149,7 +149,7 @@ The following example makes <strong>s2</strong> a new copy of <strong>s1</strong
 <h3>subshapes<a class="headerlink" href="#subshapes" title="Permalink to this headline">¶</a></h3>
 <p>subshapes reports the shapes of a specific type that make up a shape.
 The following example sets <strong>edges</strong> to a list of the edges in <strong>s1</strong>:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">s1</span> <span class="o">=</span> <span class="n">ccad</span><span class="o">.</span><span class="n">box</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">s1</span> <span class="o">=</span> <span class="n">cm</span><span class="o">.</span><span class="n">box</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">)</span>
 <span class="n">edges</span> <span class="o">=</span> <span class="n">s1</span><span class="o">.</span><span class="n">subshapes</span><span class="p">(</span><span class="s">&#39;edge&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -160,7 +160,7 @@ The following example sets <strong>edges</strong> to a list of the edges in <str
 <p>bounds places an imaginary box around the shape and returns a 6-tuple
 that describes the minimum and maximum (x, y, z) boundaries of the
 box:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">s1</span> <span class="o">=</span> <span class="n">ccad</span><span class="o">.</span><span class="n">box</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">s1</span> <span class="o">=</span> <span class="n">cm</span><span class="o">.</span><span class="n">box</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">)</span>
 <span class="n">s1</span><span class="o">.</span><span class="n">bounds</span><span class="p">()</span>
 <span class="p">(</span><span class="o">-</span><span class="mf">9.9999999999999995e-08</span><span class="p">,</span> <span class="o">-</span><span class="mf">9.9999999999999995e-08</span><span class="p">,</span> <span class="o">-</span><span class="mf">9.9999999999999995e-08</span><span class="p">,</span>
 <span class="mf">1.0000001000000001</span><span class="p">,</span> <span class="mf">2.0000000999999998</span><span class="p">,</span> <span class="mf">3.0000000999999998</span><span class="p">)</span>
@@ -170,7 +170,7 @@ box:</p>
 <div class="section" id="center">
 <h3>center<a class="headerlink" href="#center" title="Permalink to this headline">¶</a></h3>
 <p>center returns the center of the shape:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">s1</span> <span class="o">=</span> <span class="n">ccad</span><span class="o">.</span><span class="n">box</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">s1</span> <span class="o">=</span> <span class="n">cm</span><span class="o">.</span><span class="n">box</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">)</span>
 <span class="n">s1</span><span class="o">.</span><span class="n">center</span><span class="p">()</span>
 <span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">)</span>
 </pre></div>
@@ -179,7 +179,7 @@ box:</p>
 <div class="section" id="subcenters">
 <h3>subcenters<a class="headerlink" href="#subcenters" title="Permalink to this headline">¶</a></h3>
 <p>subcenters returns a list of the centers of the subshapes of a shape:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">s1</span> <span class="o">=</span> <span class="n">ccad</span><span class="o">.</span><span class="n">box</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">s1</span> <span class="o">=</span> <span class="n">cm</span><span class="o">.</span><span class="n">box</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">)</span>
 <span class="n">s1</span><span class="o">.</span><span class="n">subcenters</span><span class="p">(</span><span class="s">&#39;edge&#39;</span><span class="p">)</span>
 <span class="p">[(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">),</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">),</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">),</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
 <span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">),</span> <span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">),</span> <span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">),</span> <span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
@@ -191,7 +191,7 @@ box:</p>
 <h3>check<a class="headerlink" href="#check" title="Permalink to this headline">¶</a></h3>
 <p>check performs an OCC BRep check on the shape to make sure there&#8217;s
 nothing wrong with it.  It returns 1 if it&#8217;s okay:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">s1</span> <span class="o">=</span> <span class="n">ccad</span><span class="o">.</span><span class="n">box</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">s1</span> <span class="o">=</span> <span class="n">cm</span><span class="o">.</span><span class="n">box</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">)</span>
 <span class="n">s1</span><span class="o">.</span><span class="n">check</span><span class="p">()</span>
 <span class="mi">1</span>
 </pre></div>
@@ -203,7 +203,7 @@ nothing wrong with it.  It returns 1 if it&#8217;s okay:</p>
 doesn&#8217;t.  It&#8217;s usually best to find out what caused the shape to be
 corrupted in the first place and fix that.  It does nothing if the
 shape&#8217;s okay:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">s1</span> <span class="o">=</span> <span class="n">ccad</span><span class="o">.</span><span class="n">box</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">s1</span> <span class="o">=</span> <span class="n">cm</span><span class="o">.</span><span class="n">box</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">)</span>
 <span class="n">s1</span><span class="o">.</span><span class="n">fix</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -212,7 +212,7 @@ shape&#8217;s okay:</p>
 <h3>nearest<a class="headerlink" href="#nearest" title="Permalink to this headline">¶</a></h3>
 <p>nearest returns the index of the subshape whose center is closest to a
 passed position.  It operates on a list of positions:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">s1</span> <span class="o">=</span> <span class="n">ccad</span><span class="o">.</span><span class="n">box</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">s1</span> <span class="o">=</span> <span class="n">cm</span><span class="o">.</span><span class="n">box</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">)</span>
 <span class="n">s1</span><span class="o">.</span><span class="n">nearest</span><span class="p">(</span><span class="s">&#39;edge&#39;</span><span class="p">,</span> <span class="p">[(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">),</span> <span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)])</span>
 <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">7</span><span class="p">]</span>
 </pre></div>
@@ -225,7 +225,7 @@ subcenters call above.</p>
 <p>subtolerance returns the min, average, and max tolerance on every
 subshape.  When called with &#8216;all&#8217;, it iterates through all subshape
 types:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">s1</span> <span class="o">=</span> <span class="n">ccad</span><span class="o">.</span><span class="n">box</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">s1</span> <span class="o">=</span> <span class="n">cm</span><span class="o">.</span><span class="n">box</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">)</span>
 <span class="n">s1</span><span class="o">.</span><span class="n">subtolerance</span><span class="p">(</span><span class="s">&#39;edge&#39;</span><span class="p">)</span>
 <span class="p">(</span><span class="mf">1.0001000025000001e-07</span><span class="p">,</span> <span class="mf">1.0001000025000002e-07</span><span class="p">,</span> <span class="mf">1.0001000025000001e-07</span><span class="p">)</span>
 </pre></div>
@@ -236,7 +236,7 @@ which returns the tolerance of that shape itself.</p>
 <div class="section" id="dump">
 <h3>dump<a class="headerlink" href="#dump" title="Permalink to this headline">¶</a></h3>
 <p>dump returns the index, center, and tolerance of every subshape:</p>
-<div class="highlight-python"><pre>s1 = ccad.box(1.0, 2.0, 3.0)
+<div class="highlight-python"><pre>s1 = cm.box(1.0, 2.0, 3.0)
 s1.dump()
 shell0 location: (0.500000,1.000000,1.500000)
 face0 location: (0.000000,1.000000,1.500000) tolerance: 1.0000e-07
@@ -284,7 +284,7 @@ vertex7 location: (1.000000,2.000000,0.000000) tolerance: 1.0000e-07</pre>
 <div class="section" id="type">
 <h3>type<a class="headerlink" href="#type" title="Permalink to this headline">¶</a></h3>
 <p>type returns the type of edge:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">e1</span> <span class="o">=</span> <span class="n">ccad</span><span class="o">.</span><span class="n">arc_ellipse</span><span class="p">(</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">e1</span> <span class="o">=</span> <span class="n">cm</span><span class="o">.</span><span class="n">arc_ellipse</span><span class="p">(</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span>
 <span class="n">e1</span><span class="o">.</span><span class="n">type</span><span class="p">()</span>
 <span class="s">&#39;ellipse&#39;</span>
 </pre></div>
@@ -293,7 +293,7 @@ vertex7 location: (1.000000,2.000000,0.000000) tolerance: 1.0000e-07</pre>
 <div class="section" id="length">
 <h3>length<a class="headerlink" href="#length" title="Permalink to this headline">¶</a></h3>
 <p>length returns the length of the edge:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">e1</span> <span class="o">=</span> <span class="n">ccad</span><span class="o">.</span><span class="n">circle</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">e1</span> <span class="o">=</span> <span class="n">cm</span><span class="o">.</span><span class="n">circle</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span>
 <span class="n">e1</span><span class="o">.</span><span class="n">length</span><span class="p">()</span>
 <span class="mf">6.2831853071795862</span>
 </pre></div>
@@ -302,7 +302,7 @@ vertex7 location: (1.000000,2.000000,0.000000) tolerance: 1.0000e-07</pre>
 <div class="section" id="poly">
 <h3>poly<a class="headerlink" href="#poly" title="Permalink to this headline">¶</a></h3>
 <p>poly returns a polyline approximation to an edge:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">e1</span> <span class="o">=</span> <span class="n">ccad</span><span class="o">.</span><span class="n">arc_ellipse</span><span class="p">(</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">e1</span> <span class="o">=</span> <span class="n">cm</span><span class="o">.</span><span class="n">arc_ellipse</span><span class="p">(</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span>
 <span class="n">e1</span><span class="o">.</span><span class="n">poly</span><span class="p">()</span>
 <span class="p">[(</span><span class="o">-</span><span class="mf">3.6738190614671318e-16</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
 <span class="p">(</span><span class="mf">0.15691819145569041</span><span class="p">,</span> <span class="mf">0.99691733373312796</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
@@ -358,12 +358,12 @@ approximation to a wire.</p>
 <h3>fillet<a class="headerlink" href="#fillet" title="Permalink to this headline">¶</a></h3>
 <p>fillet allows you to fillet a face at passed vertices.  The following
 example fillets the upper right corner and lower left corner of a square:</p>
-<div class="highlight-python"><pre>w1 = ccad.polygon([(-1.0, -1.0, 0.0),
+<div class="highlight-python"><pre>w1 = cm.polygon([(-1.0, -1.0, 0.0),
                    (1.0, -1.0, 0.0),
                    (1.0, 1.0, 0.0),
                    (-1.0, 1.0, 0.0),
                    (-1.0, -1.0, 0.0)])
-f1 = ccad.plane(w1)
+f1 = cm.plane(w1)
 f1.fillet(0.25, [(1.0, 1.0, 0.0), (-1.0, -1.0, 0.0)]))</pre>
 </div>
 <img alt="_images/logging_face_fillet.png" src="_images/logging_face_fillet.png" />
@@ -379,7 +379,7 @@ f1.fillet(0.25, [(1.0, 1.0, 0.0), (-1.0, -1.0, 0.0)]))</pre>
 <div class="section" id="id4">
 <h3>type<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h3>
 <p>type returns the type of mathematical surface a face sits on:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">s1</span> <span class="o">=</span> <span class="n">ccad</span><span class="o">.</span><span class="n">cone</span><span class="p">(</span><span class="mf">4.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">s1</span> <span class="o">=</span> <span class="n">cm</span><span class="o">.</span><span class="n">cone</span><span class="p">(</span><span class="mf">4.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">)</span>
 <span class="n">faces</span> <span class="o">=</span> <span class="n">s1</span><span class="o">.</span><span class="n">subshapes</span><span class="p">(</span><span class="s">&#39;face&#39;</span><span class="p">)</span>
 <span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">type</span><span class="p">(),</span> <span class="n">faces</span><span class="p">)</span>
 <span class="p">[</span><span class="s">&#39;cone&#39;</span><span class="p">,</span> <span class="s">&#39;plane&#39;</span><span class="p">,</span> <span class="s">&#39;plane&#39;</span><span class="p">]</span>
@@ -389,7 +389,7 @@ f1.fillet(0.25, [(1.0, 1.0, 0.0), (-1.0, -1.0, 0.0)]))</pre>
 <div class="section" id="area">
 <h3>area<a class="headerlink" href="#area" title="Permalink to this headline">¶</a></h3>
 <p>area returns the area of the face:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">f1</span> <span class="o">=</span> <span class="n">ccad</span><span class="o">.</span><span class="n">plane</span><span class="p">(</span><span class="n">cm</span><span class="o">.</span><span class="n">wire</span><span class="p">([</span><span class="n">ccad</span><span class="o">.</span><span class="n">circle</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)]))</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">f1</span> <span class="o">=</span> <span class="n">cm</span><span class="o">.</span><span class="n">plane</span><span class="p">(</span><span class="n">cm</span><span class="o">.</span><span class="n">wire</span><span class="p">([</span><span class="n">cm</span><span class="o">.</span><span class="n">circle</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)]))</span>
 <span class="n">f1</span><span class="o">.</span><span class="n">area</span><span class="p">()</span>
 <span class="mf">3.141592653589794</span>
 </pre></div>
@@ -413,7 +413,7 @@ into a solid.</p>
 <h3>fillet<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h3>
 <p>fillet allows you to fillet edges.  The following example fillets all
 the edges on the positive x-side of the cube:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">s1</span> <span class="o">=</span> <span class="n">ccad</span><span class="o">.</span><span class="n">box</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">s1</span> <span class="o">=</span> <span class="n">cm</span><span class="o">.</span><span class="n">box</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
 <span class="n">s1</span><span class="o">.</span><span class="n">fillet</span><span class="p">(</span><span class="mf">0.25</span><span class="p">,</span> <span class="p">[(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
                  <span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">),</span>
                  <span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">),</span>
@@ -448,7 +448,7 @@ to fail when the number of fillets got large.</li>
 <h3>chamfer<a class="headerlink" href="#chamfer" title="Permalink to this headline">¶</a></h3>
 <p>chamfer allows you to chamfer edges.  The following example chamfers
 three edges in a cube:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">s1</span> <span class="o">=</span> <span class="n">ccad</span><span class="o">.</span><span class="n">box</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">s1</span> <span class="o">=</span> <span class="n">cm</span><span class="o">.</span><span class="n">box</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
 <span class="n">s1</span><span class="o">.</span><span class="n">chamfer</span><span class="p">(</span><span class="mf">0.25</span><span class="p">,</span> <span class="p">[(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
                   <span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">),</span>
                   <span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">),</span>
@@ -461,7 +461,7 @@ three edges in a cube:</p>
 <h3>draft<a class="headerlink" href="#draft" title="Permalink to this headline">¶</a></h3>
 <p>draft places a draft on the faces specified.  The following example
 drafts the vertical edges of a cube:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">s1</span> <span class="o">=</span> <span class="n">ccad</span><span class="o">.</span><span class="n">box</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">s1</span> <span class="o">=</span> <span class="n">cm</span><span class="o">.</span><span class="n">box</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
 <span class="n">s1</span><span class="o">.</span><span class="n">translate</span><span class="p">((</span><span class="o">-</span><span class="mf">0.5</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">))</span>
 <span class="n">face_centers</span> <span class="o">=</span> <span class="n">s1</span><span class="o">.</span><span class="n">subcenters</span><span class="p">(</span><span class="s">&#39;face&#39;</span><span class="p">)</span>
 <span class="n">to_draft</span> <span class="o">=</span> <span class="p">[]</span>
@@ -476,7 +476,7 @@ drafts the vertical edges of a cube:</p>
 <div class="section" id="volume">
 <h3>volume<a class="headerlink" href="#volume" title="Permalink to this headline">¶</a></h3>
 <p>volume returns the volume in cubic units of the solid:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">s1</span> <span class="o">=</span> <span class="n">ccad</span><span class="o">.</span><span class="n">box</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">s1</span> <span class="o">=</span> <span class="n">cm</span><span class="o">.</span><span class="n">box</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">)</span>
 <span class="n">s1</span><span class="o">.</span><span class="n">volume</span><span class="p">()</span>
 <span class="mf">6.0</span>
 </pre></div>
@@ -487,7 +487,7 @@ drafts the vertical edges of a cube:</p>
 <p>Boolean operations can often leave more faces than are necessary,
 particularly when faces are coincident.  OCC hasn&#8217;t fixed this issue,
 so I fixed it, although my implementation won&#8217;t fix all cases:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">s1</span> <span class="o">=</span> <span class="n">ccad</span><span class="o">.</span><span class="n">box</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">s1</span> <span class="o">=</span> <span class="n">cm</span><span class="o">.</span><span class="n">box</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
 <span class="n">s2</span> <span class="o">=</span> <span class="n">s1</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 <span class="n">s2</span><span class="o">.</span><span class="n">translate</span><span class="p">((</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">))</span>
 <span class="n">s3</span> <span class="o">=</span> <span class="n">s1</span> <span class="o">-</span> <span class="n">s2</span>

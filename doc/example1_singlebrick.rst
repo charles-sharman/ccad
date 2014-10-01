@@ -4,18 +4,18 @@ A Single Brick
 First, I'll start by importing the required packages::
 
   import math
-  import ccad
+  import ccad.model as cm
 
 Now, I'll define some dimensions for all bricks::
 
   unit = 5.0
   height = 10.0
-  knob_rad = 1.8 # radius of the brick knob for mating with other bricks
-  knob_draft = 5.0 # degrees of draft for the knob
+  knob_rad = 1.8  # radius of the brick knob for mating with other bricks
+  knob_draft = 5.0  # degrees of draft for the knob
   knob_height = 2.0
-  wall_thickness = 1.6 # plastic wall thickness
-  draft = 1.0 # degrees of draft on faces for plastic ejection
-  fillet_rad = 0.4 # the default radius to use for rounded edges
+  wall_thickness = 1.6  # plastic wall thickness
+  draft = 1.0  # degrees of draft on faces for plastic ejection
+  fillet_rad = 0.4  # the default radius to use for rounded edges
 
 In ipython, I set up the specific brick's dimensions.  Later, these
 will be pass parameters in a function::
@@ -29,12 +29,12 @@ ejection easier.  **loft* tends to be more robust than **draft** on
 arbitrary shapes, so I'll use that::
 
   dx = height * math.tan(math.radians(draft))
-  wbottom = ccad.rectangle(unit * xsize, unit * ysize)
-  wtop = ccad.rectangle(unit * xsize - 2*dx, unit * ysize - 2*dx)
+  wbottom = cm.rectangle(unit * xsize, unit * ysize)
+  wtop = cm.rectangle(unit * xsize - 2 * dx, unit * ysize - 2 * dx)
   wtop.translate((dx, dx, height))
-  brick = ccad.loft([wbottom, wtop], True)
+  brick = cm.loft([wbottom, wtop], True)
 
-  view1 = ccad.view()
+  view1 = cm.view()
   view1.display(brick)
 
 .. image:: example1_box.png
@@ -49,7 +49,7 @@ knob to aid in alignment by tapering it.  A cone would do nicely::
   drad = knob_height * math.tan(math.radians(knob_draft))
   knob_top_rad = knob_rad - drad
   knob_base_rad = knob_rad + drad
-  knob = ccad.cone(knob_base_rad, knob_top_rad, 2 * knob_height)
+  knob = cm.cone(knob_base_rad, knob_top_rad, 2 * knob_height)
   knob.translate((0.5 * unit, 0.5 * unit, height - knob_height))
 
 Notice the knob is higher than it needed to be, then offset.  Usually,
@@ -60,7 +60,7 @@ robust boolean operations.
 Now, I add the knob to the view to make sure I like the position.
 It's added in red::
 
-  view1.display(knob, color = (1.0, 0.0, 0.0))
+  view1.display(knob, color=(1.0, 0.0, 0.0))
 
 .. image:: example1_boxwknob.png
 
@@ -68,7 +68,7 @@ Now, I'll replicate the knob and fuse it with the brick::
 
   for x in range(xsize):
       for y in range(ysize):
-          brick = brick + ccad.translated(knob, (x * unit, y * unit, 0.0))
+          brick = brick + cm.translated(knob, (x * unit, y * unit, 0.0))
 
   view1.clear()
   view1.display(brick)
@@ -76,7 +76,7 @@ Now, I'll replicate the knob and fuse it with the brick::
 .. image:: example1_boxwknobs.png
 
 Note the use of the *function* form of translate here:
-**ccad.translated** versus the *method* form for wtop: **wtop.translate**.
+**cm.translated** versus the *method* form for wtop: **wtop.translate**.
 I use the function form when I want to *copy* a shape.  I use the
 method form when I want to *change* a shape.
 
@@ -93,23 +93,23 @@ called **brick.py**::
                  knob_rad, knob_height, knob_draft):
     
       dx = height * math.tan(math.radians(draft))
-      wbottom = ccad.rectangle(unit*xsize - 2*wall_offset,
-                               unit*ysize - 2*wall_offset)
-      wtop = ccad.rectangle(unit*xsize - 2*dx - 2*wall_offset,
-                            unit*ysize - 2*dx - 2*wall_offset)
+      wbottom = cm.rectangle(unit * xsize - 2 * wall_offset,
+                               unit * ysize - 2 * wall_offset)
+      wtop = cm.rectangle(unit * xsize - 2 * dx - 2 * wall_offset,
+                            unit * ysize - 2 * dx - 2 * wall_offset)
       wtop.translate((dx, dx, height))
-      brick = ccad.loft([wbottom, wtop], True)
+      brick = cm.loft([wbottom, wtop], True)
       brick.translate((wall_offset, wall_offset, 0.0))
 
       drad = knob_height * math.tan(math.radians(knob_draft))
       knob_top_rad = knob_rad - drad
       knob_base_rad = knob_rad + drad
-      knob = ccad.cone(knob_base_rad, knob_top_rad, 2 * knob_height)
+      knob = cm.cone(knob_base_rad, knob_top_rad, 2 * knob_height)
       knob.translate((0.5 * unit, 0.5 * unit, height - knob_height))
 
       for x in range(xsize):
           for y in range(ysize):
-              brick = brick + ccad.translated(knob, (x * unit, y * unit, 0.0))
+              brick = brick + cm.translated(knob, (x * unit, y * unit, 0.0))
 
       return brick
 
@@ -137,8 +137,8 @@ and the top walls::
   for count, edge_center in enumerate(outerbrick.subcenters('edge')):
       if (abs(edge_center[2]) < 0.1 or
           (abs(edge_center[2] - height) < 0.1 and
-           abs(edge_center[0] - 0.5*unit) % unit < 0.1 and
-           abs(edge_center[1] - 0.5*unit) % unit < 0.1)):
+           abs(edge_center[0] - (0.5 * unit)) % unit < 0.1 and
+           abs(edge_center[1] - (0.5 * unit)) % unit < 0.1)):
           pass
       else:
           to_fillet.append(count)
@@ -161,8 +161,8 @@ With the **solidbrick** function, I can now define the inside of the brick::
                                 unit, height - wall_thickness, draft,
                                 knob_rad - wall_thickness, knob_height,
                                 knob_draft)
-  base = ccad.box(2*unit*xsize, 2*unit*ysize, 1.0)
-  base.translate((-0.5*unit*xsize, -0.5*unit*ysize, -1.0))
+  base = cm.box(2 * unit * xsize, 2 * unit * ysize, 1.0)
+  base.translate((-0.5 * unit * xsize, -0.5 * unit * ysize, -1.0))
   innerbrick = innerbrick + base
 
   view1.clear()
@@ -177,8 +177,8 @@ perform the boolean cut.  Finally, I'll fillet **innerbrick**::
   for count, edge_center in enumerate(innerbrick.subcenters('edge')):
       if (abs(edge_center[2]) < 0.1 or
           (abs(edge_center[2] - (height - wall_thickness)) < 0.1 and
-           abs(edge_center[0] - 0.5*unit) % unit < 0.1 and
-           abs(edge_center[1] - 0.5*unit) % unit < 0.1)):
+           abs(edge_center[0] - (0.5 * unit)) % unit < 0.1 and
+           abs(edge_center[1] - (0.5 * unit)) % unit < 0.1)):
           to_fillet.append(count)
   innerbrick.fillet(fillet_rad, to_fillet)
 
@@ -206,10 +206,10 @@ I'm almost there.  I now only need the posts that sit between the
 knobs to add more holding force.  Like the knobs, I'll make the posts
 cones and fillet the tips::
 
-  post_rad = (math.sqrt(2.0)*unit - 2*knob_rad)/2.0
-  drad = (height - 0.5*wall_thickness) * math.tan(math.radians(draft))
+  post_rad = ((math.sqrt(2.0) * unit) - (2 * knob_rad)) / 2.0
+  drad = (height - (0.5 * wall_thickness)) * math.tan(math.radians(draft))
   post_base_rad = post_rad + drad
-  post = ccad.cone(post_rad, post_base_rad, height - 0.5*wall_thickness)
+  post = cm.cone(post_rad, post_base_rad, height - (0.5 * wall_thickness))
   post.fillet(fillet_rad, [(0.0, 0.0, 0.0)])
 
 .. image:: example1_post.png
@@ -220,9 +220,9 @@ one edge, the tip.
 
 Now, I translate it and add it to the brick::
 
-  post.translate((unit/2, unit/2, 0.0))
+  post.translate((unit, unit, 0.0))
   for x in range(xsize - 1):
       for y in range(ysize - 1):
-          brick = brick + ccad.translated(post, (x * unit, y * unit, 0.0))
+          brick = brick + cm.translated(post, (x * unit, y * unit, 0.0))
 
 .. image:: example1_brickpost.png

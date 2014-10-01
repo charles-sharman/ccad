@@ -100,7 +100,7 @@ following example creates a segment from the origin to the point
 (1.0, 0.0, 0.0):</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">pt1</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
 <span class="n">pt2</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
-<span class="n">e1</span> <span class="o">=</span> <span class="n">ccad</span><span class="o">.</span><span class="n">segment</span><span class="p">(</span><span class="n">pt1</span><span class="p">,</span> <span class="n">pt2</span><span class="p">)</span>
+<span class="n">e1</span> <span class="o">=</span> <span class="n">cm</span><span class="o">.</span><span class="n">segment</span><span class="p">(</span><span class="n">pt1</span><span class="p">,</span> <span class="n">pt2</span><span class="p">)</span>
 </pre></div>
 </div>
 <img alt="_images/edge_segment.png" src="_images/edge_segment.png" />
@@ -110,7 +110,7 @@ following example creates a segment from the origin to the point
 <p>An arc defines a portion of a circle.  The following example creates
 an arc centered on the origin of radius 1.0 that extends from 0.0
 radians to pi/2 radians:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">e1</span> <span class="o">=</span> <span class="n">ccad</span><span class="o">.</span><span class="n">arc</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">e1</span> <span class="o">=</span> <span class="n">cm</span><span class="o">.</span><span class="n">arc</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span>
 </pre></div>
 </div>
 <img alt="_images/edge_arc.png" src="_images/edge_arc.png" />
@@ -120,7 +120,7 @@ radians to pi/2 radians:</p>
 <p>An arc_ellipse defines a portion of an ellipse.  The following example
 creates an arc_ellipse centered on the origin with major radius 2.0,
 minor radius 1.0, and that extends from 0.0 radians to pi/2 radians:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">e1</span> <span class="o">=</span> <span class="n">ccad</span><span class="o">.</span><span class="n">arc_ellipse</span><span class="p">(</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">e1</span> <span class="o">=</span> <span class="n">cm</span><span class="o">.</span><span class="n">arc_ellipse</span><span class="p">(</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span>
 </pre></div>
 </div>
 <img alt="_images/edge_arc_ellipse.png" src="_images/edge_arc_ellipse.png" />
@@ -130,7 +130,7 @@ minor radius 1.0, and that extends from 0.0 radians to pi/2 radians:</p>
 <p>A spline defines a 3D spline fit to a series of passed points.  The
 following example creates a spline that passes through the points
 (0.0, 0.0, 0.0), (0.2, 0.1, 0.0), (0.5, 0.2, 0.0), (-0.5, 0.3, 0.0):</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">e1</span> <span class="o">=</span> <span class="n">ccad</span><span class="o">.</span><span class="n">spline</span><span class="p">([(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">e1</span> <span class="o">=</span> <span class="n">cm</span><span class="o">.</span><span class="n">spline</span><span class="p">([(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
                   <span class="p">(</span><span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
                   <span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
                   <span class="p">(</span><span class="o">-</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)])</span>
@@ -143,7 +143,7 @@ following example creates a spline that passes through the points
 <p>A bezier edge is an edge that passes from and to the endpoints.  The
 intermediate points shape the curve.  The following example creates a
 bezier that is the same as a quarter circle:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">e1</span> <span class="o">=</span> <span class="n">ccad</span><span class="o">.</span><span class="n">bezier</span><span class="p">([(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">e1</span> <span class="o">=</span> <span class="n">cm</span><span class="o">.</span><span class="n">bezier</span><span class="p">([(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
                   <span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
                   <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)],</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="o">/</span><span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">2.0</span><span class="p">),</span> <span class="mf">1.0</span><span class="p">])</span>
 </pre></div>
@@ -156,7 +156,7 @@ used in svg files.</p>
 <h2>circle<a class="headerlink" href="#circle" title="Permalink to this headline">¶</a></h2>
 <p>The following example creates a circle centered on the origin with
 radius 3.0:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">e1</span> <span class="o">=</span> <span class="n">ccad</span><span class="o">.</span><span class="n">circle</span><span class="p">(</span><span class="mf">3.0</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">e1</span> <span class="o">=</span> <span class="n">cm</span><span class="o">.</span><span class="n">circle</span><span class="p">(</span><span class="mf">3.0</span><span class="p">)</span>
 </pre></div>
 </div>
 <img alt="_images/edge_circle.png" src="_images/edge_circle.png" />
@@ -164,7 +164,7 @@ radius 3.0:</p>
 <div class="section" id="ellipse">
 <h2>ellipse<a class="headerlink" href="#ellipse" title="Permalink to this headline">¶</a></h2>
 <p>The following example creates an ellipse centered on the origin with major radius 2.0 and minor radius 1.0:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">e1</span> <span class="o">=</span> <span class="n">ccad</span><span class="o">.</span><span class="n">ellipse</span><span class="p">(</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">e1</span> <span class="o">=</span> <span class="n">cm</span><span class="o">.</span><span class="n">ellipse</span><span class="p">(</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
 </pre></div>
 </div>
 <img alt="_images/edge_ellipse.png" src="_images/edge_ellipse.png" />

@@ -26,7 +26,7 @@ View LICENSE for details.
 """
 
 # Globals
-version = '0.11'  # Change also in setup.py, doc/conf.py
+version = '0.12'  # Change also in setup.py, doc/conf.py
 interactive = True
 manager = 'qt'
 app = None
@@ -46,11 +46,12 @@ display.  Instead, you may use pythonocc's viewers.  ccad shapes may
 be displayed in pythonocc's viewers by using the .shape attribute.
 For example:
 
-    import ccad
+    import ccad.model as cm
     import OCC.Display.SimpleGui as SimpleGui
-    
-    s1 = ccad.sphere(1.0)
-    display, start_display, add_menu, add_function_to_menu = SimpleGui.init_display()
+
+    s1 = cm.sphere(1.0)
+    display, start_display, add_menu, add_function_to_menu = \
+        SimpleGui.init_display()
     display.DisplayShape(s1.shape, update = True)
     start_display()
 """
@@ -62,14 +63,15 @@ from OCC.BRepTools import BRepTools_WireExplorer as _BRepTools_WireExplorer
 from OCC.HLRAlgo import HLRAlgo_Projector as _HLRAlgo_Projector
 from OCC.HLRBRep import (HLRBRep_Algo as _HLRBRep_Algo,
                          HLRBRep_HLRToShape as _HLRBRep_HLRToShape)
-from OCC.TCollection import (TCollection_ExtendedString as 
+from OCC.TCollection import (TCollection_ExtendedString as
                              _TCollection_ExtendedString)
 from OCC.TopExp import TopExp_Explorer as _TopExp_Explorer
 from OCC.Visual3d import Visual3d_ViewOrientation as _Visual3d_ViewOrientation
 # Use lower level window routines for linux to allow multiple viewing
 # windows.  Doesn't work on other platforms.
 if _sys.platform.startswith('linux'):
-    from OCC.Xw import Xw_Window as _Xw_Window, Xw_WQ_3DQUALITY as _Xw_WQ_3DQUALITY
+    from OCC.Xw import (Xw_Window as _Xw_Window,
+                        Xw_WQ_3DQUALITY as _Xw_WQ_3DQUALITY)
 else:
     from OCC.Visualization import Display3d as _Display3d
 
@@ -140,7 +142,8 @@ class view_qt(_QtGui.QWidget):
         self.menubar.addMenu(file_menu)
 
         file_save = file_menu.addAction('&Save', self.save)
-        file_quit = file_menu.addAction('&Quit', self.quit, self.key_lookup('quit()'))
+        file_quit = file_menu.addAction('&Quit', self.quit,
+                                        self.key_lookup('quit()'))
 
         ### view
         view_menu = _QtGui.QMenu('&View', self)
@@ -149,47 +152,80 @@ class view_qt(_QtGui.QWidget):
         view_mode = _QtGui.QMenu('Mode', self)
         view_menu.addMenu(view_mode)
         view_mode_container = _QtGui.QActionGroup(self)
-        view_mode_wireframe = view_mode.addAction('Wireframe', self.mode_wireframe)
+        view_mode_wireframe = view_mode.addAction('Wireframe',
+                                                  self.mode_wireframe)
         view_mode_wireframe.setCheckable(True)
         view_mode_container.addAction(view_mode_wireframe)
         view_mode_shaded = view_mode.addAction('Shaded', self.mode_shaded)
         view_mode_shaded.setCheckable(True)
         view_mode_shaded.setChecked(True)
         view_mode_container.addAction(view_mode_shaded)
-        view_mode_hlr = view_mode.addAction('Hidden Line Removal', self.mode_hlr)
+        view_mode_hlr = view_mode.addAction('Hidden Line Removal',
+                                            self.mode_hlr)
         view_mode_hlr.setCheckable(True)
         view_mode_container.addAction(view_mode_hlr)
 
         view_side = _QtGui.QMenu('Side', self)
         view_menu.addMenu(view_side)
-        view_front = view_side.addAction('Front', lambda view='front': self.viewstandard(view), self.key_lookup('viewstandard("front")'))
-        view_top = view_side.addAction('Top', lambda view='top': self.viewstandard(view), self.key_lookup('viewstandard("top")'))
-        view_right = view_side.addAction('Right', lambda view='right': self.viewstandard(view), self.key_lookup('viewstandard("right")'))
-        view_back = view_side.addAction('Back', lambda view='back': self.viewstandard(view), self.key_lookup('viewstandard("back")'))
-        view_bottom = view_side.addAction('Bottom', lambda view='bottom': self.viewstandard(view), self.key_lookup('viewstandard("bottom")'))
-        view_left = view_side.addAction('Left', lambda view='left': self.viewstandard(view), self.key_lookup('viewstandard("left")'))
+        view_front = view_side.addAction(
+            'Front',
+            lambda view='front': self.viewstandard(view),
+            self.key_lookup('viewstandard("front")'))
+        view_top = view_side.addAction(
+            'Top',
+            lambda view='top': self.viewstandard(view),
+            self.key_lookup('viewstandard("top")'))
+        view_right = view_side.addAction(
+            'Right',
+            lambda view='right': self.viewstandard(view),
+            self.key_lookup('viewstandard("right")'))
+        view_back = view_side.addAction(
+            'Back',
+            lambda view='back': self.viewstandard(view),
+            self.key_lookup('viewstandard("back")'))
+        view_bottom = view_side.addAction(
+            'Bottom',
+            lambda view='bottom': self.viewstandard(view),
+            self.key_lookup('viewstandard("bottom")'))
+        view_left = view_side.addAction(
+            'Left',
+            lambda view='left': self.viewstandard(view),
+            self.key_lookup('viewstandard("left")'))
 
         view_orbit = _QtGui.QMenu('Orbit', self)
         view_menu.addMenu(view_orbit)
-        view_orbitup = view_orbit.addAction('Up', self.orbitup, self.key_lookup('orbitup()'))
-        view_orbitdown = view_orbit.addAction('Down', self.orbitdown, self.key_lookup('orbitdown()'))
-        view_orbitleft = view_orbit.addAction('Left', self.orbitleft, self.key_lookup('orbitleft()'))
-        view_orbitright = view_orbit.addAction('Right', self.orbitright, self.key_lookup('orbitright()'))
-        view_orbitccw = view_orbit.addAction('CCW', self.rotateccw, self.key_lookup('rotateccw()'))
-        view_orbitleft = view_orbit.addAction('CW', self.rotatecw, self.key_lookup('rotatecw()'))
+        view_orbitup = view_orbit.addAction('Up', self.orbitup,
+                                            self.key_lookup('orbitup()'))
+        view_orbitdown = view_orbit.addAction('Down', self.orbitdown,
+                                              self.key_lookup('orbitdown()'))
+        view_orbitleft = view_orbit.addAction('Left', self.orbitleft,
+                                              self.key_lookup('orbitleft()'))
+        view_orbitright = view_orbit.addAction('Right', self.orbitright,
+                                               self.key_lookup('orbitright()'))
+        view_orbitccw = view_orbit.addAction('CCW', self.rotateccw,
+                                             self.key_lookup('rotateccw()'))
+        view_orbitleft = view_orbit.addAction('CW', self.rotatecw,
+                                              self.key_lookup('rotatecw()'))
 
         view_pan = _QtGui.QMenu('Pan', self)
         view_menu.addMenu(view_pan)
-        view_panup = view_pan.addAction('Up', self.panup, self.key_lookup('panup()'))
-        view_pandown = view_pan.addAction('Down', self.pandown, self.key_lookup('pandown()'))
-        view_panleft = view_pan.addAction('Left', self.panleft, self.key_lookup('panleft()'))
-        view_panright = view_pan.addAction('Right', self.panright, self.key_lookup('panright()'))
+        view_panup = view_pan.addAction('Up', self.panup,
+                                        self.key_lookup('panup()'))
+        view_pandown = view_pan.addAction('Down', self.pandown,
+                                          self.key_lookup('pandown()'))
+        view_panleft = view_pan.addAction('Left', self.panleft,
+                                          self.key_lookup('panleft()'))
+        view_panright = view_pan.addAction('Right', self.panright,
+                                           self.key_lookup('panright()'))
 
         view_zoom = _QtGui.QMenu('Zoom', self)
         view_menu.addMenu(view_zoom)
-        view_zoomin = view_zoom.addAction('In', self.zoomin, self.key_lookup('zoomin()'))
-        view_zoomout = view_zoom.addAction('Out', self.zoomout, self.key_lookup('zoomout()'))
-        view_fit = view_zoom.addAction('Fit to Screen', self.fit, self.key_lookup('fit()'))
+        view_zoomin = view_zoom.addAction('In', self.zoomin,
+                                          self.key_lookup('zoomin()'))
+        view_zoomout = view_zoom.addAction('Out', self.zoomout,
+                                           self.key_lookup('zoomout()'))
+        view_fit = view_zoom.addAction('Fit to Screen', self.fit,
+                                       self.key_lookup('fit()'))
 
         view_menu.addAction('Redraw', self.redraw, self.key_lookup('redraw()'))
 
@@ -198,7 +234,8 @@ class view_qt(_QtGui.QWidget):
         self.menubar.addMenu(select_menu)
         select_container = _QtGui.QActionGroup(self)
 
-        select_vertex = select_menu.addAction('Select Vertex', self.select_vertex)
+        select_vertex = select_menu.addAction('Select Vertex',
+                                              self.select_vertex)
         select_vertex.setCheckable(True)
         select_container.addAction(select_vertex)
 
@@ -219,7 +256,9 @@ class view_qt(_QtGui.QWidget):
         select_shape.setChecked(True)
         select_container.addAction(select_vertex)
 
-        select_query = select_menu.addAction('Query', self.query, self.key_lookup('query()'))
+        select_query = select_menu.addAction('Query',
+                                             self.query,
+                                             self.key_lookup('query()'))
 
         ### help
         help_menu = _QtGui.QMenu('&Help', self)
@@ -243,11 +282,12 @@ class view_qt(_QtGui.QWidget):
 
         # Some Initial Values
         self.mode_shaded()
-        self.glarea.occ_view.SetBackgroundColor(_Quantity.Quantity_TOC_RGB, 0.0, 0.0, 0.0)
+        self.glarea.occ_view.SetBackgroundColor(
+            _Quantity.Quantity_TOC_RGB, 0.0, 0.0, 0.0)
         self.set_triedron(1)
 
         # Set up some initial states
-        self.morbit = _math.pi/12.0
+        self.morbit = _math.pi / 12.0
         self.set_scale(10.0)
 
     def add_menu(self, hierarchy):
@@ -341,7 +381,8 @@ class view_qt(_QtGui.QWidget):
         # ComputedModes are too slow to redraw, so disabled for them
         if (event.buttons() & _QtCore.Qt.MidButton) and \
                 not self.glarea.occ_view.ComputedMode():
-            if event.modifiers() & _QtCore.Qt.ShiftModifier:  # Mouse-Controlled Pan
+            # Mouse-Controlled Pan
+            if event.modifiers() & _QtCore.Qt.ShiftModifier:
                 self.glarea.occ_view.Pan(x - self.beginx, -y + self.beginy)
                 self.beginx, self.beginy = x, y
             else:  # Mouse-Controlled Orbit
@@ -382,9 +423,10 @@ class view_qt(_QtGui.QWidget):
         should be possible using the Gravity method from occ_view, but
         pythonocc doesn't implement OCC's Gravity.
         """
-        # The better way
-        #gravity = self.glarea.occ_view.Gravity() # pythonocc doesn't implement
-        #self.glarea.occ_view.Rotate(0.0, -self.morbit, 0.0, gravity[0], gravity[1], gravity[2])
+        # The better way (pythonocc doesn't implement)
+        #gravity = self.glarea.occ_view.Gravity()
+        #self.glarea.occ_view.Rotate(0.0, -self.morbit, 0.0,
+        #                            gravity[0], gravity[1], gravity[2])
         self.glarea.occ_view.Rotate(0.0, -self.morbit, 0.0)
 
     def panup(self, widget=None, rapid=False):
@@ -499,7 +541,10 @@ class view_qt(_QtGui.QWidget):
         vup, the vector from vcenter in scene coordinates that show straight up
         """
 
-        projection = _Visual3d_ViewOrientation(_Graphic3d.Graphic3d_Vertex(vcenter[0], vcenter[1], vcenter[2]), _Graphic3d.Graphic3d_Vector(vout[0], vout[1], vout[2]), _Graphic3d.Graphic3d_Vector(vup[0], vup[1], vup[2]))
+        projection = _Visual3d_ViewOrientation(
+            _Graphic3d.Graphic3d_Vertex(vcenter[0], vcenter[1], vcenter[2]),
+            _Graphic3d.Graphic3d_Vector(vout[0], vout[1], vout[2]),
+            _Graphic3d.Graphic3d_Vector(vup[0], vup[1], vup[2]))
         self.glarea.occ_view.SetViewOrientation(projection)
 
     def set_scale(self, scale):
@@ -533,7 +578,8 @@ class view_qt(_QtGui.QWidget):
         Sets the background color.
         color is a 3-tuple with each value from 0.0 to 1.0
         """
-        self.glarea.occ_view.SetBackgroundColor(_Quantity.Quantity_TOC_RGB, color[0], color[1], color[2])
+        self.glarea.occ_view.SetBackgroundColor(
+            _Quantity.Quantity_TOC_RGB, color[0], color[1], color[2])
 
     def set_foreground(self, color):
         """
@@ -542,7 +588,8 @@ class view_qt(_QtGui.QWidget):
         """
         self.foreground = color
 
-    def set_triedron(self, state, position='down_right', color=(1.0, 1.0, 1.0), size=0.08):
+    def set_triedron(self, state, position='down_right',
+                     color=(1.0, 1.0, 1.0), size=0.08):
         """
         Controls the triedron, the little x, y, z coordinate display.
 
@@ -554,20 +601,26 @@ class view_qt(_QtGui.QWidget):
         if not state:
             self.glarea.occ_view.TriedronErase()
         else:
-            local_position = {'down_right': _Aspect.Aspect_TOTP_RIGHT_LOWER,
-                              'down_left': _Aspect.Aspect_TOTP_LEFT_LOWER,
-                              'up_right': _Aspect.Aspect_TOTP_RIGHT_UPPER,
-                              'up_left': _Aspect.Aspect_TOTP_LEFT_UPPER}[position]
+            local_positions = {'down_right': _Aspect.Aspect_TOTP_RIGHT_LOWER,
+                               'down_left': _Aspect.Aspect_TOTP_LEFT_LOWER,
+                               'up_right': _Aspect.Aspect_TOTP_RIGHT_UPPER,
+                               'up_left': _Aspect.Aspect_TOTP_LEFT_UPPER}
+            local_position = local_positions[position]
             # Can't set Triedron color RGB-wise!
-            #qcolor = Quantity_Color(color[0], color[1], color[2], Quantity_TOC_RGB)
+            #qcolor = Quantity_Color(
+            #    color[0], color[1], color[2], Quantity_TOC_RGB)
             if color == (1.0, 1.0, 1.0):
                 qcolor = _Quantity.Quantity_NOC_WHITE
             else:
                 qcolor = _Quantity.Quantity_NOC_BLACK
-            self.glarea.occ_view.TriedronDisplay(local_position, qcolor, size, _V3d.V3d_WIREFRAME)
+            self.glarea.occ_view.TriedronDisplay(local_position,
+                                                 qcolor,
+                                                 size,
+                                                 _V3d.V3d_WIREFRAME)
 
     # Things to Show Functions
-    def display(self, shape, color=None, material='default', transparency=0.0, line_type='solid', line_width=1, logging=True):
+    def display(self, shape, color=None, material='default', transparency=0.0,
+                line_type='solid', line_width=1, logging=True):
         """
         Displays a ccad shape.
 
@@ -634,10 +687,14 @@ class view_qt(_QtGui.QWidget):
         handle_drawer = aisshape.Attributes()
         drawer = handle_drawer.GetObject()
 
-        qcolor = _Quantity.Quantity_Color(color[0], color[1], color[2], _Quantity.Quantity_TOC_RGB)
+        qcolor = _Quantity.Quantity_Color(color[0],
+                                          color[1],
+                                          color[2],
+                                          _Quantity.Quantity_TOC_RGB)
 
         # Set Point Type
-        aspect_point = _Prs3d.Prs3d_PointAspect(_Aspect.Aspect_TOM_PLUS, qcolor, 1.0)
+        aspect_point = _Prs3d.Prs3d_PointAspect(_Aspect.Aspect_TOM_PLUS,
+                                                qcolor, 1.0)
         handle_aspect_point = aspect_point.GetHandle()
         drawer.SetPointAspect(handle_aspect_point)
 
@@ -645,7 +702,9 @@ class view_qt(_QtGui.QWidget):
         local_line_type = {'solid': _Aspect.Aspect_TOL_SOLID,
                            'dash': _Aspect.Aspect_TOL_DASH,
                            'dot': _Aspect.Aspect_TOL_DOT}[line_type]
-        aspect_line = _Prs3d.Prs3d_LineAspect(qcolor, local_line_type, line_width)
+        aspect_line = _Prs3d.Prs3d_LineAspect(qcolor,
+                                              local_line_type,
+                                              line_width)
         handle_aspect_line = aspect_line.GetHandle()
         #drawer = self.glarea.occ_context.DefaultDrawer().GetObject()
         drawer.SetSeenLineAspect(handle_aspect_line)
@@ -656,26 +715,28 @@ class view_qt(_QtGui.QWidget):
         handle_aspect_shading = aspect_shading.GetHandle()
         #print 'shading color', color
         aspect_shading.SetColor(qcolor, _Aspect.Aspect_TOFM_BOTH_SIDE)
-        local_material = {'brass': _Graphic3d.Graphic3d_NOM_BRASS,
-                          'bronze': _Graphic3d.Graphic3d_NOM_BRONZE,
-                          'copper': _Graphic3d.Graphic3d_NOM_COPPER,
-                          'gold': _Graphic3d.Graphic3d_NOM_GOLD,
-                          'pewter': _Graphic3d.Graphic3d_NOM_PEWTER,
-                          'plaster': _Graphic3d.Graphic3d_NOM_PLASTER,
-                          'plastic': _Graphic3d.Graphic3d_NOM_PLASTIC,
-                          'silver': _Graphic3d.Graphic3d_NOM_SILVER,
-                          'steel': _Graphic3d.Graphic3d_NOM_STEEL,
-                          'stone': _Graphic3d.Graphic3d_NOM_STONE,
-                          'shiny_plastic': _Graphic3d.Graphic3d_NOM_SHINY_PLASTIC,
-                          'satin': _Graphic3d.Graphic3d_NOM_SATIN,
-                          'metallized': _Graphic3d.Graphic3d_NOM_METALIZED,
-                          'neon_gnc': _Graphic3d.Graphic3d_NOM_NEON_GNC,
-                          'chrome': _Graphic3d.Graphic3d_NOM_CHROME,
-                          'aluminum': _Graphic3d.Graphic3d_NOM_ALUMINIUM,
-                          'obsidian': _Graphic3d.Graphic3d_NOM_OBSIDIAN,
-                          'neon_phc': _Graphic3d.Graphic3d_NOM_NEON_PHC,
-                          'jade': _Graphic3d.Graphic3d_NOM_JADE,
-                          'default': _Graphic3d.Graphic3d_NOM_DEFAULT}[material]
+        local_materials = {'brass': _Graphic3d.Graphic3d_NOM_BRASS,
+                           'bronze': _Graphic3d.Graphic3d_NOM_BRONZE,
+                           'copper': _Graphic3d.Graphic3d_NOM_COPPER,
+                           'gold': _Graphic3d.Graphic3d_NOM_GOLD,
+                           'pewter': _Graphic3d.Graphic3d_NOM_PEWTER,
+                           'plaster': _Graphic3d.Graphic3d_NOM_PLASTER,
+                           'plastic': _Graphic3d.Graphic3d_NOM_PLASTIC,
+                           'silver': _Graphic3d.Graphic3d_NOM_SILVER,
+                           'steel': _Graphic3d.Graphic3d_NOM_STEEL,
+                           'stone': _Graphic3d.Graphic3d_NOM_STONE,
+                           'shiny_plastic': \
+                               _Graphic3d.Graphic3d_NOM_SHINY_PLASTIC,
+                           'satin': _Graphic3d.Graphic3d_NOM_SATIN,
+                           'metallized': _Graphic3d.Graphic3d_NOM_METALIZED,
+                           'neon_gnc': _Graphic3d.Graphic3d_NOM_NEON_GNC,
+                           'chrome': _Graphic3d.Graphic3d_NOM_CHROME,
+                           'aluminum': _Graphic3d.Graphic3d_NOM_ALUMINIUM,
+                           'obsidian': _Graphic3d.Graphic3d_NOM_OBSIDIAN,
+                           'neon_phc': _Graphic3d.Graphic3d_NOM_NEON_PHC,
+                           'jade': _Graphic3d.Graphic3d_NOM_JADE,
+                           'default': _Graphic3d.Graphic3d_NOM_DEFAULT}
+        local_material = local_materials[material]
         aspect_shading.SetMaterial(local_material)
         aspect_shading.SetTransparency(transparency)
         drawer.SetShadingAspect(handle_aspect_shading)
@@ -704,7 +765,8 @@ class view_qt(_QtGui.QWidget):
             ex_type = _TopAbs.TopAbs_VERTEX
         else:
             print 'Error: Unknown hash type', htype
-        if self.selected_shape.ShapeType == _TopAbs.TopAbs_WIRE and htype == 'edge':
+        if (self.selected_shape.ShapeType == _TopAbs.TopAbs_WIRE and
+            htype == 'edge'):
             ex = _BRepTools_WireExplorer(selected_shape)  # Ordered this way
         else:
             ex = _TopExp_Explorer(self.selected_shape, ex_type)
@@ -747,7 +809,9 @@ class view_qt(_QtGui.QWidget):
                 if index == -1:
                     self.status_bar.setText('Select shape first.')
                 else:
-                    status = self.selection_type + ' ' + str(index) + self.positions[index][0] + ' at (%.9f, %.9f, %.9f)' % self.positions[index][1]
+                    status = self.selection_type + ' ' + str(index) + \
+                        self.positions[index][0] + \
+                        ' at (%.9f, %.9f, %.9f)' % self.positions[index][1]
                     print status
                     self.status_bar.setText(status)
                 self.selection_index = index
@@ -837,7 +901,8 @@ class view_qt(_QtGui.QWidget):
             self.glarea.occ_context.SetDisplayMode(_AIS.AIS_ExactHLR)
 
         # Draws hidden lines
-        #presentation = Prs3d_LineAspect(Quantity_NOC_BLACK, Aspect_TOL_DASH, 3)
+        #presentation = Prs3d_LineAspect(
+        #    Quantity_NOC_BLACK, Aspect_TOL_DASH, 3)
         #self.glarea.occ_context.SetHiddenLineAspect(presentation.GetHandle())
         #self.glarea.occ_context.EnableDrawHiddenLine()
 
@@ -849,7 +914,13 @@ class view_qt(_QtGui.QWidget):
         self.clear(0)
         self.glarea.occ_view.SetViewOrientation(self.saved_projection)
         for display_shape in self.display_shapes:
-            self.display(display_shape['shape'], display_shape['color'], display_shape['material'], display_shape['transparency'], display_shape['line_type'], display_shape['line_width'], logging = 0)
+            self.display(display_shape['shape'],
+                         display_shape['color'],
+                         display_shape['material'],
+                         display_shape['transparency'],
+                         display_shape['line_type'],
+                         display_shape['line_width'],
+                         logging=0)
 
     def mode_drawing(self, widget=None):
         """
@@ -859,13 +930,17 @@ class view_qt(_QtGui.QWidget):
         pop up a separate window for it.
         """
         self.saved_projection = self.glarea.occ_view.ViewOrientation()
-        vcenter = self.saved_projection.ViewReferencePoint()  # Graphic3d_Vertex
+        # Graphic3d_Vertex
+        vcenter = self.saved_projection.ViewReferencePoint()
         vout = self.saved_projection.ViewReferencePlane()  # Graphic3d_Vector
         vup = self.saved_projection.ViewReferenceUp()  # Graphic3d_Vector
         vout_gp = _gp.gp_Vec(vout.X(), vout.Y(), vout.Z())
         vright = _gp.gp_Vec(vup.X(), vup.Y(), vup.Z())
         vright.Cross(vout_gp)
-        projection = _HLRAlgo_Projector(_gp.gp_Ax2(_gp.gp_Pnt(vcenter.X(), vcenter.Y(), vcenter.Z()), _gp.gp_Dir(vout.X(), vout.Y(), vout.Z()), _gp.gp_Dir(vright.X(), vright.Y(), vright.Z())))
+        projection = _HLRAlgo_Projector(
+            _gp.gp_Ax2(_gp.gp_Pnt(vcenter.X(), vcenter.Y(), vcenter.Z()),
+                       _gp.gp_Dir(vout.X(), vout.Y(), vout.Z()),
+                       _gp.gp_Dir(vright.X(), vright.Y(), vright.Z())))
         hlr_algo = _HLRBRep_Algo()
         handle_hlr_algo = hlr_algo.GetHandle()
         for display_shape in self.display_shapes:
@@ -877,8 +952,16 @@ class view_qt(_QtGui.QWidget):
         vcompound = hlr_toshape.VCompound()
         outlinevcompound = hlr_toshape.OutLineVCompound()
         self.clear(0)
-        self.display(vcompound, color=display_shape['color'], line_type=display_shape['line_type'], line_width=display_shape['line_width'], logging=False)
-        self.display(outlinevcompound, color=display_shape['color'], line_type=display_shape['line_type'], line_width=display_shape['line_width'], logging=False)
+        self.display(vcompound,
+                     color=display_shape['color'],
+                     line_type=display_shape['line_type'],
+                     line_width=display_shape['line_width'],
+                     logging=False)
+        self.display(outlinevcompound,
+                     color=display_shape['color'],
+                     line_type=display_shape['line_type'],
+                     line_width=display_shape['line_width'],
+                     logging=False)
         self.viewstandard(viewtype='top')
 
     # Helps
@@ -893,11 +976,14 @@ class view_qt(_QtGui.QWidget):
         elif _sys.platform.startswith('win'):
             updirs = 3
         elif _sys.platform.startswith('darwin'):
-            updirs = 4 # Not debugged
+            updirs = 4  # Not debugged
         else:
             updirs = 0
 
-        doc_directory = _os.path.normpath(_os.path.join(_os.path.dirname(__file__), '../'*updirs + 'share/doc/ccad/html'))
+        doc_directory = _os.path.normpath(
+            _os.path.join(
+                _os.path.dirname(__file__),
+                '../' * updirs + 'share/doc/ccad/html'))
         fullname = _os.path.join(doc_directory, 'contents.html')
 
         if _os.path.exists(fullname):
@@ -908,7 +994,8 @@ class view_qt(_QtGui.QWidget):
             elif _sys.platform.startswith('darwin'):
                 _os.system('open ' + fullname)
             else:
-                self.status_bar.setText('Warning: viewer not found for ' + _sys.platform)
+                self.status_bar.setText(
+                    'Warning: viewer not found for ' + _sys.platform)
         else:
             self.status_bar.setText('Warning: cannot find ' + fullname)
 
@@ -917,7 +1004,10 @@ class view_qt(_QtGui.QWidget):
         Pops up a window about ccad
         """
         global version
-        _QtGui.QMessageBox.about(self, 'ccad viewer ' + str(version), '\251 Copyright 2014 by Charles Sharman and Others')
+        _QtGui.QMessageBox.about(
+            self,
+            'ccad viewer ' + str(version),
+            '\251 Copyright 2014 by Charles Sharman and Others')
 
     def save(self, name=''):
         """
@@ -928,7 +1018,12 @@ class view_qt(_QtGui.QWidget):
         if name:
             filename = name
         else:
-            filename = str(_QtGui.QFileDialog.getSaveFileName(self, 'Save Screen Image', '.', 'Image Files (*.png *.bmp *.jpg *.gif)'))
+            filename = str(
+                _QtGui.QFileDialog.getSaveFileName(
+                    self,
+                    'Save Screen Image',
+                    '.',
+                    'Image Files (*.png *.bmp *.jpg *.gif)'))
 
         if filename:
             while app.hasPendingEvents():
@@ -979,7 +1074,8 @@ class GLWidget(_QtGui.QWidget):
         #self.setFocusPolicy(_QtCore.Qt.WheelFocus)
         self.setAttribute(_QtCore.Qt.WA_PaintOnScreen)
         self.setAttribute(_QtCore.Qt.WA_NoSystemBackground)
-        self.setSizePolicy(_QtGui.QSizePolicy(_QtGui.QSizePolicy.Expanding, _QtGui.QSizePolicy.Expanding))
+        self.setSizePolicy(_QtGui.QSizePolicy(_QtGui.QSizePolicy.Expanding,
+                                              _QtGui.QSizePolicy.Expanding))
         self.occ_view = None
         self.SCR = (400, 400)
 
@@ -992,8 +1088,14 @@ class GLWidget(_QtGui.QWidget):
             # This lower level routine allows multiple viewing
             # windows.  Only works on linux.
             gd = _Graphic3d.Graphic3d_GraphicDevice(_os.environ['DISPLAY'])
-            window = _Xw_Window(gd.GetHandle(), window_handle >> 16, window_handle & 0xffff, _Xw_WQ_3DQUALITY)
-            self.occ_viewer = _V3d.V3d_Viewer(gd.GetHandle(), _TCollection_ExtendedString('Viewer').ToExtString())
+            window = _Xw_Window(
+                gd.GetHandle(),
+                window_handle >> 16,
+                window_handle & 0xffff,
+                _Xw_WQ_3DQUALITY)
+            self.occ_viewer = _V3d.V3d_Viewer(
+                gd.GetHandle(),
+                _TCollection_ExtendedString('Viewer').ToExtString())
             handle_occ_viewer = self.occ_viewer.GetHandle()
             self.occ_viewer.Init()
             if perspective:
@@ -1073,5 +1175,9 @@ if __name__ == '__main__':
     s1 = cm.sphere(1.0)
     view.display(s1, (0.5, 0.0, 0.0), line_type='solid', line_width=3)
     s2 = cm.box(1, 2, 3)
-    view.display(s2, (0.0, 0.0, 0.5), transparency=0.5, line_type='dash', line_width=1)
+    view.display(s2,
+                 (0.0, 0.0, 0.5),
+                 transparency=0.5,
+                 line_type='dash',
+                 line_width=1)
     start()

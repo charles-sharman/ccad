@@ -17,7 +17,7 @@ copy
 All shapes offer a copy method.  copy returns a copy of the shape.
 The following example makes **s2** a new copy of **s1**::
 
-  s1 = ccad.box(1.0, 2.0, 3.0)
+  s1 = cm.box(1.0, 2.0, 3.0)
   s2 = s1.copy()
 
 subshapes
@@ -26,7 +26,7 @@ subshapes
 subshapes reports the shapes of a specific type that make up a shape.
 The following example sets **edges** to a list of the edges in **s1**::
 
-  s1 = ccad.box(1.0, 2.0, 3.0)
+  s1 = cm.box(1.0, 2.0, 3.0)
   edges = s1.subshapes('edge')
 
 The passed parameter may be *vertex*, *edge*, *wire*, *face*, or *shell*.
@@ -38,7 +38,7 @@ bounds places an imaginary box around the shape and returns a 6-tuple
 that describes the minimum and maximum (x, y, z) boundaries of the
 box::
 
-  s1 = ccad.box(1.0, 2.0, 3.0)
+  s1 = cm.box(1.0, 2.0, 3.0)
   s1.bounds()
   (-9.9999999999999995e-08, -9.9999999999999995e-08, -9.9999999999999995e-08,
   1.0000001000000001, 2.0000000999999998, 3.0000000999999998)
@@ -48,7 +48,7 @@ center
 
 center returns the center of the shape::
 
-  s1 = ccad.box(1.0, 2.0, 3.0)
+  s1 = cm.box(1.0, 2.0, 3.0)
   s1.center()
   (0.5, 1.0, 1.5)
 
@@ -57,7 +57,7 @@ subcenters
 
 subcenters returns a list of the centers of the subshapes of a shape::
 
-  s1 = ccad.box(1.0, 2.0, 3.0)
+  s1 = cm.box(1.0, 2.0, 3.0)
   s1.subcenters('edge')
   [(0.0, 0.0, 1.5), (0.0, 1.0, 3.0), (0.0, 2.0, 1.5), (0.0, 1.0, 0.0),
   (1.0, 0.0, 1.5), (1.0, 1.0, 3.0), (1.0, 2.0, 1.5), (1.0, 1.0, 0.0),
@@ -69,7 +69,7 @@ check
 check performs an OCC BRep check on the shape to make sure there's
 nothing wrong with it.  It returns 1 if it's okay::
 
-  s1 = ccad.box(1.0, 2.0, 3.0)
+  s1 = cm.box(1.0, 2.0, 3.0)
   s1.check()
   1
 
@@ -81,7 +81,7 @@ doesn't.  It's usually best to find out what caused the shape to be
 corrupted in the first place and fix that.  It does nothing if the
 shape's okay::
 
-  s1 = ccad.box(1.0, 2.0, 3.0)
+  s1 = cm.box(1.0, 2.0, 3.0)
   s1.fix()
 
 nearest
@@ -90,7 +90,7 @@ nearest
 nearest returns the index of the subshape whose center is closest to a
 passed position.  It operates on a list of positions::
 
-  s1 = ccad.box(1.0, 2.0, 3.0)
+  s1 = cm.box(1.0, 2.0, 3.0)
   s1.nearest('edge', [(0.0, 1.0, 3.0), (1.0, 1.0, 0.0)])
   [1, 7]
 
@@ -104,7 +104,7 @@ subtolerance returns the min, average, and max tolerance on every
 subshape.  When called with 'all', it iterates through all subshape
 types::
 
-  s1 = ccad.box(1.0, 2.0, 3.0)
+  s1 = cm.box(1.0, 2.0, 3.0)
   s1.subtolerance('edge')
   (1.0001000025000001e-07, 1.0001000025000002e-07, 1.0001000025000001e-07)
 
@@ -116,7 +116,7 @@ dump
 
 dump returns the index, center, and tolerance of every subshape::
 
-  s1 = ccad.box(1.0, 2.0, 3.0)
+  s1 = cm.box(1.0, 2.0, 3.0)
   s1.dump()
   shell0 location: (0.500000,1.000000,1.500000)
   face0 location: (0.000000,1.000000,1.500000) tolerance: 1.0000e-07
@@ -167,7 +167,7 @@ type
 
 type returns the type of edge::
 
-  e1 = ccad.arc_ellipse(2.0, 1.0, 0.0, math.pi/2)
+  e1 = cm.arc_ellipse(2.0, 1.0, 0.0, math.pi/2)
   e1.type()
   'ellipse'
 
@@ -176,7 +176,7 @@ length
 
 length returns the length of the edge::
 
-  e1 = ccad.circle(1.0)
+  e1 = cm.circle(1.0)
   e1.length()
   6.2831853071795862
 
@@ -185,7 +185,7 @@ poly
 
 poly returns a polyline approximation to an edge::
 
-  e1 = ccad.arc_ellipse(2.0, 1.0, 0.0, math.pi/2)
+  e1 = cm.arc_ellipse(2.0, 1.0, 0.0, math.pi/2)
   e1.poly()
   [(-3.6738190614671318e-16, 1.0, 0.0),
   (0.15691819145569041, 0.99691733373312796, 0.0),
@@ -244,12 +244,12 @@ fillet
 fillet allows you to fillet a face at passed vertices.  The following
 example fillets the upper right corner and lower left corner of a square::
 
-  w1 = ccad.polygon([(-1.0, -1.0, 0.0),
+  w1 = cm.polygon([(-1.0, -1.0, 0.0),
                      (1.0, -1.0, 0.0),
 		     (1.0, 1.0, 0.0),
 		     (-1.0, 1.0, 0.0),
 		     (-1.0, -1.0, 0.0)])
-  f1 = ccad.plane(w1)
+  f1 = cm.plane(w1)
   f1.fillet(0.25, [(1.0, 1.0, 0.0), (-1.0, -1.0, 0.0)]))
 
 .. image:: logging_face_fillet.png
@@ -269,7 +269,7 @@ type
 
 type returns the type of mathematical surface a face sits on::
 
-  s1 = ccad.cone(4.0, 2.0, 2.0)
+  s1 = cm.cone(4.0, 2.0, 2.0)
   faces = s1.subshapes('face')
   map(lambda x: x.type(), faces)
   ['cone', 'plane', 'plane']
@@ -279,7 +279,7 @@ area
 
 area returns the area of the face::
 
-  f1 = ccad.plane(cm.wire([ccad.circle(1.0)]))
+  f1 = cm.plane(cm.wire([cm.circle(1.0)]))
   f1.area()
   3.141592653589794
 
@@ -306,7 +306,7 @@ fillet
 fillet allows you to fillet edges.  The following example fillets all
 the edges on the positive x-side of the cube::
 
-  s1 = ccad.box(1.0, 1.0, 1.0)
+  s1 = cm.box(1.0, 1.0, 1.0)
   s1.fillet(0.25, [(1.0, 0.5, 0.0),
   		   (1.0, 0.5, 1.0),
                    (1.0, 0.0, 0.5),
@@ -345,7 +345,7 @@ chamfer
 chamfer allows you to chamfer edges.  The following example chamfers
 three edges in a cube::
 
-  s1 = ccad.box(1.0, 1.0, 1.0)
+  s1 = cm.box(1.0, 1.0, 1.0)
   s1.chamfer(0.25, [(1.0, 0.5, 0.0),
                     (1.0, 0.5, 1.0),
                     (1.0, 0.0, 0.5),
@@ -359,7 +359,7 @@ draft
 draft places a draft on the faces specified.  The following example
 drafts the vertical edges of a cube::
 
-  s1 = ccad.box(1.0, 1.0, 1.0)
+  s1 = cm.box(1.0, 1.0, 1.0)
   s1.translate((-0.5, -0.5, 0.0))
   face_centers = s1.subcenters('face')
   to_draft = []
@@ -375,7 +375,7 @@ volume
 
 volume returns the volume in cubic units of the solid::
 
-  s1 = ccad.box(1.0, 2.0, 3.0)
+  s1 = cm.box(1.0, 2.0, 3.0)
   s1.volume()
   6.0
 
@@ -386,7 +386,7 @@ Boolean operations can often leave more faces than are necessary,
 particularly when faces are coincident.  OCC hasn't fixed this issue,
 so I fixed it, although my implementation won't fix all cases::
 
-  s1 = ccad.box(1.0, 1.0, 1.0)
+  s1 = cm.box(1.0, 1.0, 1.0)
   s2 = s1.copy()
   s2.translate((1.0, 0.5, 0.5))
   s3 = s1 - s2

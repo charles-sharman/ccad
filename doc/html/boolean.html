@@ -91,8 +91,8 @@
 <h1>Boolean Operations<a class="headerlink" href="#boolean-operations" title="Permalink to this headline">¶</a></h1>
 <p>Boolean operations operate on two solids.  The following shapes are
 used in the following examples:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">s1</span> <span class="o">=</span> <span class="n">ccad</span><span class="o">.</span><span class="n">sphere</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span>
-<span class="n">s2</span> <span class="o">=</span> <span class="n">ccad</span><span class="o">.</span><span class="n">box</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">s1</span> <span class="o">=</span> <span class="n">cm</span><span class="o">.</span><span class="n">sphere</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span>
+<span class="n">s2</span> <span class="o">=</span> <span class="n">cm</span><span class="o">.</span><span class="n">box</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">)</span>
 </pre></div>
 </div>
 <p><strong>s3</strong> is the derived shape.</p>
@@ -104,7 +104,7 @@ fuses <strong>s1</strong> and <strong>s2</strong>:</p>
 </pre></div>
 </div>
 <p>or:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">s3</span> <span class="o">=</span> <span class="n">ccad</span><span class="o">.</span><span class="n">fuse</span><span class="p">(</span><span class="n">s1</span><span class="p">,</span> <span class="n">s2</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">s3</span> <span class="o">=</span> <span class="n">cm</span><span class="o">.</span><span class="n">fuse</span><span class="p">(</span><span class="n">s1</span><span class="p">,</span> <span class="n">s2</span><span class="p">)</span>
 </pre></div>
 </div>
 <img alt="_images/boolean_fuse.png" src="_images/boolean_fuse.png" />
@@ -117,7 +117,7 @@ cuts <strong>s2</strong> from <strong>s1</strong>:</p>
 </pre></div>
 </div>
 <p>or:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">s3</span> <span class="o">=</span> <span class="n">ccad</span><span class="o">.</span><span class="n">cut</span><span class="p">(</span><span class="n">s1</span><span class="p">,</span> <span class="n">s2</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">s3</span> <span class="o">=</span> <span class="n">cm</span><span class="o">.</span><span class="n">cut</span><span class="p">(</span><span class="n">s1</span><span class="p">,</span> <span class="n">s2</span><span class="p">)</span>
 </pre></div>
 </div>
 <img alt="_images/boolean_cut.png" src="_images/boolean_cut.png" />
@@ -130,7 +130,7 @@ lines below finds the common portions of <strong>s1</strong> and <strong>s2</str
 </pre></div>
 </div>
 <p>or:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">s3</span> <span class="o">=</span> <span class="n">ccad</span><span class="o">.</span><span class="n">common</span><span class="p">(</span><span class="n">s1</span><span class="p">,</span> <span class="n">s2</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">s3</span> <span class="o">=</span> <span class="n">cm</span><span class="o">.</span><span class="n">common</span><span class="p">(</span><span class="n">s1</span><span class="p">,</span> <span class="n">s2</span><span class="p">)</span>
 </pre></div>
 </div>
 <img alt="_images/boolean_common.png" src="_images/boolean_common.png" />
@@ -142,10 +142,10 @@ faces.  Sometimes the glue function can help.  glue merges two solids
 at a coincident face.  Unfortunately, you need to know the face
 indices that must merge.  Read more about finding face indices in the
 Display or Logging sections:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">s1</span> <span class="o">=</span> <span class="n">ccad</span><span class="o">.</span><span class="n">box</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">)</span>
-<span class="n">s2</span> <span class="o">=</span> <span class="n">ccad</span><span class="o">.</span><span class="n">box</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">s1</span> <span class="o">=</span> <span class="n">cm</span><span class="o">.</span><span class="n">box</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">)</span>
+<span class="n">s2</span> <span class="o">=</span> <span class="n">cm</span><span class="o">.</span><span class="n">box</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
 <span class="n">s2</span><span class="o">.</span><span class="n">translate</span><span class="p">((</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">))</span>
-<span class="n">s3</span> <span class="o">=</span> <span class="n">ccad</span><span class="o">.</span><span class="n">glue</span><span class="p">(</span><span class="n">s1</span><span class="p">,</span> <span class="n">s2</span><span class="p">,</span> <span class="p">[(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">)])</span>
+<span class="n">s3</span> <span class="o">=</span> <span class="n">cm</span><span class="o">.</span><span class="n">glue</span><span class="p">(</span><span class="n">s1</span><span class="p">,</span> <span class="n">s2</span><span class="p">,</span> <span class="p">[(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">)])</span>
 </pre></div>
 </div>
 <img alt="_images/boolean_glue.png" src="_images/boolean_glue.png" />

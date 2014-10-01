@@ -66,8 +66,8 @@ are options to control color, material, transparency, line type, and
 line width.  The following example draws s1 red, in a metallized
 material, halfway transparent::
 
-  s1 = ccad.sphere(1.0) + ccad.box(1.0, 2.0, 2.0)
-  v1.display(s1, color = (1.0, 0.0, 0.0), material = 'metallized', transparency = 0.5)
+  s1 = cm.sphere(1.0) + cm.box(1.0, 2.0, 2.0)
+  v1.display(s1, color=(1.0, 0.0, 0.0), material='metallized', transparency=0.5)
 
 .. image:: display_display.png
 

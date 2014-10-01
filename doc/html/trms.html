@@ -95,7 +95,7 @@ class method.  For example:</p>
 </div>
 <p>This translates <em>s1</em> in-place.  ccad comes with a function call form
 too with &#8220;ed&#8221; appended.  For example:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">s2</span> <span class="o">=</span> <span class="n">ccad</span><span class="o">.</span><span class="n">translated</span><span class="p">(</span><span class="n">s1</span><span class="p">,</span> <span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">))</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">s2</span> <span class="o">=</span> <span class="n">cm</span><span class="o">.</span><span class="n">translated</span><span class="p">(</span><span class="n">s1</span><span class="p">,</span> <span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">))</span>
 </pre></div>
 </div>
 <p>The function form returns a new shape.  <em>s2</em> is <em>s1</em> translated.  <em>s1</em>
@@ -108,8 +108,8 @@ drawn in <strong>red</strong>, and <strong>s2</strong> describes the new object 
 <p>translate changes a shape&#8217;s position but not its orientation.  The
 following example moves the box 2.0 in the x-direction, -6.0 in the
 y-direction, and 4.0 in the z-direction:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">s1</span> <span class="o">=</span> <span class="n">ccad</span><span class="o">.</span><span class="n">box</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">)</span>
-<span class="n">s2</span> <span class="o">=</span> <span class="n">ccad</span><span class="o">.</span><span class="n">translated</span><span class="p">(</span><span class="n">s1</span><span class="p">,</span> <span class="p">(</span><span class="mf">2.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">6.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">))</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">s1</span> <span class="o">=</span> <span class="n">cm</span><span class="o">.</span><span class="n">box</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">)</span>
+<span class="n">s2</span> <span class="o">=</span> <span class="n">cm</span><span class="o">.</span><span class="n">translated</span><span class="p">(</span><span class="n">s1</span><span class="p">,</span> <span class="p">(</span><span class="mf">2.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">6.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">))</span>
 </pre></div>
 </div>
 <img alt="_images/trms_translate.png" src="_images/trms_translate.png" />
@@ -119,8 +119,8 @@ y-direction, and 4.0 in the z-direction:</p>
 <p>rotate rotates a shape about a point and a direction vector.  Rotation
 follows the right hand rule.  The following example rotates the box 90
 degrees about the z-axis:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">s1</span> <span class="o">=</span> <span class="n">ccad</span><span class="o">.</span><span class="n">box</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">)</span>
-<span class="n">s2</span> <span class="o">=</span> <span class="n">ccad</span><span class="o">.</span><span class="n">rotated</span><span class="p">(</span><span class="n">s1</span><span class="p">,</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">),</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">s1</span> <span class="o">=</span> <span class="n">cm</span><span class="o">.</span><span class="n">box</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">)</span>
+<span class="n">s2</span> <span class="o">=</span> <span class="n">cm</span><span class="o">.</span><span class="n">rotated</span><span class="p">(</span><span class="n">s1</span><span class="p">,</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">),</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span>
 </pre></div>
 </div>
 <img alt="_images/trms_rotate.png" src="_images/trms_rotate.png" />
@@ -129,7 +129,7 @@ origin and a single axis: <strong>rotatex</strong>, <strong>rotatey</strong>, an
 (or <strong>rotatedx</strong>, <strong>rotatedy</strong>, and <strong>rotatedz</strong> in function form).
 The following example performs the same rotation above but in
 shorthand:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">s2</span> <span class="o">=</span> <span class="n">ccad</span><span class="o">.</span><span class="n">rotatedz</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">s2</span> <span class="o">=</span> <span class="n">cm</span><span class="o">.</span><span class="n">rotatedz</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -137,8 +137,8 @@ shorthand:</p>
 <h2>Mirroring<a class="headerlink" href="#mirroring" title="Permalink to this headline">¶</a></h2>
 <p>mirror mirrors the shape about a point in a given direction.  The
 following example mirrors the box about the origin in the x-direction:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">s1</span> <span class="o">=</span> <span class="n">ccad</span><span class="o">.</span><span class="n">box</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">)</span>
-<span class="n">s2</span> <span class="o">=</span> <span class="n">ccad</span><span class="o">.</span><span class="n">mirrored</span><span class="p">(</span><span class="n">s1</span><span class="p">,</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span> <span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">))</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">s1</span> <span class="o">=</span> <span class="n">cm</span><span class="o">.</span><span class="n">box</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">)</span>
+<span class="n">s2</span> <span class="o">=</span> <span class="n">cm</span><span class="o">.</span><span class="n">mirrored</span><span class="p">(</span><span class="n">s1</span><span class="p">,</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span> <span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">))</span>
 </pre></div>
 </div>
 <img alt="_images/trms_mirror.png" src="_images/trms_mirror.png" />
@@ -150,8 +150,8 @@ function form).</p>
 <h2>Scaling<a class="headerlink" href="#scaling" title="Permalink to this headline">¶</a></h2>
 <p>scale changes the size of the shape by scale factors.  The following
 example scales the box in the x-direction and then moves it:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">s1</span> <span class="o">=</span> <span class="n">ccad</span><span class="o">.</span><span class="n">box</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">)</span>
-<span class="n">s2</span> <span class="o">=</span> <span class="n">ccad</span><span class="o">.</span><span class="n">scaled</span><span class="p">(</span><span class="n">s1</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">s1</span> <span class="o">=</span> <span class="n">cm</span><span class="o">.</span><span class="n">box</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">)</span>
+<span class="n">s2</span> <span class="o">=</span> <span class="n">cm</span><span class="o">.</span><span class="n">scaled</span><span class="p">(</span><span class="n">s1</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
 <span class="n">s2</span><span class="o">.</span><span class="n">translate</span><span class="p">((</span><span class="mf">4.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">))</span>
 </pre></div>
 </div>

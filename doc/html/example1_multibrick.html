@@ -81,7 +81,7 @@
 reuse.  Our building toy serves as a great example.</p>
 <p>I&#8217;ll create a new file and call it <strong>all_bricks.py</strong>.  First, I&#8217;ll
 define the various brick sizes I want in the toy:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">ccad</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">ccad.display</span> <span class="kn">as</span> <span class="nn">cd</span>
 <span class="kn">import</span> <span class="nn">brick</span>
 
 <span class="n">sizes</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
@@ -103,11 +103,11 @@ define the various brick sizes I want in the toy:</p>
 </div>
 <p>Finally, I&#8217;ll write the code to run at startup:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&#39;__main__&#39;</span><span class="p">:</span>
-    <span class="n">v1</span> <span class="o">=</span> <span class="n">ccad</span><span class="o">.</span><span class="n">view</span><span class="p">()</span>
+    <span class="n">view1</span> <span class="o">=</span> <span class="n">cd</span><span class="o">.</span><span class="n">view</span><span class="p">()</span>
     <span class="k">for</span> <span class="n">size</span> <span class="ow">in</span> <span class="n">sizes</span><span class="p">:</span>
         <span class="n">name</span> <span class="o">=</span> <span class="s">&#39;brick&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">size</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">+</span> <span class="s">&#39;x&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">size</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
-        <span class="n">v1</span><span class="o">.</span><span class="n">add_menuitem</span><span class="p">((</span><span class="s">&#39;Bricks&#39;</span><span class="p">,</span> <span class="n">name</span><span class="p">),</span> <span class="n">display_brick</span><span class="p">,</span> <span class="n">v1</span><span class="p">,</span> <span class="n">size</span><span class="p">)</span>
-    <span class="n">ccad</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+        <span class="n">view1</span><span class="o">.</span><span class="n">add_menuitem</span><span class="p">((</span><span class="s">&#39;Bricks&#39;</span><span class="p">,</span> <span class="n">name</span><span class="p">),</span> <span class="n">display_brick</span><span class="p">,</span> <span class="n">view1</span><span class="p">,</span> <span class="n">size</span><span class="p">)</span>
+    <span class="n">cd</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
 </pre></div>
 </div>
 <p>The startup code instantiates a view, adds a menu item for every brick

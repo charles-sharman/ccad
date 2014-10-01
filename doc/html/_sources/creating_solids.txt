@@ -11,7 +11,7 @@ A box is a six-sided perpendicular-faced solid.  The following example
 creates a box that extends 1.0 in the x-direction, 2.0 in the
 y-direction, and 3.0 in the z-direction::
 
-  s1 = ccad.box(1.0, 2.0, 3.0)
+  s1 = cm.box(1.0, 2.0, 3.0)
 
 .. image:: solid_box.png
 
@@ -22,7 +22,7 @@ A wedge is a box with one or more tapered sides.  The following
 example creates a wedge that extends 2.0 in the y-direction and 3.0 in
 the z-direction and tapers from 1.0 to 0.5 in the x-direction::
 
-  s1 = ccad.wedge(1.0, 2.0, 3.0, 0.5)
+  s1 = cm.wedge(1.0, 2.0, 3.0, 0.5)
 
 .. image:: solid_wedge.png
 
@@ -31,7 +31,7 @@ cylinder
 
 The following example creates a cylinder 1.0 in radius and 2.0 high::
 
-  s1 = ccad.cylinder(1.0, 2.0)
+  s1 = cm.cylinder(1.0, 2.0)
 
 .. image:: solid_cylinder.png
 
@@ -40,7 +40,7 @@ sphere
 
 The following example creates a sphere 5.0 in radius::
 
-  s1 = ccad.sphere(5.0)
+  s1 = cm.sphere(5.0)
 
 .. image:: solid_sphere.png
 
@@ -50,7 +50,7 @@ cone
 The following example creates the bottom of a cone, radius 4.0 at the
 bottom, 2.0 at the top, and 2.0 high::
 
-  s1 = ccad.cone(4.0, 2.0, 2.0)
+  s1 = cm.cone(4.0, 2.0, 2.0)
 
 .. image:: solid_cone.png
 
@@ -64,7 +64,7 @@ torus
 The following example creates a torus 10.0 from torus center to
 extruded circle center, and 1.0 in radius::
 
-  s1 = ccad.torus(10.0, 1.0)
+  s1 = cm.torus(10.0, 1.0)
 
 .. image:: solid_torus.png
 

@@ -78,17 +78,17 @@ that directory to your PYTHONPATH.  That, at least, will get you going.
 Importing
 ---------
 
-ccad consists of two modules: **model** and **display**.  The
-command::
+ccad consists of two modules: **model** and **display**.  As the names
+suggest, **model** models shapes, and **display** displays shapes.
+Usually, you import both at the front of your program::
 
-  import ccad
+  import ccad.model as cm
+  import ccad.display as cd
 
-imports both modules in * form, making all their contents relative to
-**ccad**::
+Then, you may model and display::
 
-  import ccad
-  s1 = ccad.box(1,2,3)
-  v1 = ccad.view()
+  s1 = cm.box(1,2,3)
+  v1 = cd.view()
   v1.display(s1)
 
 Some users may prefer to write or use their own display.  In that
@@ -96,14 +96,3 @@ case, the **model** module can be imported alone::
 
   import ccad.model as cm
 
-Finally, if you prefer to keep the modules separate, you can import
-each one separately::
-
-  import ccad.model as cm
-  import ccad.display as cd
-
-  s1 = cm.box(1,2,3)
-  v1 = cd.view()
-  v1.display(s1)
-
-The rest of this document assumes you use **import ccad**.

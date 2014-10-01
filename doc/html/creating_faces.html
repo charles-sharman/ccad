@@ -94,8 +94,8 @@ is called <strong>f1</strong>.</p>
 <p>A plane is a flat shape bounded by a closed wire in 3D space.  The
 wire must be planar (flat) to work.  The following example creates a
 face inside an ngon:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">w1</span> <span class="o">=</span> <span class="n">ccad</span><span class="o">.</span><span class="n">ngon</span><span class="p">(</span><span class="mf">2.0</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
-<span class="n">f1</span> <span class="o">=</span> <span class="n">ccad</span><span class="o">.</span><span class="n">plane</span><span class="p">(</span><span class="n">w1</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">w1</span> <span class="o">=</span> <span class="n">cm</span><span class="o">.</span><span class="n">ngon</span><span class="p">(</span><span class="mf">2.0</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
+<span class="n">f1</span> <span class="o">=</span> <span class="n">cm</span><span class="o">.</span><span class="n">plane</span><span class="p">(</span><span class="n">w1</span><span class="p">)</span>
 </pre></div>
 </div>
 <img alt="_images/face_plane.png" src="_images/face_plane.png" />
@@ -107,10 +107,10 @@ face but is bounded by a different wire.  The following example
 creates a filled square from a filled octagon.  The example isn&#8217;t very
 practical.  face_from is more often used when the face is 3D and you
 want to bound it by a different wire:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">w1</span> <span class="o">=</span> <span class="n">ccad</span><span class="o">.</span><span class="n">ngon</span><span class="p">(</span><span class="mf">2.0</span><span class="p">,</span> <span class="mi">8</span><span class="p">)</span>
-<span class="n">w2</span> <span class="o">=</span> <span class="n">ccad</span><span class="o">.</span><span class="n">ngon</span><span class="p">(</span><span class="mf">10.0</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
-<span class="n">f2</span> <span class="o">=</span> <span class="n">ccad</span><span class="o">.</span><span class="n">plane</span><span class="p">(</span><span class="n">w1</span><span class="p">)</span>
-<span class="n">f1</span> <span class="o">=</span> <span class="n">ccad</span><span class="o">.</span><span class="n">face_from</span><span class="p">(</span><span class="n">f2</span><span class="p">,</span> <span class="n">w2</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">w1</span> <span class="o">=</span> <span class="n">cm</span><span class="o">.</span><span class="n">ngon</span><span class="p">(</span><span class="mf">2.0</span><span class="p">,</span> <span class="mi">8</span><span class="p">)</span>
+<span class="n">w2</span> <span class="o">=</span> <span class="n">cm</span><span class="o">.</span><span class="n">ngon</span><span class="p">(</span><span class="mf">10.0</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+<span class="n">f2</span> <span class="o">=</span> <span class="n">cm</span><span class="o">.</span><span class="n">plane</span><span class="p">(</span><span class="n">w1</span><span class="p">)</span>
+<span class="n">f1</span> <span class="o">=</span> <span class="n">cm</span><span class="o">.</span><span class="n">face_from</span><span class="p">(</span><span class="n">f2</span><span class="p">,</span> <span class="n">w2</span><span class="p">)</span>
 </pre></div>
 </div>
 <img alt="_images/face_face_from.png" src="_images/face_face_from.png" />
@@ -120,13 +120,13 @@ want to bound it by a different wire:</p>
 <p>A filling is a surface fit to a wire, and that wire does not need to
 be planar.  The following example fits a surface to a wavy wire.  Both
 the wire and face are shown:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">w1</span> <span class="o">=</span> <span class="n">ccad</span><span class="o">.</span><span class="n">spline</span><span class="p">([(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">w1</span> <span class="o">=</span> <span class="n">cm</span><span class="o">.</span><span class="n">spline</span><span class="p">([(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
                   <span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">),</span>
                   <span class="p">(</span><span class="mf">1.5</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">),</span>
                   <span class="p">(</span><span class="mf">0.8</span><span class="p">,</span> <span class="mf">1.2</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">),</span>
                   <span class="p">(</span><span class="o">-</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.5</span><span class="p">),</span>
                   <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)])</span>
-<span class="n">f1</span> <span class="o">=</span> <span class="n">ccad</span><span class="o">.</span><span class="n">filling</span><span class="p">(</span><span class="n">w1</span><span class="p">)</span>
+<span class="n">f1</span> <span class="o">=</span> <span class="n">cm</span><span class="o">.</span><span class="n">filling</span><span class="p">(</span><span class="n">w1</span><span class="p">)</span>
 </pre></div>
 </div>
 <img alt="_images/face_filling.png" src="_images/face_filling.png" />

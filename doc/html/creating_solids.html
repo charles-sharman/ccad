@@ -98,7 +98,7 @@ is called <strong>s1</strong>.</p>
 <p>A box is a six-sided perpendicular-faced solid.  The following example
 creates a box that extends 1.0 in the x-direction, 2.0 in the
 y-direction, and 3.0 in the z-direction:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">s1</span> <span class="o">=</span> <span class="n">ccad</span><span class="o">.</span><span class="n">box</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">s1</span> <span class="o">=</span> <span class="n">cm</span><span class="o">.</span><span class="n">box</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">)</span>
 </pre></div>
 </div>
 <img alt="_images/solid_box.png" src="_images/solid_box.png" />
@@ -108,7 +108,7 @@ y-direction, and 3.0 in the z-direction:</p>
 <p>A wedge is a box with one or more tapered sides.  The following
 example creates a wedge that extends 2.0 in the y-direction and 3.0 in
 the z-direction and tapers from 1.0 to 0.5 in the x-direction:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">s1</span> <span class="o">=</span> <span class="n">ccad</span><span class="o">.</span><span class="n">wedge</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">s1</span> <span class="o">=</span> <span class="n">cm</span><span class="o">.</span><span class="n">wedge</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)</span>
 </pre></div>
 </div>
 <img alt="_images/solid_wedge.png" src="_images/solid_wedge.png" />
@@ -116,7 +116,7 @@ the z-direction and tapers from 1.0 to 0.5 in the x-direction:</p>
 <div class="section" id="cylinder">
 <h2>cylinder<a class="headerlink" href="#cylinder" title="Permalink to this headline">¶</a></h2>
 <p>The following example creates a cylinder 1.0 in radius and 2.0 high:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">s1</span> <span class="o">=</span> <span class="n">ccad</span><span class="o">.</span><span class="n">cylinder</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">s1</span> <span class="o">=</span> <span class="n">cm</span><span class="o">.</span><span class="n">cylinder</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">)</span>
 </pre></div>
 </div>
 <img alt="_images/solid_cylinder.png" src="_images/solid_cylinder.png" />
@@ -124,7 +124,7 @@ the z-direction and tapers from 1.0 to 0.5 in the x-direction:</p>
 <div class="section" id="sphere">
 <h2>sphere<a class="headerlink" href="#sphere" title="Permalink to this headline">¶</a></h2>
 <p>The following example creates a sphere 5.0 in radius:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">s1</span> <span class="o">=</span> <span class="n">ccad</span><span class="o">.</span><span class="n">sphere</span><span class="p">(</span><span class="mf">5.0</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">s1</span> <span class="o">=</span> <span class="n">cm</span><span class="o">.</span><span class="n">sphere</span><span class="p">(</span><span class="mf">5.0</span><span class="p">)</span>
 </pre></div>
 </div>
 <img alt="_images/solid_sphere.png" src="_images/solid_sphere.png" />
@@ -133,7 +133,7 @@ the z-direction and tapers from 1.0 to 0.5 in the x-direction:</p>
 <h2>cone<a class="headerlink" href="#cone" title="Permalink to this headline">¶</a></h2>
 <p>The following example creates the bottom of a cone, radius 4.0 at the
 bottom, 2.0 at the top, and 2.0 high:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">s1</span> <span class="o">=</span> <span class="n">ccad</span><span class="o">.</span><span class="n">cone</span><span class="p">(</span><span class="mf">4.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">s1</span> <span class="o">=</span> <span class="n">cm</span><span class="o">.</span><span class="n">cone</span><span class="p">(</span><span class="mf">4.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">)</span>
 </pre></div>
 </div>
 <img alt="_images/solid_cone.png" src="_images/solid_cone.png" />
@@ -145,7 +145,7 @@ sometimes.</p>
 <h2>torus<a class="headerlink" href="#torus" title="Permalink to this headline">¶</a></h2>
 <p>The following example creates a torus 10.0 from torus center to
 extruded circle center, and 1.0 in radius:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">s1</span> <span class="o">=</span> <span class="n">ccad</span><span class="o">.</span><span class="n">torus</span><span class="p">(</span><span class="mf">10.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">s1</span> <span class="o">=</span> <span class="n">cm</span><span class="o">.</span><span class="n">torus</span><span class="p">(</span><span class="mf">10.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
 </pre></div>
 </div>
 <img alt="_images/solid_torus.png" src="_images/solid_torus.png" />

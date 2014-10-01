@@ -19,7 +19,8 @@ brick_images.py
 
 I'll create a file called **brick_images.py**.  It starts like this::
 
-  import ccad
+  import ccad.model as cm
+  import ccad.display as cd
   import brick
 
   def generate_images(xsize, ysize):
@@ -34,20 +35,22 @@ views::
 
       unit = 5.0
       height = 10.0
-      center = (unit*xsize/2, unit*ysize/2, height/2)
+      center = (unit * xsize/2, unit * ysize/2, height / 2)
       projections = {'top': (center, (0.0, 0.0, 1.0), (0.0, 1.0, 0.0)),
                      'side': (center, (1.0, 0.0, 0.0), (0.0, 0.0, 1.0)),
                      'iso': (center,
                              (math.sqrt(0.4), -math.sqrt(0.4), math.sqrt(0.2)),
                              (-math.sqrt(0.5), math.sqrt(0.5), 0.0)),
                      'bottom': (center,
-		                (math.sqrt(0.4), -math.sqrt(0.4), -math.sqrt(0.2)),
+		                (math.sqrt(0.4),
+                                 -math.sqrt(0.4),
+                                 -math.sqrt(0.2)),
                                 (-math.sqrt(0.5), math.sqrt(0.5), 0.0))}
 
 Now, I'll create a brick and view instance::
 
-      b1 = brick.brick(xsize, ysize, fillet = False)
-      v1 = ccad.view()
+      b1 = brick.brick(xsize, ysize, fillet=False)
+      v1 = cd.view()
 
 Note that I called brick with fillet set to *False*.  Smooth edges
 (e.g. filleted ones) are not shown in *drawing* mode.  We need them
@@ -66,9 +69,9 @@ and save it::
           vcenter, vout, vup = projections[projection]
           v1.clear()
           v1.set_projection(vcenter, vout, vup)
-          v1.display(b1, color = (0.0, 0.0, 0.0), line_width = 2.0)
+          v1.display(b1, color=(0.0, 0.0, 0.0), line_width=2.0)
           v1.mode_drawing()
-          v1.save(name = 'brick_' + projection + '.png')
+          v1.save(name='brick_' + projection + '.png')
 
 Note the **mode_drawing** call after **display**.  This redraws the image
 in a drafting-like mode.

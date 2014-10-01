@@ -94,7 +94,3 @@ selected.  Right click on the vertex of interest, and you'll see the
 vertex index and center on the status line.
 
 .. image:: select_vertex.png
-
-
-
-  
