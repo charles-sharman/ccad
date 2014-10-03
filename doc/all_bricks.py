@@ -13,7 +13,7 @@ sizes = [(1, 1),
          (4, 4)]
 
 
-def display_brick(widget, view, size):
+def display_brick(view, size):
     view.clear()
     view.display(brick.brick(size[0], size[1]))
 

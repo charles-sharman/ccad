@@ -20,7 +20,7 @@ exist, it is created.  **display_car** is the function to call when the
 item is selected.  Pass parameters follow the function call.
 **display_car** might look like this::
 
-  def display_car(widget, version):
+  def display_car(version):
       ...
 
 add_menu

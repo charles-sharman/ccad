@@ -90,6 +90,8 @@ class view_qt(_QtGui.QWidget):
         super(view_qt, self).__init__()
         self.setMouseTracking(True)
         #self.setFocusPolicy(_QtCore.Qt.WheelFocus)
+        #self.setSizePolicy(_QtGui.QSizePolicy(_QtGui.QSizePolicy.Ignored,
+        #                                      _QtGui.QSizePolicy.Ignored))
 
         self.REGULAR_CURSOR = _QtCore.Qt.ArrowCursor
         self.WAIT_CURSOR = _QtCore.Qt.WaitCursor
@@ -559,19 +561,21 @@ class view_qt(_QtGui.QWidget):
 
     def set_size(self, size):
         """
-        Sets the size of the window in pixels.  Size is a 2-tuple
-
-        Currently does not work ***.  Updates window but OCC not updated.
+        Sets the size of the window in pixels.  Size is a 2-tuple.
         """
-        #self.win.resize(max(1, size[0]-1), max(1, size[1]-1))
-        self.glarea.SCR = size
-        #old_size = self.glarea.size()
-        #new_size = _QtCore.QSize(size[0], size[1])
-        #self.glarea.setFixedSize(size[0], size[1])
-        #self.glarea.resizeEvent(_QtGui.QResizeEvent(new_size, old_size))
-        #self.glarea.resize(size[0], size[1])
-        self.glarea.updateGeometry()
-        self.adjustSize()
+        # This worked, but adjustSize is limited to 2/3 screen size
+        #self.glarea.SCR = size
+        #self.glarea.updateGeometry()
+        #self.adjustSize()
+
+        # self.glarea.resize didn't work.  This worked but it's based
+        # on the non-glarea stuff not growing -- a potential future
+        # bug.
+        all_size = self.size()
+        glarea_size = self.glarea.size()
+        dx = all_size.width() - glarea_size.width()
+        dy = all_size.height() - glarea_size.height()
+        self.resize(size[0] + dx, size[1] + dy)
 
     def set_background(self, color):
         """
@@ -1131,7 +1135,6 @@ class GLWidget(_QtGui.QWidget):
     def resizeEvent(self, event):
         global app
         x, y = event.size().width(), event.size().height()
-        #print 'resize', x, y, self.SCR
         self.SCR = (x, y)
         self.mpan = max(x, y) / 10
 

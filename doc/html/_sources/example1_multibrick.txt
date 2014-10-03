@@ -22,7 +22,7 @@ define the various brick sizes I want in the toy::
 
 Now, I'll define a display function to view a given brick::
 
-  def display_brick(widget, view, size):
+  def display_brick(view, size):
       view.clear()
       view.display(brick.brick(size[0], size[1]))
 
