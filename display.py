@@ -250,7 +250,7 @@ class view_qt(_QtGui.QWidget):
         select_container.addAction(select_wire)
 
         select_face = select_menu.addAction('Select Face', self.select_face)
-        select_vertex.setCheckable(True)
+        select_face.setCheckable(True)
         select_container.addAction(select_face)
 
         select_shape = select_menu.addAction('Select Shape', self.select_shape)
