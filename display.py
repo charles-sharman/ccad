@@ -256,7 +256,7 @@ class view_qt(_QtGui.QWidget):
         select_shape = select_menu.addAction('Select Shape', self.select_shape)
         select_shape.setCheckable(True)
         select_shape.setChecked(True)
-        select_container.addAction(select_vertex)
+        select_container.addAction(select_shape)
 
         select_query = select_menu.addAction('Query',
                                              self.query,
