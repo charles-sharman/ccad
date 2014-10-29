@@ -765,7 +765,7 @@ def from_svg(name):
             del local_wire[:]
 
     def strpt_to_float(strpt):
-        pt = map(lambda x: float(x), strpt.split(','))
+        pt = list(map(lambda x: float(x), strpt.split(',')))
         if not absolute:
             pt = (pt0[0] + pt[0], pt0[1] + pt[1])  # Make absolute
         return (pt[0], pt[1])
