@@ -1112,7 +1112,7 @@ class TestFacePrimitives(unittest.TestCase):
         w1 = cm.wire([e1, e2])
         f1 = cm.filling(w1)
         # empirical
-        self.assert_(close(5.448, f1.area(), 0.001))
+        self.assert_(close(5.473, f1.area(), 0.001))
 
     # from documentation
     def test_slice(self):
