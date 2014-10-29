@@ -25,6 +25,7 @@ Distributed under the GNU LESSER GENERAL PUBLIC LICENSE Version 3.
 View LICENSE for details.
 """
 
+from __future__ import print_function
 # Globals
 version = '0.12'  # Change also in setup.py, doc/conf.py
 interactive = True
@@ -41,7 +42,7 @@ try:
 except ImportError:
     from PySide import QtCore as _QtCore, QtGui as _QtGui
     manager = 'none'
-    print """
+    print("""
 Warning: Cannot find python-qt4.  You will not be able to use ccad's
 display.  Instead, you may use pythonocc's viewers.  ccad shapes may
 be displayed in pythonocc's viewers by using the .shape attribute.
@@ -55,7 +56,7 @@ For example:
         SimpleGui.init_display()
     display.DisplayShape(s1.shape, update = True)
     start_display()
-"""
+""")
 
 from OCC import (AIS as _AIS, Aspect as _Aspect, gp as _gp,
                  Graphic3d as _Graphic3d, Prs3d as _Prs3d,
@@ -345,7 +346,7 @@ class view_qt(_QtGui.QWidget):
         self.status_bar.setText('Key ' + hex(key))
         if key in self.key_table.values():
             try:
-                print 'Got to 2'
+                print('Got to 2')
                 cmd = self.key_table.keys()[self.key_table.values().index(key)]
                 eval('self.' + cmd)
             except:
@@ -532,7 +533,7 @@ class view_qt(_QtGui.QWidget):
                     '\ntolerance: ' + str(s.tolerance())
             else:
                 retval = 'No properties for type ' + self.selection_type
-            print retval
+            print(retval)
 
     # Direct Call (not from GUI) Functions
     def set_projection(self, vcenter, vout, vup):
@@ -769,7 +770,7 @@ class view_qt(_QtGui.QWidget):
         elif htype == 'vertex':
             ex_type = _TopAbs.TopAbs_VERTEX
         else:
-            print 'Error: Unknown hash type', htype
+            print('Error: Unknown hash type', htype)
         if (self.selected_shape.ShapeType == _TopAbs.TopAbs_WIRE and
             htype == 'edge'):
             ex = _BRepTools_WireExplorer(selected_shape)  # Ordered this way
@@ -817,7 +818,7 @@ class view_qt(_QtGui.QWidget):
                     status = self.selection_type + ' ' + str(index) + \
                         self.positions[index][0] + \
                         ' at (%.9f, %.9f, %.9f)' % self.positions[index][1]
-                    print status
+                    print(status)
                     self.status_bar.setText(status)
                 self.selection_index = index
 
@@ -1159,7 +1160,7 @@ def view(perspective=False):
         v1 = view_qt(perspective)
         return v1
     else:
-        print 'Error: Manager', manager, 'not supported'
+        print('Error: Manager', manager, 'not supported')
 
 
 def start():  # For non-interactive sessions (don't run in ipython)
@@ -1169,7 +1170,7 @@ def start():  # For non-interactive sessions (don't run in ipython)
     if manager == 'qt':
         app.exec_()
     else:
-        print 'Error: Manager', manager, 'not supported'
+        print('Error: Manager', manager, 'not supported')
 
 
 if __name__ == '__main__':

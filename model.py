@@ -15,6 +15,7 @@ License
 Distributed under the GNU LESSER GENERAL PUBLIC LICENSE Version 3.
 View LICENSE for details.
 """
+from __future__ import print_function
 
 from os import path as _path
 import sys as _sys
@@ -372,9 +373,9 @@ def _raw_faces_merge(f1, f2):
     # sometimes don't.  Truncate c1s, c2s
     # accordingly. ***
     if len(c1s) == 0:
-        print 'No common edges'
+        print('No common edges')
     if len(c1s) > 1:
-        print 'c1-', c1s, c2s, len(e1s), len(e2s)
+        print('c1-', c1s, c2s, len(e1s), len(e2s))
         min_index = 0
         max_index = 0
         while (max_index < len(c1s) - 1 and
@@ -390,7 +391,7 @@ def _raw_faces_merge(f1, f2):
         else:
             c1s = c1s[:max_index + 1]
             c2s = c2s[:max_index + 1]
-        print 'c1+', c1s, c2s, len(e1s), len(e2s)
+        print('c1+', c1s, c2s, len(e1s), len(e2s))
     # Create the merged wire
     b = _BRepBuilderAPI.BRepBuilderAPI_MakeWire()
     ds = []
@@ -610,7 +611,7 @@ def glue(s1, s2, face_pairs=[]):
     s1f = s1._raw('face')
     s2f = s2._raw('face')
     if len(face_pairs) == 0:
-        print 'Error: Haven\'t implemented locate glued faces'
+        print('Error: Haven\'t implemented locate glued faces')
         return
         # This was expensive and didn't work.  I believe intersections
         # occurred at edge coincidences.  I may want to try
@@ -622,7 +623,7 @@ def glue(s1, s2, face_pairs=[]):
                 b.Perform(f1, f2)
                 if b.SurfacesSameOriented():
                     face_pairs.append((i1, i2))
-        print face_pairs
+        print(face_pairs)
 
     b = _BRepFeat_Gluer(s1.shape, s2.shape)
     for face_pair in face_pairs:
@@ -671,7 +672,7 @@ def simple_glue(s1, s2, face_pairs=[], tolerance=1e-3):
         b2.Add(_TopoDS_shell(new_shell))
         return solid(b2.Solid())
     elif _raw_type(new_shell) == 'compound':
-        print 'Warning: simple_glue() returned compound'
+        print('Warning: simple_glue() returned compound')
         s = solid(new_shell)
         css = s._raw('shell')
         c = _TopoDS_compound()
@@ -683,7 +684,7 @@ def simple_glue(s1, s2, face_pairs=[], tolerance=1e-3):
             b3.Add(c, b2.Solid())
         return solid(c)
     else:
-        print 'Warning: Wrong sewed shape after simple_glue():',
+        print('Warning: Wrong sewed shape after simple_glue():', end='')
         _raw_type(new_shell)
         return solid(new_shell)
 
@@ -694,7 +695,7 @@ def _convert_import(s):
     if stype in ['solid', 'compound', 'compsolid']:
         return solid(s)
     elif stype == 'shape':
-        print 'Error: Unsupported type', stype
+        print('Error: Unsupported type', stype)
     else:
         return eval(stype + '(s)')
 
@@ -709,7 +710,7 @@ def from_brep(name):
         _breptools_Read(s, name, b)
         return _convert_import(s)
     else:
-        print 'Error: Can\'t find', name
+        print('Error: Can\'t find', name)
 
 
 def from_iges(name):
@@ -721,11 +722,11 @@ def from_iges(name):
         status = reader.ReadFile(name)
         okay = reader.TransferRoots()
         if not okay:
-            print 'Warning: Could not translate all shapes'
+            print('Warning: Could not translate all shapes')
         shape = reader.OneShape()
         return _convert_import(shape)
     else:
-        print 'Error: Can\'t find', name
+        print('Error: Can\'t find', name)
 
 
 def from_step(name):
@@ -739,7 +740,7 @@ def from_step(name):
         shape = reader.OneShape()
         return _convert_import(shape)
     else:
-        print 'Error: Can\'t find', name
+        print('Error: Can\'t find', name)
 
 
 def from_svg(name):
@@ -1008,11 +1009,11 @@ def from_svg(name):
                 index = index + 1
 
             elif cmd in cmds:  # Need to do these some time
-                print 'Error:', cmd, 'not implemented in path:', path
+                print('Error:', cmd, 'not implemented in path:', path)
                 _sys.exit()
 
             else:
-                print 'Error: svg path type unknown', cmd
+                print('Error: svg path type unknown', cmd)
                 _sys.exit()
 
         finish_wire()
@@ -1134,7 +1135,7 @@ class shape(object):
         # Write
         okay = w.AddShape(self.shape)
         if not okay:
-            print 'Warning: Could not translate all shapes'
+            print('Warning: Could not translate all shapes')
         w.Write(name)
 
     def to_step(self, name, **options):
@@ -1223,7 +1224,7 @@ class shape(object):
         if okay in [_IFSelect.IFSelect_RetError,
                     _IFSelect.IFSelect_RetFail,
                     _IFSelect.IFSelect_RetStop]:
-            print 'Error: Could not translate shape to step'
+            print('Error: Could not translate shape to step')
         else:
             w.Write(name)
 
@@ -1355,7 +1356,7 @@ class shape(object):
         if stype in self._valid_subshapes():
             return True
         else:
-            print 'Warning: ' + stype + ' is not a subshape of ' + self.stype
+            print('Warning: ' + stype + ' is not a subshape of ' + self.stype)
             return False
 
     def subshapes(self, stype):
@@ -1393,7 +1394,7 @@ class shape(object):
         """
         Finds the center of mass of the shape.
         """
-        print 'Center not defined for', self.stype
+        print('Center not defined for', self.stype)
         _sys.exit()
 
     def subcenters(self, stype):
@@ -1456,8 +1457,8 @@ class shape(object):
                     suffix = ' tolerance: %.4e' % s.tolerance()
                 else:
                     suffix = ''
-                print '.' * _level + '%s%d location: (%.6f,%.6f,%.6f)%s' % \
-                    (t, count, x, y, z, suffix)
+                print('.' * _level + '%s%d location: (%.6f,%.6f,%.6f)%s' % \
+                    (t, count, x, y, z, suffix))
                 if not flat:
                     s.dump(False, level + 1)
 
@@ -1652,7 +1653,7 @@ class wire(shape):
                 elif e.stype == 'wire':
                     b.Add(_TopoDS_wire(e.shape))
                 else:
-                    print 'Error: Cannot add', e.stype, 'to wire.'
+                    print('Error: Cannot add', e.stype, 'to wire.')
             self.shape = b.Wire()
         elif isinstance(es, _TopoDS.TopoDS_Wire):
             self.shape = es
@@ -1834,7 +1835,7 @@ class shell(shape):
                 b.Add(f.shape)
             b.Perform()
             self.shape = b.SewedShape()
-            print 'sewing type:', self._raw_type()
+            print('sewing type:', self._raw_type())
         elif isinstance(fs, _TopoDS.TopoDS_Shell):
             self.shape = fs
         elif isinstance(fs, _TopoDS.TopoDS_Shape) and _raw_type(fs) == 'shell':
@@ -2128,26 +2129,26 @@ class solid(shape):
             for rec, raw_edge in enumerate(raw_edges):
                 if stopat >= 0 and rec == stopat:
                     break
-                print 'raw edge', rec,
+                print('raw edge', rec, end='')
                 l1 = edge_map.FindFromKey(raw_edge)
                 f1 = l1.First()  # Assumes only two faces per edge
                 f2 = l1.Last()
                 h1 = f1.__hash__()
                 h2 = f2.__hash__()
                 if h1 == h2:  # Avoid seam edges
-                    print 'Seam'
+                    print('Seam')
                     continue
                 elif h1 > h2:
                     pair = (h2, h1)
                 else:
                     pair = (h1, h2)
                 if pair in pairs:
-                    print 'Skipped'
+                    print('Skipped')
                     continue
                 else:
                     pairs.append(pair)
                 if _raw_faces_same_domain(f1, f2, skip_fits):
-                    print 'Merge'
+                    print('Merge')
                     merge_count = merge_count + 1
                     if f1 not in common_faces:
                         if f2 not in common_faces:
@@ -2183,7 +2184,7 @@ class solid(shape):
                         common_faces[f2] = index
                     else:  # Both in common_faces
                         if common_faces[f1] == common_faces[f2]:
-                            print 'Done already'
+                            print('Done already')
                         else:
                             index = common_faces[f1]
                             index2 = common_faces[f2]
@@ -2200,7 +2201,7 @@ class solid(shape):
                             new_faces[index2] = None
 
                 else:
-                    print 'Different'
+                    print('Different')
 
             if len(new_faces) <= 0:  # No common faces
                 return
@@ -2223,7 +2224,7 @@ class solid(shape):
                     b2.Add(_TopoDS_shell(new_shell))
                     self.shape = b2.Solid()
                 elif _raw_type(new_shell) == 'compound':
-                    print 'Warning: simplify() returned compound'
+                    print('Warning: simplify() returned compound')
                     s = solid(new_shell)
                     css = s._raw('shell')
                     c = _TopoDS.TopoDS_Compound()
@@ -2235,8 +2236,8 @@ class solid(shape):
                         b3.Add(c, b2.Solid())
                     self.shape = c
                 else:
-                    print 'Warning: Wrong Sewed Shape after simplify():', \
-                        _raw_type(new_shell)
+                    print('Warning: Wrong Sewed Shape after simplify():', \
+                        _raw_type(new_shell))
                     self.shape = new_shell
 
 
@@ -2288,8 +2289,8 @@ def arc_ellipse(rad1, rad2, start_angle, end_angle):
     end_angle.
     """
     if rad2 > rad1:
-        print 'Error: Major radius ', rad1, \
-            ' must be greater than minor radius ', rad2
+        print('Error: Major radius ', rad1, \
+            ' must be greater than minor radius ', rad2)
         _sys.exit()
     return edge(_BRepBuilderAPI.BRepBuilderAPI_MakeEdge(
             _GC_MakeArcOfEllipse(
@@ -2372,8 +2373,8 @@ def ellipse(rad1, rad2):
     with major radius rad1 and minor radius rad2.
     """
     if rad2 > rad1:
-        print 'Error: Major radius ', rad1, \
-            ' must be greater than minor radius ', rad2
+        print('Error: Major radius ', rad1, \
+            ' must be greater than minor radius ', rad2)
         _sys.exit()
     return edge(_BRepBuilderAPI.BRepBuilderAPI_MakeEdge(
             _gp.gp_Elips(_gp.gp_Ax2(_gp.gp_Pnt(0.0, 0.0, 0.0),
@@ -2444,7 +2445,7 @@ def helix(rad, angle, turns, eps=1e-12):
     num_parts = int(frac_parts)
     rem_parts = frac_parts - num_parts
     if abs(rem_parts) > eps:
-        print 'Error: Fractional turns not currently supported.'
+        print('Error: Fractional turns not currently supported.')
         _sys.exit()
 
     # Calculate a quarter helix using a weighted bezier
@@ -2747,7 +2748,7 @@ def prism(s, pdir):
     elif s.stype == 'face':
         return solid(b.Shape())
     else:
-        print 'Error: Improper type for prism', s.stype
+        print('Error: Improper type for prism', s.stype)
 
 
 def revol(s, pabout, pdir, angle):
@@ -2773,7 +2774,7 @@ def revol(s, pabout, pdir, angle):
     elif s.stype == 'face':
         return solid(b.Shape())
     else:
-        print 'Error: Improper type for prism', s.stype
+        print('Error: Improper type for prism', s.stype)
 
 
 def loft(ws, ruled=False, stype='solid'):
@@ -2834,7 +2835,7 @@ def plane_loft(ws, stype='solid'):
             try:
                 faces.append(plane(p))
             except NameError:
-                print 'Error: Not Planar'
+                print('Error: Not Planar')
                 _sys.exit()
                 # The loft must have slightly changed edges or vertices,
                 # because this was a mess.
@@ -2993,7 +2994,7 @@ def offset(s1, dist, tolerance=1e-3, join='arc', mode='skin'):
         elif _raw_type(raw_shape) == 'solid':
             ss.append(solid(raw_shape))
         else:
-            print 'Warning: Unexpected type', _raw_type(raw_shape)
+            print('Warning: Unexpected type', _raw_type(raw_shape))
         return ss
 
     elif s1.stype == 'face':
@@ -3030,4 +3031,4 @@ def offset(s1, dist, tolerance=1e-3, join='arc', mode='skin'):
         return fs
 
     else:
-        print 'Error: Only solid or face allowed for offset'
+        print('Error: Only solid or face allowed for offset')

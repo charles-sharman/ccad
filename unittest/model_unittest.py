@@ -22,6 +22,7 @@ Notes
 2. Basic functionality caught in most places, particularly on
    different arguments.  Add more stringency as needed.
 """
+from __future__ import print_function
 
 import ccad.model as cm
 
@@ -283,7 +284,7 @@ class TestImportFunctions(unittest.TestCase):
         total_length = 0.0
         for w in ws:
             total_length = total_length + w.length()
-        print 'total_length', total_length
+        print('total_length', total_length)
         self.assert_(close(total_length, 2962.0, 1.0))
 
 # Classes
@@ -524,7 +525,7 @@ class TestWire(unittest.TestCase):
     def test_bounds(self):
         s1 = cm.ngon(1.0, 3)
         rt3d2 = math.sqrt(3.0) / 2
-        print 'bounds', s1.bounds()
+        print('bounds', s1.bounds())
         self.assert_(close(s1.bounds(),
                            (-0.5, -rt3d2, 0.0, 1.0, rt3d2, 0.0), eps=0.1))
 
@@ -631,7 +632,7 @@ class TestFace(unittest.TestCase):
     def test_bounds(self):
         s1 = cm.plane(cm.ngon(1.0, 3))
         rt3d2 = math.sqrt(3.0) / 2
-        print 'bounds', s1.bounds()
+        print('bounds', s1.bounds())
         self.assert_(close(s1.bounds(),
                            (-0.5, -rt3d2, 0.0, 1.0, rt3d2, 0.0), eps=0.1))
 
@@ -1244,7 +1245,7 @@ def suite(tests=[]):
     suite = unittest.TestSuite()
     if len(tests) == 0:  # Do all
         tests = filter(lambda x: x.startswith('Test'), globals())
-    print tests
+    print(tests)
     for test in tests:
         eval('suite.addTest(unittest.makeSuite(' + test + '))')
     return suite
