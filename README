@@ -78,6 +78,9 @@ committing.**
 To Build the Documentation (only for developers)
 ================================================
 
+Some files are captured with xwd (window dump).  They're commented in
+MANIFEST.in.  The remaining are generated with generate_images.py.
+
   cd ccad-ver/doc
   python generate_images.py
   sphinx-build . html

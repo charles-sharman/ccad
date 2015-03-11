@@ -1,25 +1,31 @@
+
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Creating Edges &mdash; ccad v0.12 documentation</title>
+    <title>Creating Edges &mdash; ccad 0.13 documentation</title>
+    
     <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.12',
-        COLLAPSE_MODINDEX: false,
+        VERSION:     '0.13',
+        COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
       };
     </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="ccad v0.12 documentation" href="index.html" />
+    <link rel="top" title="ccad 0.13 documentation" href="index.html" />
     <link rel="up" title="Modelling" href="modelling.html" />
     <link rel="next" title="Creating Wires" href="creating_wires.html" />
     <link rel="prev" title="Modelling" href="modelling.html" /> 
@@ -37,50 +43,50 @@
         <li class="right" >
           <a href="modelling.html" title="Modelling"
              accesskey="P">previous</a> |</li>
-        <li><a href="contents.html">ccad v0.12 documentation</a> &raquo;</li>
+        <li><a href="contents.html">ccad 0.13 documentation</a> &raquo;</li>
           <li><a href="modelling.html" accesskey="U">Modelling</a> &raquo;</li> 
       </ul>
     </div>
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
-            <h3><a href="contents.html">Table Of Contents</a></h3>
-            <ul>
-<li><a class="reference external" href="#">Creating Edges</a><ul>
-<li><a class="reference external" href="#segment">segment</a></li>
-<li><a class="reference external" href="#arc">arc</a></li>
-<li><a class="reference external" href="#arc-ellipse">arc_ellipse</a></li>
-<li><a class="reference external" href="#spline">spline</a></li>
-<li><a class="reference external" href="#bezier">bezier</a></li>
-<li><a class="reference external" href="#circle">circle</a></li>
-<li><a class="reference external" href="#ellipse">ellipse</a></li>
+  <h3><a href="contents.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Creating Edges</a><ul>
+<li><a class="reference internal" href="#segment">segment</a></li>
+<li><a class="reference internal" href="#arc">arc</a></li>
+<li><a class="reference internal" href="#arc-ellipse">arc_ellipse</a></li>
+<li><a class="reference internal" href="#spline">spline</a></li>
+<li><a class="reference internal" href="#bezier">bezier</a></li>
+<li><a class="reference internal" href="#circle">circle</a></li>
+<li><a class="reference internal" href="#ellipse">ellipse</a></li>
 </ul>
 </li>
 </ul>
 
-            <h4>Previous topic</h4>
-            <p class="topless"><a href="modelling.html"
-                                  title="previous chapter">Modelling</a></p>
-            <h4>Next topic</h4>
-            <p class="topless"><a href="creating_wires.html"
-                                  title="next chapter">Creating Wires</a></p>
-            <h3>This Page</h3>
-            <ul class="this-page-menu">
-              <li><a href="_sources/creating_edges.txt"
-                     rel="nofollow">Show Source</a></li>
-            </ul>
-          <div id="searchbox" style="display: none">
-            <h3>Quick search</h3>
-              <form class="search" action="search.html" method="get">
-                <input type="text" name="q" size="18" />
-                <input type="submit" value="Go" />
-                <input type="hidden" name="check_keywords" value="yes" />
-                <input type="hidden" name="area" value="default" />
-              </form>
-              <p class="searchtip" style="font-size: 90%">
-              Enter search terms or a module, class or function name.
-              </p>
-          </div>
-          <script type="text/javascript">$('#searchbox').show(0);</script>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="modelling.html"
+                        title="previous chapter">Modelling</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="creating_wires.html"
+                        title="next chapter">Creating Wires</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/creating_edges.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
 
@@ -189,13 +195,13 @@ radius 3.0:</p>
         <li class="right" >
           <a href="modelling.html" title="Modelling"
              >previous</a> |</li>
-        <li><a href="contents.html">ccad v0.12 documentation</a> &raquo;</li>
+        <li><a href="contents.html">ccad 0.13 documentation</a> &raquo;</li>
           <li><a href="modelling.html" >Modelling</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
-      &copy; Copyright 2014 by Charles Sharman and Others.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.6.
+        &copy; Copyright 2014 by Charles Sharman and Others.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
     </div>
   </body>
 </html>

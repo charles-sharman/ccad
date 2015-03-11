@@ -1,25 +1,31 @@
+
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Gathering Information and Miscellaneous Methods &mdash; ccad v0.12 documentation</title>
+    <title>Gathering Information and Miscellaneous Methods &mdash; ccad 0.13 documentation</title>
+    
     <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.12',
-        COLLAPSE_MODINDEX: false,
+        VERSION:     '0.13',
+        COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
       };
     </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="ccad v0.12 documentation" href="index.html" />
+    <link rel="top" title="ccad 0.13 documentation" href="index.html" />
     <link rel="up" title="Modelling" href="modelling.html" />
     <link rel="next" title="File Transfer" href="file_transfer.html" />
     <link rel="prev" title="Boolean Operations" href="boolean.html" /> 
@@ -37,88 +43,88 @@
         <li class="right" >
           <a href="boolean.html" title="Boolean Operations"
              accesskey="P">previous</a> |</li>
-        <li><a href="contents.html">ccad v0.12 documentation</a> &raquo;</li>
+        <li><a href="contents.html">ccad 0.13 documentation</a> &raquo;</li>
           <li><a href="modelling.html" accesskey="U">Modelling</a> &raquo;</li> 
       </ul>
     </div>
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
-            <h3><a href="contents.html">Table Of Contents</a></h3>
-            <ul>
-<li><a class="reference external" href="#">Gathering Information and Miscellaneous Methods</a><ul>
-<li><a class="reference external" href="#overview">Overview</a><ul>
-<li><a class="reference external" href="#copy">copy</a></li>
-<li><a class="reference external" href="#subshapes">subshapes</a></li>
-<li><a class="reference external" href="#bounds">bounds</a></li>
-<li><a class="reference external" href="#center">center</a></li>
-<li><a class="reference external" href="#subcenters">subcenters</a></li>
-<li><a class="reference external" href="#check">check</a></li>
-<li><a class="reference external" href="#fix">fix</a></li>
-<li><a class="reference external" href="#nearest">nearest</a></li>
-<li><a class="reference external" href="#subtolerance">subtolerance</a></li>
-<li><a class="reference external" href="#dump">dump</a></li>
+  <h3><a href="contents.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Gathering Information and Miscellaneous Methods</a><ul>
+<li><a class="reference internal" href="#overview">Overview</a><ul>
+<li><a class="reference internal" href="#copy">copy</a></li>
+<li><a class="reference internal" href="#subshapes">subshapes</a></li>
+<li><a class="reference internal" href="#bounds">bounds</a></li>
+<li><a class="reference internal" href="#center">center</a></li>
+<li><a class="reference internal" href="#subcenters">subcenters</a></li>
+<li><a class="reference internal" href="#check">check</a></li>
+<li><a class="reference internal" href="#fix">fix</a></li>
+<li><a class="reference internal" href="#nearest">nearest</a></li>
+<li><a class="reference internal" href="#subtolerance">subtolerance</a></li>
+<li><a class="reference internal" href="#dump">dump</a></li>
 </ul>
 </li>
-<li><a class="reference external" href="#vertex">vertex</a></li>
-<li><a class="reference external" href="#edge">edge</a><ul>
-<li><a class="reference external" href="#type">type</a></li>
-<li><a class="reference external" href="#length">length</a></li>
-<li><a class="reference external" href="#poly">poly</a></li>
+<li><a class="reference internal" href="#vertex">vertex</a></li>
+<li><a class="reference internal" href="#edge">edge</a><ul>
+<li><a class="reference internal" href="#type">type</a></li>
+<li><a class="reference internal" href="#length">length</a></li>
+<li><a class="reference internal" href="#poly">poly</a></li>
 </ul>
 </li>
-<li><a class="reference external" href="#wire">wire</a><ul>
-<li><a class="reference external" href="#id1">length</a></li>
-<li><a class="reference external" href="#id2">poly</a></li>
+<li><a class="reference internal" href="#wire">wire</a><ul>
+<li><a class="reference internal" href="#id1">length</a></li>
+<li><a class="reference internal" href="#id2">poly</a></li>
 </ul>
 </li>
-<li><a class="reference external" href="#face">face</a><ul>
-<li><a class="reference external" href="#fillet">fillet</a></li>
-<li><a class="reference external" href="#id3">wire</a></li>
-<li><a class="reference external" href="#inner-wires">inner_wires</a></li>
-<li><a class="reference external" href="#id4">type</a></li>
-<li><a class="reference external" href="#area">area</a></li>
+<li><a class="reference internal" href="#face">face</a><ul>
+<li><a class="reference internal" href="#fillet">fillet</a></li>
+<li><a class="reference internal" href="#id3">wire</a></li>
+<li><a class="reference internal" href="#inner-wires">inner_wires</a></li>
+<li><a class="reference internal" href="#id4">type</a></li>
+<li><a class="reference internal" href="#area">area</a></li>
 </ul>
 </li>
-<li><a class="reference external" href="#shell">shell</a><ul>
-<li><a class="reference external" href="#id5">area</a></li>
+<li><a class="reference internal" href="#shell">shell</a><ul>
+<li><a class="reference internal" href="#id5">area</a></li>
 </ul>
 </li>
-<li><a class="reference external" href="#solid">solid</a><ul>
-<li><a class="reference external" href="#id6">fillet</a></li>
-<li><a class="reference external" href="#chamfer">chamfer</a></li>
-<li><a class="reference external" href="#draft">draft</a></li>
-<li><a class="reference external" href="#volume">volume</a></li>
-<li><a class="reference external" href="#simplify">simplify</a></li>
+<li><a class="reference internal" href="#solid">solid</a><ul>
+<li><a class="reference internal" href="#id6">fillet</a></li>
+<li><a class="reference internal" href="#chamfer">chamfer</a></li>
+<li><a class="reference internal" href="#draft">draft</a></li>
+<li><a class="reference internal" href="#volume">volume</a></li>
+<li><a class="reference internal" href="#simplify">simplify</a></li>
 </ul>
 </li>
 </ul>
 </li>
 </ul>
 
-            <h4>Previous topic</h4>
-            <p class="topless"><a href="boolean.html"
-                                  title="previous chapter">Boolean Operations</a></p>
-            <h4>Next topic</h4>
-            <p class="topless"><a href="file_transfer.html"
-                                  title="next chapter">File Transfer</a></p>
-            <h3>This Page</h3>
-            <ul class="this-page-menu">
-              <li><a href="_sources/logging.txt"
-                     rel="nofollow">Show Source</a></li>
-            </ul>
-          <div id="searchbox" style="display: none">
-            <h3>Quick search</h3>
-              <form class="search" action="search.html" method="get">
-                <input type="text" name="q" size="18" />
-                <input type="submit" value="Go" />
-                <input type="hidden" name="check_keywords" value="yes" />
-                <input type="hidden" name="area" value="default" />
-              </form>
-              <p class="searchtip" style="font-size: 90%">
-              Enter search terms or a module, class or function name.
-              </p>
-          </div>
-          <script type="text/javascript">$('#searchbox').show(0);</script>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="boolean.html"
+                        title="previous chapter">Boolean Operations</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="file_transfer.html"
+                        title="next chapter">File Transfer</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/logging.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
 
@@ -424,7 +430,7 @@ the edges on the positive x-side of the cube:</p>
 <p>Filleting can be buggy.  I found the following things helped improve
 success rate:</p>
 <blockquote>
-<ul class="simple">
+<div><ul class="simple">
 <li>Eliminate impossible conditions (e.g. fillet radius is 0.6 on a
 1x1x1 box).</li>
 <li>Eliminate unneeded edges.  OCC&#8217;s boolean operations often return
@@ -442,7 +448,7 @@ example, if you have a shape with multiple pockets, fillet one
 pocket, then the next, then the next.  The fillet operation tended
 to fail when the number of fillets got large.</li>
 </ul>
-</blockquote>
+</div></blockquote>
 </div>
 <div class="section" id="chamfer">
 <h3>chamfer<a class="headerlink" href="#chamfer" title="Permalink to this headline">¶</a></h3>
@@ -527,13 +533,13 @@ point).  Now, let&#8217;s simplify it:</p>
         <li class="right" >
           <a href="boolean.html" title="Boolean Operations"
              >previous</a> |</li>
-        <li><a href="contents.html">ccad v0.12 documentation</a> &raquo;</li>
+        <li><a href="contents.html">ccad 0.13 documentation</a> &raquo;</li>
           <li><a href="modelling.html" >Modelling</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
-      &copy; Copyright 2014 by Charles Sharman and Others.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.6.
+        &copy; Copyright 2014 by Charles Sharman and Others.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
     </div>
   </body>
 </html>

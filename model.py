@@ -2849,11 +2849,10 @@ def plane_loft(ws, stype='solid'):
         faces.append(plane(polygon(profiles[0])))
         faces.append(plane(polygon(profiles[-1])))
     s = shell(faces)
-    s.fix()
     if stype == 'solid':
-        return solid([s])
-    else:
-        return s
+        s = solid([s])
+    s.fix()
+    return s
 
 
 def pipe(profile, spine, continuous=False, transition='sharp',

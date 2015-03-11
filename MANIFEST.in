@@ -3,6 +3,8 @@ global-exclude *
 include README LICENSE AUTHORS TODO setup.py MANIFEST.in
 include __init__.py model.py display.py
 include doc/*.rst doc/*.py doc/*.svg
+# These includes are captured with xwd
+include doc/example1_all_bricks.png doc/logo.png doc/sphere_example.png doc/display_spherebox1.png doc/display_wireframe.png doc/display_shaded.png doc/display_hlr.png doc/select_face.png doc/select_edge.png doc/select_vertex.png
 include unittest/*.py
 recursive-include doc/html *
 prune doc/html/.*

@@ -23,7 +23,7 @@ import distutils.dir_util
 import distutils.sysconfig
 
 name = 'ccad'
-version = '0.12'  # Change also in display.py, doc/conf.py
+version = '0.13'  # Change also in display.py, doc/conf.py
 
 # Include the documentation
 prefix = 'share/doc/ccad/'  # Don't like including the share prefix.

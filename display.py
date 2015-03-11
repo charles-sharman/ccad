@@ -27,7 +27,7 @@ View LICENSE for details.
 
 from __future__ import print_function
 # Globals
-version = '0.12'  # Change also in setup.py, doc/conf.py
+version = '0.13'  # Change also in setup.py, doc/conf.py
 interactive = True
 manager = 'qt'
 app = None
@@ -40,13 +40,15 @@ import math as _math
 try:
     from PyQt4 import QtCore as _QtCore, QtGui as _QtGui
 except ImportError:
-    from PySide import QtCore as _QtCore, QtGui as _QtGui
-    manager = 'none'
-    print("""
-Warning: Cannot find python-qt4.  You will not be able to use ccad's
-display.  Instead, you may use pythonocc's viewers.  ccad shapes may
-be displayed in pythonocc's viewers by using the .shape attribute.
-For example:
+    try:
+        from PySide import QtCore as _QtCore, QtGui as _QtGui
+    except:
+        manager = 'none'
+        print("""
+Warning: Cannot find python-qt4 or pyside.  You will not be able to
+use ccad's display.  Instead, you may use pythonocc's viewers.  ccad
+shapes may be displayed in pythonocc's viewers by using the .shape
+attribute.  For example:
 
     import ccad.model as cm
     import OCC.Display.SimpleGui as SimpleGui
@@ -69,13 +71,7 @@ from OCC.TCollection import (TCollection_ExtendedString as
                              _TCollection_ExtendedString)
 from OCC.TopExp import TopExp_Explorer as _TopExp_Explorer
 from OCC.Visual3d import Visual3d_ViewOrientation as _Visual3d_ViewOrientation
-# Use lower level window routines for linux to allow multiple viewing
-# windows.  Doesn't work on other platforms.
-if _sys.platform.startswith('linux'):
-    from OCC.Xw import (Xw_Window as _Xw_Window,
-                        Xw_WQ_3DQUALITY as _Xw_WQ_3DQUALITY)
-else:
-    from OCC.Visualization import Display3d as _Display3d
+from OCC.Visualization import Display3d as _Display3d
 
 import ccad.model as _cm
 
@@ -286,8 +282,7 @@ class view_qt(_QtGui.QWidget):
 
         # Some Initial Values
         self.mode_shaded()
-        self.glarea.occ_view.SetBackgroundColor(
-            _Quantity.Quantity_TOC_RGB, 0.0, 0.0, 0.0)
+        self.set_background((0.0, 0.0, 0.0))
         self.set_triedron(1)
 
         # Set up some initial states
@@ -346,7 +341,6 @@ class view_qt(_QtGui.QWidget):
         self.status_bar.setText('Key ' + hex(key))
         if key in self.key_table.values():
             try:
-                print('Got to 2')
                 cmd = self.key_table.keys()[self.key_table.values().index(key)]
                 eval('self.' + cmd)
             except:
@@ -370,7 +364,6 @@ class view_qt(_QtGui.QWidget):
             if self.glarea.occ_context.MoreSelected():
                 if self.glarea.occ_context.HasSelectedShape():
                     self.selected = self.glarea.occ_context.SelectedShape()
-                    #print "Current selection (single):",self.selected_shape
             else:
                 self.selected = None
             self.make_selection()
@@ -594,7 +587,7 @@ class view_qt(_QtGui.QWidget):
         """
         self.foreground = color
 
-    def set_triedron(self, state, position='down_right',
+    def set_triedron(self, state, position='bottom_right',
                      color=(1.0, 1.0, 1.0), size=0.08):
         """
         Controls the triedron, the little x, y, z coordinate display.
@@ -607,14 +600,14 @@ class view_qt(_QtGui.QWidget):
         if not state:
             self.glarea.occ_view.TriedronErase()
         else:
-            local_positions = {'down_right': _Aspect.Aspect_TOTP_RIGHT_LOWER,
-                               'down_left': _Aspect.Aspect_TOTP_LEFT_LOWER,
-                               'up_right': _Aspect.Aspect_TOTP_RIGHT_UPPER,
-                               'up_left': _Aspect.Aspect_TOTP_LEFT_UPPER}
+            local_positions = {'bottom_right': _Aspect.Aspect_TOTP_RIGHT_LOWER,
+                               'bottom_left': _Aspect.Aspect_TOTP_LEFT_LOWER,
+                               'top_right': _Aspect.Aspect_TOTP_RIGHT_UPPER,
+                               'top_left': _Aspect.Aspect_TOTP_LEFT_UPPER}
             local_position = local_positions[position]
             # Can't set Triedron color RGB-wise!
-            #qcolor = Quantity_Color(
-            #    color[0], color[1], color[2], Quantity_TOC_RGB)
+            #qcolor = _Quantity.Quantity_Color(
+            #    color[0], color[1], color[2], _Quantity.Quantity_TOC_RGB)
             if color == (1.0, 1.0, 1.0):
                 qcolor = _Quantity.Quantity_NOC_WHITE
             else:
@@ -622,7 +615,8 @@ class view_qt(_QtGui.QWidget):
             self.glarea.occ_view.TriedronDisplay(local_position,
                                                  qcolor,
                                                  size,
-                                                 _V3d.V3d_WIREFRAME)
+                                                 _V3d.V3d_ZBUFFER)
+                                                 #_V3d.V3d_WIREFRAME)
 
     # Things to Show Functions
     def display(self, shape, color=None, material='default', transparency=0.0,
@@ -685,7 +679,7 @@ class view_qt(_QtGui.QWidget):
         # Set Color
         if not color:
             color = self.foreground
-        #print 'color', color
+        #print('color', color)
 
         #drawer = AIS_Drawer()
         #handle_drawer = drawer.GetHandle()
@@ -719,7 +713,7 @@ class view_qt(_QtGui.QWidget):
         # Set Shading Type
         aspect_shading = _Prs3d.Prs3d_ShadingAspect()
         handle_aspect_shading = aspect_shading.GetHandle()
-        #print 'shading color', color
+        #print('shading color', color)
         aspect_shading.SetColor(qcolor, _Aspect.Aspect_TOFM_BOTH_SIDE)
         local_materials = {'brass': _Graphic3d.Graphic3d_NOM_BRASS,
                            'bronze': _Graphic3d.Graphic3d_NOM_BRONZE,
@@ -1013,7 +1007,7 @@ class view_qt(_QtGui.QWidget):
         _QtGui.QMessageBox.about(
             self,
             'ccad viewer ' + str(version),
-            '\251 Copyright 2014 by Charles Sharman and Others')
+            '\251 Copyright 2015 by Charles Sharman and Others')
 
     def save(self, name=''):
         """
@@ -1090,42 +1084,17 @@ class GLWidget(_QtGui.QWidget):
         # Set up the OCC hooks to the OpenGL space
         window_handle = int(self.winId())
 
-        if _sys.platform.startswith('linux'):
-            # This lower level routine allows multiple viewing
-            # windows.  Only works on linux.
-            gd = _Graphic3d.Graphic3d_GraphicDevice(_os.environ['DISPLAY'])
-            window = _Xw_Window(
-                gd.GetHandle(),
-                window_handle >> 16,
-                window_handle & 0xffff,
-                _Xw_WQ_3DQUALITY)
-            self.occ_viewer = _V3d.V3d_Viewer(
-                gd.GetHandle(),
-                _TCollection_ExtendedString('Viewer').ToExtString())
-            handle_occ_viewer = self.occ_viewer.GetHandle()
-            self.occ_viewer.Init()
-            if perspective:
-                self.handle_view = self.occ_viewer.DefaultPerspectiveView()
-            else:
-                self.handle_view = self.occ_viewer.DefaultOrthographicView()
-            self.occ_view = self.handle_view.GetObject()
-            self.occ_view.SetWindow(window.GetHandle())
-            if not window.IsMapped():
-                window.Map()
-            self.occ_context = _AIS.AIS_InteractiveContext(handle_occ_viewer)
-            handle_occ_context = self.occ_context.GetHandle()
+        self.d3d = _Display3d()
+        self.d3d.Init(window_handle)
 
-        else:
-
-            self.d3d = _Display3d()
-            self.d3d.Init(window_handle)
-
-            handle_occ_context = self.d3d.GetContext()
-            handle_occ_viewer = self.d3d.GetViewer()
-            self.handle_view = self.d3d.GetView()
-            self.occ_context = handle_occ_context.GetObject()
-            self.occ_viewer = handle_occ_viewer.GetObject()
-            self.occ_view = self.handle_view.GetObject()
+        handle_occ_context = self.d3d.GetContext()
+        handle_occ_viewer = self.d3d.GetViewer()
+        self.handle_view = self.d3d.GetView()
+        self.occ_context = handle_occ_context.GetObject()
+        self.occ_viewer = handle_occ_viewer.GetObject()
+        self.occ_viewer.SetDefaultLights()
+        self.occ_viewer.SetLightOn()
+        self.occ_view = self.handle_view.GetObject()
 
     def sizeHint(self):
         return _QtCore.QSize(self.SCR[0], self.SCR[1])
